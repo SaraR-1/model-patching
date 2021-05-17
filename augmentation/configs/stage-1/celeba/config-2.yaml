@@ -3,7 +3,7 @@ prefix: cyclegan
 mode: train
 
 # Weights and Biases
-wandb_entity: hazy-research # change this to your entity
+wandb_entity: predictive-analytics-lab # change this to your entity
 wandb_project: model-patching
 wandb_group: stage-1
 wandb_job_type: celeba

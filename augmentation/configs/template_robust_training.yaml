@@ -8,7 +8,7 @@ prefix: robust
 mode: train
 
 # Weights and Biases: point these to your own credentials
-wandb_entity: hazy-research
+wandb_entity: predictive-analytics-lab
 wandb_project: model-patching
 wandb_group: stage-2
 wandb_job_type: training

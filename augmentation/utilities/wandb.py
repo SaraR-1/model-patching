@@ -22,7 +22,7 @@ def particular_checkpoint_step_extractor(checkpoint, step_extractor=lambda fname
     return step_extractor
 
 
-def fetch_all_wandb_run_ids(wandb_project, wandb_entity='hazy-research', wandb_api=None):
+def fetch_all_wandb_run_ids(wandb_project, wandb_entity='predictive-analytics-lab', wandb_api=None):
     if wandb_api is None:
         wandb_api = wandb.Api()
     wandb_path = f'{wandb_entity}/{wandb_project}/*'
@@ -30,7 +30,7 @@ def fetch_all_wandb_run_ids(wandb_project, wandb_entity='hazy-research', wandb_a
     return [run.id for run in runs]
 
 
-def load_wandb_run(wandb_run_id, wandb_project, wandb_entity='hazy-research', wandb_api=None):
+def load_wandb_run(wandb_run_id, wandb_project, wandb_entity='predictive-analytics-lab', wandb_api=None):
     if wandb_api is None:
         wandb_api = wandb.Api()
     wandb_path = f'{wandb_entity}/{wandb_project}/{wandb_run_id}'

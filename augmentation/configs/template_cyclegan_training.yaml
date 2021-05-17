@@ -7,7 +7,7 @@ prefix: cyclegan
 mode: train
 
 # Weights and Biases
-wandb_entity: hazy-research
+wandb_entity: predictive-analytics-lab
 wandb_project: model-patching
 wandb_group: stage-1
 wandb_job_type: training
