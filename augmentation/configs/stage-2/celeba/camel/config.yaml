@@ -168,7 +168,7 @@ eval_gpu_augmentation_pipelines_args:
 
 # Dataflow settings
 dataflow: disk_cached
-cache_dir: /./tfcache/
+cache_dir: ./tfcache/
 
 # Path to checkpoints in wandb.run directory
 checkpoint_path: '/checkpoints/'
