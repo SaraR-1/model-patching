@@ -70,6 +70,7 @@ def load_most_recent_keras_model_weights(keras_model,
     try:
         model_file = get_most_recent_model_file(wandb_run, wandb_ckpt_path, model_name, exclude, step_extractor)
         time.sleep(3)
+        print(model_file.name)
         keras_model.load_weights(model_file.name)
         print('load_most_recent_keras_model_weights: file ', model_file.name)
         try:
