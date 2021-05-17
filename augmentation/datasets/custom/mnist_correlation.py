@@ -150,7 +150,7 @@ def load_mnist_correlation_yz(dataset_name, dataset_version, data_dir, validatio
     val_sz_ = augmentation.datasets.utils.dataset_len(mnists_val)
     test_sz_ = augmentation.datasets.utils.dataset_len(mnists_test)
 
-    size = train_sz_ + val_sz_, if size == -1 else size
+    size = train_sz_ + val_sz_ if size == -1 else size
     test_size = test_sz_ if test_size == -1 else min(test_size, test_sz_)
     assert size <= train_sz_ + val_sz_, f'Dataset size {size} for {dataset_name} should be at most {train_sz_ + val_sz_}.'
     val_size = int(size * validation_frac)
