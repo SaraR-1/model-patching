@@ -259,7 +259,12 @@ def get_loss_info(train_dataset_aliases, augmentation_training, group_training_e
     print(len(group_training_examples_used))
     print(training_groups_mask[:10])
     print(group_training_examples[:10])
+    print(train_dataset_aliases[:10])
     print(group_training_examples_used[:10])
+
+    print(af)
+    print(ag)
+    print(a)
     print("----------------------- TRAINING GROUP MASK MY PRINT END-----------------------")
 
     if gdro_mixed:
