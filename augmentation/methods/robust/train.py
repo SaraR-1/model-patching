@@ -336,10 +336,16 @@ def _train_robust_model(train_generators,
         for metrics in metrics_by_group:
             reset_metrics(metrics)
 
+        print(f"steps_per_epoch: {steps_per_epoch}")
+        print(f"len(training_groups_mask: {len(training_groups_mask)}")
+        print(f"sum(training_groups_mask: {sum(training_groups_mask)}")
+
         for _ in range(steps_per_epoch):
             # Get batches of data from each group's training iterator
             group_batches, group_targets = tuple(zip(*[tuple(map(make_floatx_tensor, next(it)))
                                                        for it in train_iterators]))
+            print(f"len(group_batches): {len(group_batches)}")
+            print(f"group_batches: {group_batches}")
 
             # Compute the IRM penalty weight
             step_irm_penalty_weight = irm_penalty_scheduler(step, irm_anneal_steps, irm_penalty_weight)
