@@ -255,8 +255,10 @@ def get_loss_info(train_dataset_aliases, augmentation_training, group_training_e
     group_training_aliases_used = [a for a, use in zip(train_dataset_aliases, training_groups_mask) if use]
 
     print("----------------------- TRAINING GROUP MASK MY PRINT -----------------------")
-    print(len(training_groups_mask), len(training_groups_mask[0]))
+    print(len(training_groups_mask))
     print(len(group_training_examples_used))
+    print(training_groups_mask[:10])
+    print(group_training_examples[:10])
     print(group_training_examples_used[:10])
     print("----------------------- TRAINING GROUP MASK MY PRINT END-----------------------")
 
