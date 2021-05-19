@@ -254,6 +254,12 @@ def get_loss_info(train_dataset_aliases, augmentation_training, group_training_e
     group_training_examples_used = [n for n, use in zip(group_training_examples, training_groups_mask) if use]
     group_training_aliases_used = [a for a, use in zip(train_dataset_aliases, training_groups_mask) if use]
 
+    print("----------------------- TRAINING GROUP MASK MY PRINT -----------------------")
+    print(len(training_groups_mask), len(training_groups_mask[0]))
+    print(len(group_training_examples_used))
+    print(group_training_examples_used[:10])
+    print("----------------------- TRAINING GROUP MASK MY PRINT END-----------------------")
+
     if gdro_mixed:
         def extract(alias):
             if '(Y=0)' in alias:
@@ -341,12 +347,13 @@ def _train_robust_model(train_generators,
         print(f"len(training_groups_mask: {len(training_groups_mask)}")
         print(f"sum(training_groups_mask: {sum(training_groups_mask)}")
 
+
         for _ in range(steps_per_epoch):
             # Get batches of data from each group's training iterator
             group_batches, group_targets = tuple(zip(*[tuple(map(make_floatx_tensor, next(it)))
                                                        for it in train_iterators]))
-            print(f"len(group_batches): {len(group_batches)}")
-            print(f"group_batches: {group_batches}")
+            print(f"shape (group_batches): {tf.shape(group_batches)}")
+            # print(f"group_batches: {group_batches}")
 
             # Compute the IRM penalty weight
             step_irm_penalty_weight = irm_penalty_scheduler(step, irm_anneal_steps, irm_penalty_weight)
