@@ -335,7 +335,8 @@ def _train_robust_model(train_generators,
         reset_metrics(aggregate_metrics)
         for metrics in metrics_by_group:
             reset_metrics(metrics)
-
+        print("-------------------------------------------------------------- MY PRINTS "
+              "--------------------------------------------------------------")
         print(f"steps_per_epoch: {steps_per_epoch}")
         print(f"len(training_groups_mask: {len(training_groups_mask)}")
         print(f"sum(training_groups_mask: {sum(training_groups_mask)}")
