@@ -546,7 +546,8 @@ def setup_and_train_robust_model(args):
     config = recursively_create_config_simple_namespace(args.config, args.template_config)
 
     # Train the end model
-    breakpoint()
+    # breakpoint()
+    import pdb; pdb.set_trace()
     train_robust_model(config)
 
 
