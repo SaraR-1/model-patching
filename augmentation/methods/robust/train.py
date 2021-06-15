@@ -19,6 +19,7 @@ from augmentation.utilities.checkpoint import *
 from augmentation.utilities.wandb import *
 import tempfile
 
+os.environ['WANDB_MODE'] = 'offline'
 
 def train_robust_model(config):
     # Do basic setup
@@ -545,6 +546,7 @@ def setup_and_train_robust_model(args):
     config = recursively_create_config_simple_namespace(args.config, args.template_config)
 
     # Train the end model
+    breakpoint()
     train_robust_model(config)
 
 
