@@ -129,6 +129,8 @@ def train_robust_model(config):
         # Create a scheduler for the learning rate
         steps_per_epoch = n_training_examples // config.baseline_batch_size
         print(f"Number of total training examples: {n_training_examples}\nSteps per epoch: {steps_per_epoch}")
+
+        import pdb;pdb.set_trace()
         # Recalculate batch size per group
         learning_rate_fn = build_lr_scheduler(scheduler=config.lr_scheduler,
                                               steps_per_epoch=steps_per_epoch,
@@ -179,6 +181,7 @@ def train_robust_model(config):
                                                  continue_training=config.resume  # only if we're continuing training
                                                  )
 
+        import pdb;pdb.set_trace()
         with devices[0]:
             # Train the end model
             _train_robust_model(train_generators=train_generators,
@@ -547,7 +550,7 @@ def setup_and_train_robust_model(args):
 
     # Train the end model
     # breakpoint()
-    import pdb; pdb.set_trace()
+    import pdb;pdb.set_trace()
     train_robust_model(config)
 
 
