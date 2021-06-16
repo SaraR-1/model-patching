@@ -493,6 +493,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
     print("Test original indices per new dataset:", test_original_idx)
     print("--------------------------------------------------------------", flush=True)
 
+    import pdb;pdb.set_trace()
 
     # Create the generators
     if max_shuffle_buffer < 0:
@@ -548,6 +549,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
 
     print("Generator lengths:", len(train_generators), len(val_generators), len(test_generators))
     print("Done with creating generators for train and eval.", flush=True)
+    import pdb;pdb.set_trace()
     return (train_generators, val_generators, test_generators), \
            (train_input_shape, train_n_classes, train_classes, n_training_examples, training_examples_by_dataset), \
            (train_dataset_aliases, val_dataset_aliases, test_dataset_aliases)

@@ -86,7 +86,36 @@ def train_robust_model(config):
                     broadcast_train_to=len(config.train_datasets),
                     broadcast_eval_to=len(config.eval_datasets))
 
+        # TODO: here first time in code using aliases
         # Get the dataset generators
+        # CONFIG
+        # config.train_dataset_aliases = ['(Y=0)(Z=0)', '(Y=0)(Z=1)', '(Y=1)(Z=0)', '(Y=1)(Z=1)']
+        # config.train_datasets = ['celeb_a_128/Blond_Hair/Male/1.0/0/0/y/4054',
+        #                          'celeb_a_128/Blond_Hair/Male/1.0/0/1/y',
+        #                          'celeb_a_128/Blond_Hair/Male/1.0/1/0/y',
+        #                          'celeb_a_128/Blond_Hair/Male/1.0/1/1/y']
+
+        # OUTPUT
+        # len(train_generators)=12; why is that? same for val and test
+        # group_training_examples = [71629, 71629, 71629, 66874, 66874, 66874, 22880, 22880, 22880, 1387, 1387, 1387]; len=12; what is it? how is it used?
+        # train_dataset_aliases = ['(Y=0)(Z=0)',
+        #                          '(Y=0)(Z=0)(A-F)',
+        #                          '(Y=0)(Z=0)(A-G)',
+        #                          '(Y=0)(Z=1)',
+        #                          '(Y=0)(Z=1)(A-F)',
+        #                          '(Y=0)(Z=1)(A-G)',
+        #                          '(Y=1)(Z=0)',
+        #                          '(Y=1)(Z=0)(A-F)',
+        #                          '(Y=1)(Z=0)(A-G)',
+        #                          '(Y=1)(Z=1)',
+        #                          '(Y=1)(Z=1)(A-F)',
+        #                          '(Y=1)(Z=1)(A-G)']
+        # len=12; what is it? how is it used?
+
+        # input_shape=(128, 128, 3) - ok; image size
+        # classes = ['Not Blond_Hair', 'Blond_Hair']; n_classes=2 - ok
+        # n_training_examples=162770; still the ENTIRE train set, not jet undersampled
+        import pdb;pdb.set_trace()
         (train_generators, val_generators, test_generators), \
         (input_shape, n_classes, classes, n_training_examples, group_training_examples), \
         (train_dataset_aliases, val_dataset_aliases, test_dataset_aliases) = \
