@@ -405,7 +405,8 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                      batch_size=batch_size,
                                      cross_validation=cross_validation,
                                      fold=fold)
-
+    # Check the train_dataset before "applying" the aliases
+    import pdb;pdb.set_trace()
     # Fetch the list of evaluation datasets
     print("Fetching evaluation datasets.", flush=True)
     (val_datasets, test_datasets), (eval_input_shape, eval_n_classes, eval_classes) = \
@@ -431,6 +432,8 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
     test_dataset_identifiers = [f'[{name}].[{version}].test' for name, version in
                                 zip(eval_dataset_names, eval_dataset_versions)]
 
+    # Here the weird aliases with A-F etc. are created
+    import pdb;pdb.set_trace()
     train_datasets, train_dataset_aliases, training_examples_by_dataset, train_batch_sizes, train_original_idx = \
         augmentation.augment.static.compose_static_augmentations(
             static_augmentation_pipelines=train_static_augmentations,
