@@ -45,7 +45,7 @@ CELEBA_BASE_VARIANTS = ['5_o_Clock_Shadow',
 
 train_group_sizes = {'Blond_Hair':
                          {'Male':
-                              {(0, 0): 71629, (0, 1): 66874, (1, 0): 22880, (1, 1): 1387} # 4054
+                              {(0, 0): 4054, (0, 1): 66874, (1, 0): 22880, (1, 1): 1387} # 71629
                           }
                      }
 
@@ -61,7 +61,7 @@ test_group_sizes = {'Blond_Hair':
                          }
                     }
 
-
+# THIS IS TERRIBLE!!! ACCESSING THE LEN BY A DICTIONARY, NOT ACTUALLY CHECKING THE INPUT DATASET
 def get_celeba_dataset_len(y_variant, z_variant, y_label, z_label):
     if y_label == -1:
         if z_label == -1:
@@ -179,6 +179,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
     if n_y0z0_examples > 0:
         # Take out examples from Y = 0, Z = 0
         # here len(train_dataset) = 4054 (when loading the first of the 4 subgroups)
+        # Take the first 4054 examples
         train_dataset_y0z0 = train_dataset.filter(lambda image, y, z: (y == 0 and z == 0)).take(n_y0z0_examples)
         # Keep only examples from groups other than Y = 0, Z = 0
         train_dataset = train_dataset.filter(lambda image, y, z: (y != 0 or z != 0))
