@@ -253,9 +253,9 @@ def _int32_feature(value):
 def customised_celeba_undersampled_tosave(train_sample):
     # Create a dictionary with features that may be relevant.
     feature = {
-        'image': _int64_feature(train_sample[0]),
-        'y': _int32_feature(train_sample[1]),
-        'z': _int32_feature(train_sample[2]),
+        'image': _int64_feature(train_sample[0].numpy()),
+        'y': _int32_feature(train_sample[1].numpy()),
+        'z': _int32_feature(train_sample[2].numpy()),
     }
 
     return tf.train.Example(features=tf.train.Features(feature=feature))
