@@ -220,8 +220,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
                                                                                   y_label,
                                                                                   z_label)
 
-    import pdb;
-    pdb.set_trace()
+    import pdb;pdb.set_trace()
     # Make a dataset info namespace to ensure downstream compatibility
     num_classes = 2
     classes = [f'Not {z_variant}', f'{z_variant}'] if label_type == 'z' else [f'Not {y_variant}', f'{y_variant}']
@@ -245,17 +244,14 @@ def _int64_feature(value):
     return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
 
 
-def _int32_feature(value):
-    """Returns an int32_list from a bool / enum / int / uint."""
-    return tf.train.Feature(int32_list=tf.train.Int32List(value=[value]))
-
-
 def customised_celeba_undersampled_tosave(train_sample):
     # Create a dictionary with features that may be relevant.
     feature = {
-        'image': _int64_feature(train_sample[0].numpy()),
-        'y': _int32_feature(train_sample[1].numpy()),
-        'z': _int32_feature(train_sample[2].numpy()),
+        # 'image': _int64_feature(train_sample[0].numpy()),
+        # 'image': tf.data.Dataset.from_tensor_slices(sample[0]),
+        'image': train_sample[0],
+        'y': _int64_feature(train_sample[1].numpy()),
+        'z': _int64_feature(train_sample[2].numpy()),
     }
 
     return tf.train.Example(features=tf.train.Features(feature=feature))
