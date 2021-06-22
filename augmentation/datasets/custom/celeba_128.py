@@ -191,7 +191,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
         # Add the subset of Y = 0, Z = 0 examples back into the train dataset
         train_dataset = train_dataset.concatenate(train_dataset_y0z0)
 
-        train_dataset_tosave = train_dataset.copy()
+        train_dataset_tosave = train_dataset
         # Save undersampled train set:
         label_selection_fn_tosave = get_label_selection_function("full")
         # Still 4054
