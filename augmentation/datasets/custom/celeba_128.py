@@ -179,7 +179,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
     if n_y0z0_examples > 0:
         # Take out examples from Y = 0, Z = 0
         # here len(train_dataset) = 4054 (when loading the first of the 4 subgroups)
-        # Take the first 4054 examples
+        # Take the FIRST 4054 examples - BUT, WHEN IS IT SHUFFLING THE TRAINING SET?
         train_dataset_y0z0 = train_dataset.filter(lambda image, y, z: (y == 0 and z == 0)).take(n_y0z0_examples)
         # Keep only examples from groups other than Y = 0, Z = 0
         train_dataset = train_dataset.filter(lambda image, y, z: (y != 0 or z != 0))
