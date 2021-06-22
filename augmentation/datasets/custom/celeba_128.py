@@ -191,18 +191,18 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
         # Add the subset of Y = 0, Z = 0 examples back into the train dataset
         train_dataset = train_dataset.concatenate(train_dataset_y0z0)
 
-        train_dataset_tosave = train_dataset
-        # Save undersampled train set:
-        label_selection_fn_tosave = get_label_selection_function("full")
-        # Still 4054
-        train_dataset_tosave = train_dataset_tosave.map(label_selection_fn_tosave, num_parallel_calls=16)
-        record_file = "/its/home/sr572/model-patching/undersampled_4054.tfrec"
-
-        # import pdb;pdb.set_trace()
-        with tf.io.TFRecordWriter(record_file) as writer:
-            for sample in train_dataset_tosave:
-                tf_sample = customised_celeba_undersampled_tosave(sample)
-                writer.write(tf_sample.SerializeToString())
+        # train_dataset_tosave = train_dataset
+        # # Save undersampled train set:
+        # label_selection_fn_tosave = get_label_selection_function("full")
+        # # Still 4054
+        # train_dataset_tosave = train_dataset_tosave.map(label_selection_fn_tosave, num_parallel_calls=16)
+        # record_file = "/its/home/sr572/model-patching/undersampled_4054.tfrec"
+        #
+        # # import pdb;pdb.set_trace()
+        # with tf.io.TFRecordWriter(record_file) as writer:
+        #     for sample in train_dataset_tosave:
+        #         tf_sample = customised_celeba_undersampled_tosave(sample)
+        #         writer.write(tf_sample.SerializeToString())
 
     # FINAL LEN - Here len(train_dataset) = 4054 (when loading the first of the 4 subgroups)
 
