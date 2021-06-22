@@ -197,12 +197,11 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
         train_dataset_tosave = train_dataset.map(label_selection_fn_tosave, num_parallel_calls=16)
         record_file = "/its/home/sr572/model-patching/undersampled_4054.tfrec"
 
-        import pdb;pdb.set_trace()
+        # import pdb;pdb.set_trace()
         with tf.io.TFRecordWriter(record_file) as writer:
             for sample in train_dataset_tosave:
                 tf_sample = customised_celeba_undersampled_tosave(sample)
                 writer.write(tf_sample.SerializeToString())
-
 
     # FINAL LEN - Here len(train_dataset) = 4054 (when loading the first of the 4 subgroups)
 
@@ -220,7 +219,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
                                                                                   y_label,
                                                                                   z_label)
 
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     # Make a dataset info namespace to ensure downstream compatibility
     num_classes = 2
     classes = [f'Not {z_variant}', f'{z_variant}'] if label_type == 'z' else [f'Not {y_variant}', f'{y_variant}']
@@ -238,11 +237,13 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
                            val_dataset=val_dataset,
                            test_dataset=test_dataset)
 
+
 def _bytes_feature(value):
-  """Returns a bytes_list from a string / byte."""
-  if isinstance(value, type(tf.constant(0))):
-    value = value.numpy() # BytesList won't unpack a string from an EagerTensor.
-  return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
+    """Returns a bytes_list from a string / byte."""
+    if isinstance(value, type(tf.constant(0))):
+        value = value.numpy()  # BytesList won't unpack a string from an EagerTensor.
+    return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
+
 
 def _int64_feature(value):
     """Returns an int64_list from a bool / enum / int / uint."""

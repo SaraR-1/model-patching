@@ -238,7 +238,7 @@ def load_dataset(dataset_name, dataset_version, data_dir, validation_frac, cross
         return load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac)
 
     # Set up the dataset
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     dataset_builder = load_dataset_using_tfds(dataset_name=dataset_name,
                                               dataset_version=dataset_version,
                                               data_dir=data_dir)
@@ -252,7 +252,7 @@ def load_dataset(dataset_name, dataset_version, data_dir, validation_frac, cross
     # Put the dataset into memory and return a training, validation and test dataset
     train_dataset, val_dataset, test_dataset = dataset_builder.as_dataset(split=dataset_split, as_supervised=True)
 
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     return SimpleNamespace(dataset_builder=dataset_builder,
                            dataset_info=dataset_info,
                            dataset_split=dataset_split,
@@ -409,7 +409,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                      cross_validation=cross_validation,
                                      fold=fold)
     # Check the train_dataset before "applying" the aliases
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     # Fetch the list of evaluation datasets
     print("Fetching evaluation datasets.", flush=True)
     (val_datasets, test_datasets), (eval_input_shape, eval_n_classes, eval_classes) = \
@@ -436,7 +436,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                 zip(eval_dataset_names, eval_dataset_versions)]
 
 
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     # TODO: Here the weird aliases with A-F etc. are created - STEP INTO FUNCTION!
     # train_dataset_aliases = ['(Y=0)(Z=0)', '(Y=0)(Z=0)(A-F)', '(Y=0)(Z=0)(A-G)', '(Y=0)(Z=1)', '(Y=0)(Z=1)(A-F)', '(Y=0)(Z=1)(A-G)', '(Y=1)(Z=0)', '(Y=1)(Z=0)(A-F)', '(Y=1)(Z=0)(A-G)', '(Y=1)(Z=1)', '(Y=1)(Z=1)(A-F)', '(Y=1)(Z=1)(A-G)']
     train_datasets, train_dataset_aliases, training_examples_by_dataset, train_batch_sizes, train_original_idx = \
@@ -500,7 +500,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
     # train_batch_sizes = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4] - WHY?
     # train_shuffle_buffers = [5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000] - WHY?
     # train_shuffle_seeds = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3] - WHY?
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     train_generators = create_multiple_data_generators(datasets=train_datasets,
                                                        dataset_aliases=train_dataset_aliases,
                                                        augmentations_by_dataset=train_augmentations,
@@ -543,7 +543,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
 
     print("Generator lengths:", len(train_generators), len(val_generators), len(test_generators))
     print("Done with creating generators for train and eval.", flush=True)
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     return (train_generators, val_generators, test_generators), \
            (train_input_shape, train_n_classes, train_classes, n_training_examples, training_examples_by_dataset), \
            (train_dataset_aliases, val_dataset_aliases, test_dataset_aliases)

@@ -19,7 +19,7 @@ from augmentation.utilities.checkpoint import *
 from augmentation.utilities.wandb import *
 import tempfile
 
-os.environ['WANDB_MODE'] = 'offline'
+# os.environ['WANDB_MODE'] = 'offline'
 
 def train_robust_model(config):
     # Do basic setup
@@ -289,18 +289,18 @@ def get_loss_info(train_dataset_aliases, augmentation_training, group_training_e
     group_training_examples_used = [n for n, use in zip(group_training_examples, training_groups_mask) if use]
     group_training_aliases_used = [a for a, use in zip(train_dataset_aliases, training_groups_mask) if use]
 
-    print("----------------------- TRAINING GROUP MASK MY PRINT -----------------------")
-    print(len(training_groups_mask))
-    print(len(group_training_examples_used))
-    print(training_groups_mask[:10])
-    print(group_training_examples[:10])
-    print(train_dataset_aliases[:10])
-    print(group_training_examples_used[:10])
-
-    print(af)
-    print(ag)
-    print(a)
-    print("----------------------- TRAINING GROUP MASK MY PRINT END-----------------------")
+    # print("----------------------- TRAINING GROUP MASK MY PRINT -----------------------")
+    # print(len(training_groups_mask))
+    # print(len(group_training_examples_used))
+    # print(training_groups_mask[:10])
+    # print(group_training_examples[:10])
+    # print(train_dataset_aliases[:10])
+    # print(group_training_examples_used[:10])
+    #
+    # print(af)
+    # print(ag)
+    # print(a)
+    # print("----------------------- TRAINING GROUP MASK MY PRINT END-----------------------")
 
     if gdro_mixed:
         def extract(alias):
