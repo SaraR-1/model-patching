@@ -45,7 +45,7 @@ CELEBA_BASE_VARIANTS = ['5_o_Clock_Shadow',
 
 train_group_sizes = {'Blond_Hair':
                          {'Male':
-                              {(0, 0): 4054, (0, 1): 66874, (1, 0): 22880, (1, 1): 1387} # 71629
+                              {(0, 0): 4054, (0, 1): 66874, (1, 0): 22880, (1, 1): 1387}  # 71629
                           }
                      }
 
@@ -60,6 +60,7 @@ test_group_sizes = {'Blond_Hair':
                              {(0, 0): 9767, (0, 1): 7535, (1, 0): 2480, (1, 1): 180}
                          }
                     }
+
 
 # THIS IS TERRIBLE!!! ACCESSING THE LEN BY A DICTIONARY, NOT ACTUALLY CHECKING THE INPUT DATASET
 def get_celeba_dataset_len(y_variant, z_variant, y_label, z_label):
@@ -108,6 +109,10 @@ def get_label_selection_function(label_type):
     elif label_type == 'z':
         # Keep only the z labels
         return lambda image, y_label, z_label: (image, z_label)
+    # CUSTOMISED ADD - TO USE WHEN SAVING THE DATA (for external usage)
+    elif label_type == 'full':
+        # Keep both x the z labels
+        return lambda image, y_label, z_label: (image, y_label, z_label)
     else:
         raise NotImplementedError
 
@@ -185,6 +190,18 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
         train_dataset = train_dataset.filter(lambda image, y, z: (y != 0 or z != 0))
         # Add the subset of Y = 0, Z = 0 examples back into the train dataset
         train_dataset = train_dataset.concatenate(train_dataset_y0z0)
+
+        # Save undersampled train set:
+        label_selection_fn_tosave = get_label_selection_function("full")
+        # Still 4054
+        train_dataset_tosave = train_dataset.map(label_selection_fn_tosave, num_parallel_calls=16)
+        record_file = "/its/home/sr572/model-patchin/undersampled_4054.tfrec"
+        with tf.io.TFRecordWriter(record_file) as writer:
+            for sample in train_dataset_tosave:
+                tf_sample = customised_celeba_undersampled_tosave(sample)
+                writer.write(tf_sample.SerializeToString())
+
+
     # FINAL LEN - Here len(train_dataset) = 4054 (when loading the first of the 4 subgroups)
 
     # Get the label selection function and apply it
@@ -201,7 +218,8 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
                                                                                   y_label,
                                                                                   z_label)
 
-    import pdb;pdb.set_trace()
+    import pdb;
+    pdb.set_trace()
     # Make a dataset info namespace to ensure downstream compatibility
     num_classes = 2
     classes = [f'Not {z_variant}', f'{z_variant}'] if label_type == 'z' else [f'Not {y_variant}', f'{y_variant}']
@@ -218,3 +236,24 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
                            train_dataset=train_dataset,
                            val_dataset=val_dataset,
                            test_dataset=test_dataset)
+
+
+def _int64_feature(value):
+    """Returns an int64_list from a bool / enum / int / uint."""
+    return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
+
+
+def _int32_feature(value):
+    """Returns an int32_list from a bool / enum / int / uint."""
+    return tf.train.Feature(int32_list=tf.train.Int32List(value=[value]))
+
+
+def customised_celeba_undersampled_tosave(train_sample):
+    # Create a dictionary with features that may be relevant.
+    feature = {
+        'image': _int64_feature(train_sample[0]),
+        'y': _int32_feature(train_sample[1]),
+        'z': _int32_feature(train_sample[2]),
+    }
+
+    return tf.train.Example(features=tf.train.Features(feature=feature))
