@@ -196,6 +196,8 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
         # Still 4054
         train_dataset_tosave = train_dataset.map(label_selection_fn_tosave, num_parallel_calls=16)
         record_file = "/its/home/sr572/model-patching/undersampled_4054.tfrec"
+
+        import pdb;pdb.set_trace()
         with tf.io.TFRecordWriter(record_file) as writer:
             for sample in train_dataset_tosave:
                 tf_sample = customised_celeba_undersampled_tosave(sample)
