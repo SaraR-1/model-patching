@@ -238,6 +238,11 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
                            val_dataset=val_dataset,
                            test_dataset=test_dataset)
 
+def _bytes_feature(value):
+  """Returns a bytes_list from a string / byte."""
+  if isinstance(value, type(tf.constant(0))):
+    value = value.numpy() # BytesList won't unpack a string from an EagerTensor.
+  return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
 
 def _int64_feature(value):
     """Returns an int64_list from a bool / enum / int / uint."""
@@ -249,7 +254,7 @@ def customised_celeba_undersampled_tosave(train_sample):
     feature = {
         # 'image': _int64_feature(train_sample[0].numpy()),
         # 'image': tf.data.Dataset.from_tensor_slices(sample[0]),
-        'image': train_sample[0],
+        'image': _bytes_feature(tf.io.serialize_tensor(train_sample[0])),
         'y': _int64_feature(train_sample[1].numpy()),
         'z': _int64_feature(train_sample[2].numpy()),
     }
