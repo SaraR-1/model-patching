@@ -201,6 +201,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
                                                                                   y_label,
                                                                                   z_label)
 
+    import pdb;pdb.set_trace()
     # Make a dataset info namespace to ensure downstream compatibility
     num_classes = 2
     classes = [f'Not {z_variant}', f'{z_variant}'] if label_type == 'z' else [f'Not {y_variant}', f'{y_variant}']
