@@ -238,6 +238,7 @@ def load_dataset(dataset_name, dataset_version, data_dir, validation_frac, cross
         return load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac)
 
     # Set up the dataset
+    import pdb;pdb.set_trace()
     dataset_builder = load_dataset_using_tfds(dataset_name=dataset_name,
                                               dataset_version=dataset_version,
                                               data_dir=data_dir)
@@ -251,6 +252,7 @@ def load_dataset(dataset_name, dataset_version, data_dir, validation_frac, cross
     # Put the dataset into memory and return a training, validation and test dataset
     train_dataset, val_dataset, test_dataset = dataset_builder.as_dataset(split=dataset_split, as_supervised=True)
 
+    import pdb;pdb.set_trace()
     return SimpleNamespace(dataset_builder=dataset_builder,
                            dataset_info=dataset_info,
                            dataset_split=dataset_split,
@@ -396,6 +398,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                               fold=None):
     # Fetch the list of training datasets
     print("Fetching training datasets.", flush=True)
+    # training_examples_by_dataset = [71629, 66874, 22880, 1387]
     train_datasets, (training_examples_by_dataset, n_training_examples,
                      train_input_shape, train_n_classes, train_classes) = \
         fetch_list_of_train_datasets(train_datasets=train_dataset_names,
@@ -432,8 +435,10 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
     test_dataset_identifiers = [f'[{name}].[{version}].test' for name, version in
                                 zip(eval_dataset_names, eval_dataset_versions)]
 
-    # Here the weird aliases with A-F etc. are created
+
     import pdb;pdb.set_trace()
+    # TODO: Here the weird aliases with A-F etc. are created - STEP INTO FUNCTION!
+    # train_dataset_aliases = ['(Y=0)(Z=0)', '(Y=0)(Z=0)(A-F)', '(Y=0)(Z=0)(A-G)', '(Y=0)(Z=1)', '(Y=0)(Z=1)(A-F)', '(Y=0)(Z=1)(A-G)', '(Y=1)(Z=0)', '(Y=1)(Z=0)(A-F)', '(Y=1)(Z=0)(A-G)', '(Y=1)(Z=1)', '(Y=1)(Z=1)(A-F)', '(Y=1)(Z=1)(A-G)']
     train_datasets, train_dataset_aliases, training_examples_by_dataset, train_batch_sizes, train_original_idx = \
         augmentation.augment.static.compose_static_augmentations(
             static_augmentation_pipelines=train_static_augmentations,
@@ -477,26 +482,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
     test_augmentations = [eval_augmentations[i] for i in test_original_idx]
     test_gpu_augmentations = [eval_gpu_augmentations[i] for i in test_original_idx]
 
-    print("Diagnostics...")
-    print("--------------------------------------------------------------")
-    print("Train datasets:", train_datasets)
-    print("Train dataset aliases:", train_dataset_aliases)
-    print("Train examples per group:", training_examples_by_dataset)
-    print("Train batch sizes:", train_batch_sizes)
-    print("Train original indices per new dataset:", train_original_idx)
-    print("--------------------------------------------------------------")
-    print("Val datasets:", val_datasets)
-    print("Val dataset aliases:", val_dataset_aliases)
-    print("Val batch sizes:", val_batch_sizes)
-    print("Val original indices per new dataset:", val_original_idx)
-    print("--------------------------------------------------------------")
-    print("Test datasets:", test_datasets)
-    print("Test dataset aliases:", test_dataset_aliases)
-    print("Test batch sizes:", test_batch_sizes)
-    print("Test original indices per new dataset:", test_original_idx)
-    print("--------------------------------------------------------------", flush=True)
 
-    import pdb;pdb.set_trace()
 
     # Create the generators
     if max_shuffle_buffer < 0:
@@ -510,6 +496,11 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
     else:
         train_shuffle_seeds = [train_shuffle_seeds[i] for i in train_original_idx]
 
+    # Shouldn't be very interesting: Given a list of tf_datasets, construct a list of generators, one per dataset.
+    # train_batch_sizes = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4] - WHY?
+    # train_shuffle_buffers = [5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000] - WHY?
+    # train_shuffle_seeds = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3] - WHY?
+    import pdb;pdb.set_trace()
     train_generators = create_multiple_data_generators(datasets=train_datasets,
                                                        dataset_aliases=train_dataset_aliases,
                                                        augmentations_by_dataset=train_augmentations,

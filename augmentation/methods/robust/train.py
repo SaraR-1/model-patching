@@ -178,6 +178,8 @@ def train_robust_model(config):
         loss_fn = create_loss_fn(config.loss_name)
 
         # Set up more specific loss info: the consistency training info, and GDRO loss
+        # training_groups_mask = [True, False, False, True, False, False, True, False, False, True, False, False]
+        # consistency_triplets = [(0, 1, 2), (3, 4, 5), (6, 7, 8), (9, 10, 11)]
         consistency_triplets, training_groups_mask, robust_loss_calc = get_loss_info(train_dataset_aliases,
                                                                                      config.augmentation_training,
                                                                                      group_training_examples,
@@ -186,7 +188,7 @@ def train_robust_model(config):
                                                                                      config.gdro_mixed,
                                                                                      )
 
-        # Set up the metrics being tracked
+        # Set up the metrics being tracked: here, accuracy and sparse categorical CE
         aggregate_metrics = create_metrics(config.metric_names, n_classes, output_labels=classes)
         metrics_by_group = [create_metrics(config.metric_names, n_classes, output_labels=classes)
                             for _ in range(len(train_generators))]

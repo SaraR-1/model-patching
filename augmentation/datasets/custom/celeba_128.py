@@ -173,6 +173,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
         val_dataset = val_dataset.filter(lambda image, y, z: (z == z_label))
         test_dataset = test_dataset.filter(lambda image, y, z: (z == z_label))
 
+    import pdb;pdb.set_trace()
     # Filter out the Y0Z0 examples and then add a subset of them back in
     if n_y0z0_examples > 0:
         # Take out examples from Y = 0, Z = 0
