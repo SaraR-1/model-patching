@@ -173,23 +173,28 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
         val_dataset = val_dataset.filter(lambda image, y, z: (z == z_label))
         test_dataset = test_dataset.filter(lambda image, y, z: (z == z_label))
 
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     # Filter out the Y0Z0 examples and then add a subset of them back in
+    # here len(train_dataset) = 71629 (when loading the first of the 4 subgroups)
     if n_y0z0_examples > 0:
         # Take out examples from Y = 0, Z = 0
+        # here len(train_dataset) = 4054 (when loading the first of the 4 subgroups)
         train_dataset_y0z0 = train_dataset.filter(lambda image, y, z: (y == 0 and z == 0)).take(n_y0z0_examples)
         # Keep only examples from groups other than Y = 0, Z = 0
         train_dataset = train_dataset.filter(lambda image, y, z: (y != 0 or z != 0))
         # Add the subset of Y = 0, Z = 0 examples back into the train dataset
         train_dataset = train_dataset.concatenate(train_dataset_y0z0)
+    # FINAL LEN - Here len(train_dataset) = 4054 (when loading the first of the 4 subgroups)
 
     # Get the label selection function and apply it
     label_selection_fn = get_label_selection_function(label_type)
+    # Still 4054
     train_dataset = train_dataset.map(label_selection_fn, num_parallel_calls=16)
     val_dataset = val_dataset.map(label_selection_fn, num_parallel_calls=16)
     test_dataset = test_dataset.map(label_selection_fn, num_parallel_calls=16)
 
     # Compute the length of the training dataset
+    # Here ERROR (MOST LIKELY) train_dataset_len = 71629
     train_dataset_len, val_dataset_len, test_dataset_len = get_celeba_dataset_len(y_variant,
                                                                                   z_variant,
                                                                                   y_label,

@@ -19,7 +19,7 @@ from augmentation.utilities.checkpoint import *
 from augmentation.utilities.wandb import *
 import tempfile
 
-# os.environ['WANDB_MODE'] = 'offline'
+os.environ['WANDB_MODE'] = 'offline'
 
 def train_robust_model(config):
     # Do basic setup
@@ -115,7 +115,7 @@ def train_robust_model(config):
         # input_shape=(128, 128, 3) - ok; image size
         # classes = ['Not Blond_Hair', 'Blond_Hair']; n_classes=2 - ok
         # n_training_examples=162770; still the ENTIRE train set, not jet undersampled
-        import pdb;pdb.set_trace()
+        # import pdb;pdb.set_trace()
         (train_generators, val_generators, test_generators), \
         (input_shape, n_classes, classes, n_training_examples, group_training_examples), \
         (train_dataset_aliases, val_dataset_aliases, test_dataset_aliases) = \
@@ -159,7 +159,7 @@ def train_robust_model(config):
         steps_per_epoch = n_training_examples // config.baseline_batch_size
         print(f"Number of total training examples: {n_training_examples}\nSteps per epoch: {steps_per_epoch}")
 
-        import pdb;pdb.set_trace()
+        # import pdb;pdb.set_trace()
         # Recalculate batch size per group
         learning_rate_fn = build_lr_scheduler(scheduler=config.lr_scheduler,
                                               steps_per_epoch=steps_per_epoch,
@@ -212,7 +212,7 @@ def train_robust_model(config):
                                                  continue_training=config.resume  # only if we're continuing training
                                                  )
 
-        import pdb;pdb.set_trace()
+        # import pdb;pdb.set_trace()
         with devices[0]:
             # Train the end model
             _train_robust_model(train_generators=train_generators,

@@ -232,7 +232,7 @@ def load_dataset(dataset_name, dataset_version, data_dir, validation_frac, cross
     The main entry point to load any dataset.
     """
 
-    # For a custom dataset, call the custom dataset loader
+    # For a custom dataset, call the custom dataset loader - FOR MY SETTING ENTERS THIS IF
     if np.any([dataset_name.startswith(e) for e in CUSTOM_DATASET_PREFIXES]):
         assert cross_validation is False, 'Cross-validation is not supported for the custom datasets.'
         return load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac)
