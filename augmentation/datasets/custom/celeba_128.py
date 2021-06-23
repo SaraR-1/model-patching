@@ -178,7 +178,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
         val_dataset = val_dataset.filter(lambda image, y, z: (z == z_label))
         test_dataset = test_dataset.filter(lambda image, y, z: (z == z_label))
 
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     # Filter out the Y0Z0 examples and then add a subset of them back in
     # here len(train_dataset) = 71629 (when loading the first of the 4 subgroups)
     if n_y0z0_examples > 0:
@@ -191,18 +191,18 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
         # Add the subset of Y = 0, Z = 0 examples back into the train dataset
         train_dataset = train_dataset.concatenate(train_dataset_y0z0)
 
-        # train_dataset_tosave = train_dataset
-        # # Save undersampled train set:
-        # label_selection_fn_tosave = get_label_selection_function("full")
-        # # Still 4054
-        # train_dataset_tosave = train_dataset_tosave.map(label_selection_fn_tosave, num_parallel_calls=16)
-        # record_file = "/its/home/sr572/model-patching/undersampled_4054.tfrec"
-        #
-        # # import pdb;pdb.set_trace()
-        # with tf.io.TFRecordWriter(record_file) as writer:
-        #     for sample in train_dataset_tosave:
-        #         tf_sample = customised_celeba_undersampled_tosave(sample)
-        #         writer.write(tf_sample.SerializeToString())
+        train_dataset_tosave = train_dataset
+        # Save undersampled train set:
+        label_selection_fn_tosave = get_label_selection_function("full")
+        # Still 4054
+        train_dataset_tosave = train_dataset_tosave.map(label_selection_fn_tosave, num_parallel_calls=16)
+        record_file = "/its/home/sr572/model-patching/undersampled_4054_encoded.tfrec"
+
+        # import pdb;pdb.set_trace()
+        with tf.io.TFRecordWriter(record_file) as writer:
+            for sample in train_dataset_tosave:
+                tf_sample = customised_celeba_undersampled_tosave(sample)
+                writer.write(tf_sample.SerializeToString())
 
     # FINAL LEN - Here len(train_dataset) = 4054 (when loading the first of the 4 subgroups)
 
@@ -256,7 +256,8 @@ def customised_celeba_undersampled_tosave(train_sample):
     feature = {
         # 'image': _int64_feature(train_sample[0].numpy()),
         # 'image': tf.data.Dataset.from_tensor_slices(sample[0]),
-        'image': _bytes_feature(tf.io.serialize_tensor(train_sample[0])),
+        #'image': _bytes_feature(tf.io.serialize_tensor(train_sample[0])),
+        'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
         'y': _int64_feature(train_sample[1].numpy()),
         'z': _int64_feature(train_sample[2].numpy()),
     }
