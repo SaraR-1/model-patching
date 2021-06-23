@@ -178,7 +178,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
         val_dataset = val_dataset.filter(lambda image, y, z: (z == z_label))
         test_dataset = test_dataset.filter(lambda image, y, z: (z == z_label))
 
-    # import pdb;pdb.set_trace()
+    import pdb;pdb.set_trace()
     # Filter out the Y0Z0 examples and then add a subset of them back in
     # here len(train_dataset) = 71629 (when loading the first of the 4 subgroups)
     if n_y0z0_examples > 0:
