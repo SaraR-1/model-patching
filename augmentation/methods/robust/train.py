@@ -86,7 +86,7 @@ def train_robust_model(config):
                     eval_augmentation_pipelines_args=config.eval_static_augmentation_pipelines_args,
                     broadcast_train_to=len(config.train_datasets),
                     broadcast_eval_to=len(config.eval_datasets))
-        import pdb;pdb.set_trace()
+        # import pdb;pdb.set_trace()
         # TODO: here first time in code using aliases
         # Get the dataset generators
         # CONFIG
