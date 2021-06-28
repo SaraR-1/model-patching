@@ -56,7 +56,7 @@ weight_decay_rate: 0.05
 max_global_grad_norm: -1
 
 # Training details
-n_epochs: 100
+n_epochs: 1 #100
 batch_size: 16
 baseline_batch_size: 128
 
@@ -75,8 +75,9 @@ train_dataset_versions:
 train_dataset_aliases:
   - ''
 train_datadirs:
-  - /home/celeba_tfrecord_128
+  - ./celeba_tfrecord_128
 max_shuffle_buffer: 40000
+save_tfrec_name: 'undersampled_4054_encoded_erm.tfrec'
 
 eval_datasets:
   - 'celeb_a_128/Blond_Hair/Male/1.0/0/0/y'
@@ -95,10 +96,10 @@ eval_dataset_aliases:
   - '(Y=1)(Z=1)'
 # eval_dataset_modifier: ''
 eval_datadirs:
-  - /home/celeba_tfrecord_128
-  - /home/celeba_tfrecord_128
-  - /home/celeba_tfrecord_128
-  - /home/celeba_tfrecord_128
+  - ./celeba_tfrecord_128
+  - ./celeba_tfrecord_128
+  - ./celeba_tfrecord_128
+  - ./celeba_tfrecord_128
 
 # Static augmentations
 train_static_augmentation_pipelines:
@@ -130,7 +131,7 @@ eval_gpu_augmentation_pipelines_args:
 
 # Dataflow settings
 dataflow: disk_cached
-cache_dir: /home/tfcache/
+cache_dir: ./tfcache/
 
 # Path to checkpoints in wandb.run directory
 checkpoint_path: '/checkpoints/'
