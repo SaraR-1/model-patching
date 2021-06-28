@@ -117,7 +117,7 @@ def get_label_selection_function(label_type):
         raise NotImplementedError
 
 
-def load_celeba_128(dataset_name, dataset_version, data_dir):
+def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
     assert dataset_name.startswith('celeb_a_128'), \
         f'Dataset name is {dataset_name}, ' \
         f'should be celeb_a_128/<y_task>/<z_task>/<z_frac>/<which_y>/<which_z>/<label_type>/<optional_take_from_Y0Z0>'
@@ -191,12 +191,13 @@ def load_celeba_128(dataset_name, dataset_version, data_dir):
         # Add the subset of Y = 0, Z = 0 examples back into the train dataset
         train_dataset = train_dataset.concatenate(train_dataset_y0z0)
 
-        train_dataset_tosave = train_dataset
-        # Save undersampled train set:
-        label_selection_fn_tosave = get_label_selection_function("full")
-        # Still 4054
-        train_dataset_tosave = train_dataset_tosave.map(label_selection_fn_tosave, num_parallel_calls=16)
-        record_file = "/its/home/sr572/model-patching/undersampled_4054_encoded.tfrec"
+        if save_tfrec_name is not None:
+            train_dataset_tosave = train_dataset
+            # Save undersampled train set:
+            label_selection_fn_tosave = get_label_selection_function("full")
+            # Still 4054
+            train_dataset_tosave = train_dataset_tosave.map(label_selection_fn_tosave, num_parallel_calls=16)
+            record_file = f"/its/home/sr572/model-patching/{save_tfrec_name}"
 
         # import pdb;pdb.set_trace()
         with tf.io.TFRecordWriter(record_file) as writer:
@@ -256,7 +257,7 @@ def customised_celeba_undersampled_tosave(train_sample):
     feature = {
         # 'image': _int64_feature(train_sample[0].numpy()),
         # 'image': tf.data.Dataset.from_tensor_slices(sample[0]),
-        #'image': _bytes_feature(tf.io.serialize_tensor(train_sample[0])),
+        # 'image': _bytes_feature(tf.io.serialize_tensor(train_sample[0])),
         'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
         'y': _int64_feature(train_sample[1].numpy()),
         'z': _int64_feature(train_sample[2].numpy()),

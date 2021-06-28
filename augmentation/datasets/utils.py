@@ -227,7 +227,7 @@ CUSTOM_DATASET_PREFIXES = ['mnist_spurious',
                            ]
 
 
-def load_dataset(dataset_name, dataset_version, data_dir, validation_frac, cross_validation=False, fold=None):
+def load_dataset(dataset_name, dataset_version, data_dir, validation_frac, cross_validation=False, fold=None, save_tfrec_name=None):
     """
     The main entry point to load any dataset.
     """
@@ -235,7 +235,7 @@ def load_dataset(dataset_name, dataset_version, data_dir, validation_frac, cross
     # For a custom dataset, call the custom dataset loader - FOR MY SETTING ENTERS THIS IF
     if np.any([dataset_name.startswith(e) for e in CUSTOM_DATASET_PREFIXES]):
         assert cross_validation is False, 'Cross-validation is not supported for the custom datasets.'
-        return load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac)
+        return load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac, save_tfrec_name)
 
     # Set up the dataset
     # import pdb;pdb.set_trace()
@@ -273,9 +273,10 @@ def fetch_datasets_for_trainer(dataset,
                                validation_frac,
                                batch_size,
                                cross_validation=False,
-                               fold=None):
+                               fold=None,
+                               save_tfrec_name=None):
     # Load the dataset payload
-    dataset_payload = load_dataset(dataset, dataset_version, datadir, validation_frac, cross_validation, fold)
+    dataset_payload = load_dataset(dataset, dataset_version, datadir, validation_frac, cross_validation, fold, save_tfrec_name)
 
     # Apply modifiers on the datasets
     # dataset_payload = apply_modifier_to_dataset_payload(dataset_payload, train_dataset_modifier, eval_dataset_modifier)
@@ -294,7 +295,8 @@ def fetch_list_of_datasets(datasets,
                            validation_frac,
                            batch_size,
                            cross_validation=False,
-                           fold=None):
+                           fold=None,
+                           save_tfrec_name=None):
     dataset_splits, training_examples_by_dataset = [], []
     input_shape, n_classes, classes = None, None, None
 
@@ -309,7 +311,8 @@ def fetch_list_of_datasets(datasets,
                                          validation_frac,
                                          batch_size,
                                          cross_validation,
-                                         fold)
+                                         fold,
+                                         save_tfrec_name)
         dataset_splits.append(splits)
         if input_shape is None:
             input_shape, n_classes, classes = input_shape_, n_classes_, classes_
@@ -329,7 +332,8 @@ def fetch_list_of_train_datasets(train_datasets,
                                  validation_frac,
                                  batch_size,
                                  cross_validation=False,
-                                 fold=None):
+                                 fold=None,
+                                 save_tfrec_name=None):
     # Fetch the list of training datasets
     dataset_splits, training_examples_by_dataset, input_shape, n_classes, classes = \
         fetch_list_of_datasets(datasets=train_datasets,
@@ -338,7 +342,8 @@ def fetch_list_of_train_datasets(train_datasets,
                                validation_frac=validation_frac,
                                batch_size=batch_size,
                                cross_validation=cross_validation,
-                               fold=fold)
+                               fold=fold,
+                               save_tfrec_name=save_tfrec_name)
 
     # Grab the train datasets
     train_datasets, _, _ = zip(*dataset_splits)
@@ -365,7 +370,8 @@ def fetch_list_of_eval_datasets(eval_datasets,
                                validation_frac=validation_frac,
                                batch_size=batch_size,
                                cross_validation=cross_validation,
-                               fold=fold)
+                               fold=fold,
+                               save_tfrec_name=None) # Do not save for "evaluation" dataset
 
     # Grab the train datasets
     _, val_datasets, test_datasets = zip(*dataset_splits)
@@ -395,7 +401,8 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                               repeat=False,
                                               shuffle_before_repeat=False,
                                               cross_validation=False,
-                                              fold=None):
+                                              fold=None,
+                                              save_tfrec_name=None):
     # Fetch the list of training datasets
     print("Fetching training datasets.", flush=True)
     # training_examples_by_dataset = [71629, 66874, 22880, 1387]
@@ -407,7 +414,8 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                      validation_frac=validation_frac,
                                      batch_size=batch_size,
                                      cross_validation=cross_validation,
-                                     fold=fold)
+                                     fold=fold,
+                                     save_tfrec_name=save_tfrec_name)
     # Check the train_dataset before "applying" the aliases
     # import pdb;pdb.set_trace()
     # Fetch the list of evaluation datasets
@@ -674,7 +682,7 @@ def get_dataset_aliases(dataset_aliases, datasets):
     else:
         return datasets
 
-def load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac):
+def load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac, save_tfrec_name):
     """
     Load up a custom dataset.
     """
@@ -731,7 +739,8 @@ def load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac
     elif dataset_name.startswith('celeb_a_128'):
         return augmentation.datasets.custom.celeba_128.load_celeba_128(dataset_name,
                                                                        dataset_version,
-                                                                       data_dir)
+                                                                       data_dir,
+                                                                       save_tfrec_name)
     else:
         raise NotImplementedError
 

@@ -77,6 +77,7 @@ def train_robust_model(config):
                     broadcast_train_to=len(config.train_datasets),
                     broadcast_eval_to=len(config.eval_datasets))
 
+            # import pdb;pdb.set_trace()
             train_static_augmentations_pipelines, eval_static_augmentations_pipelines = \
                 create_multiple_train_eval_static_augmentation_pipelines(
                     train_augmentation_pipelines=config.train_static_augmentation_pipelines,
@@ -85,7 +86,7 @@ def train_robust_model(config):
                     eval_augmentation_pipelines_args=config.eval_static_augmentation_pipelines_args,
                     broadcast_train_to=len(config.train_datasets),
                     broadcast_eval_to=len(config.eval_datasets))
-
+        import pdb;pdb.set_trace()
         # TODO: here first time in code using aliases
         # Get the dataset generators
         # CONFIG
@@ -142,7 +143,8 @@ def train_robust_model(config):
                                                       max_shuffle_buffer=config.max_shuffle_buffer,
                                                       train_shuffle_seeds=config.train_shuffle_seeds,
                                                       cross_validation=config.cross_validation,
-                                                      fold=fold)
+                                                      fold=fold,
+                                                      save_tfrec_name=config.save_tfrec_name)
 
         with devices[1]:
             # Create the model
@@ -581,7 +583,7 @@ def setup_and_train_robust_model(args):
 
     # Train the end model
     # breakpoint()
-    # import pdb;pdb.set_trace()
+    import pdb;pdb.set_trace()
     train_robust_model(config)
 
 
