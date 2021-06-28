@@ -86,6 +86,7 @@ train_datadirs:
 # train_dataset_modifier: ''
 train_shuffle_seeds: null
 max_shuffle_buffer: -1
+save_tfrec_name: null
 shuffle_before_repeat: False
 
 # Eval dataset settings
