@@ -12,7 +12,7 @@ wandb_job_type: celeba
 logical_gpus: [14336]
 
 # Random seed
-seed: 2
+seed: 1
 
 # Architecture
 model_source: cm
@@ -90,7 +90,8 @@ train_datadirs:
   - ./celeba_tfrecord_128
   - ./celeba_tfrecord_128
 max_shuffle_buffer: 5000
-save_tfrec_name: 'undersampled_4054_encoded_seed2.tfrec'
+save_tfrec_name: 'undersampled_4054_encoded_trainsuffleseed1.tfrec'
+train_shuffle_seeds: 1
 
 eval_datasets:
   - 'celeb_a_128/Blond_Hair/Male/1.0/0/0/y'
