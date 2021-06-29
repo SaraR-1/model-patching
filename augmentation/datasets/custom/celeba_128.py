@@ -197,7 +197,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
             label_selection_fn_tosave = get_label_selection_function("full")
             # Still 4054
             train_dataset_tosave = train_dataset_tosave.map(label_selection_fn_tosave, num_parallel_calls=16)
-            record_file = f"/its/home/sr572/model-patching/undersampled_4054/{save_tfrec_name}"
+            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{save_tfrec_name}"
 
         # import pdb;pdb.set_trace()
         with tf.io.TFRecordWriter(record_file) as writer:
