@@ -75,7 +75,7 @@ train_dataset_versions:
 train_dataset_aliases:
   - ''
 train_datadirs:
-  - ./celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
 max_shuffle_buffer: 40000
 save_tfrec_name: 'undersampled_4054_encoded_erm.tfrec'
 
@@ -96,10 +96,10 @@ eval_dataset_aliases:
   - '(Y=1)(Z=1)'
 # eval_dataset_modifier: ''
 eval_datadirs:
-  - ./celeba_tfrecord_128
-  - ./celeba_tfrecord_128
-  - ./celeba_tfrecord_128
-  - ./celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
 
 # Static augmentations
 train_static_augmentation_pipelines:

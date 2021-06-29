@@ -12,7 +12,7 @@ wandb_job_type: celeba
 logical_gpus: [14336]
 
 # Random seed
-seed: 1
+seed: 2
 
 # Architecture
 model_source: cm
@@ -85,10 +85,10 @@ train_dataset_aliases:
   - '(Y=1)(Z=1)'
 # train_dataset_modifier: 'shuffle:5000,1'
 train_datadirs:
-  - ./celeba_tfrecord_128
-  - ./celeba_tfrecord_128
-  - ./celeba_tfrecord_128
-  - ./celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
 max_shuffle_buffer: 5000
 save_tfrec_name: 'undersampled_4054_encoded_gdro.tfrec'
 
@@ -109,10 +109,10 @@ eval_dataset_aliases:
   - '(Y=1)(Z=1)'
 # eval_dataset_modifier: ''
 eval_datadirs:
-  - ./celeba_tfrecord_128
-  - ./celeba_tfrecord_128
-  - ./celeba_tfrecord_128
-  - ./celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
 
 # Static augmentations
 train_static_augmentation_pipelines:
@@ -175,4 +175,4 @@ cache_dir: ./tfcache/
 checkpoint_path: '/checkpoints/'
 
 # Checkpoint every _ epochs
-checkpoint_freq: 1
+checkpoint_freq: 2
