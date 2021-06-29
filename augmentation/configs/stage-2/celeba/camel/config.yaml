@@ -176,4 +176,4 @@ cache_dir: ./tfcache/
 checkpoint_path: '/checkpoints/'
 
 # Checkpoint every _ epochs
-checkpoint_freq: 1
+checkpoint_freq: 2
