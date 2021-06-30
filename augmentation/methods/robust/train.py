@@ -19,7 +19,7 @@ from augmentation.utilities.checkpoint import *
 from augmentation.utilities.wandb import *
 import tempfile
 
-# os.environ['WANDB_MODE'] = 'offline'
+os.environ['WANDB_MODE'] = 'offline'
 
 def train_robust_model(config):
     # Do basic setup
@@ -77,7 +77,7 @@ def train_robust_model(config):
                     broadcast_train_to=len(config.train_datasets),
                     broadcast_eval_to=len(config.eval_datasets))
 
-            # import pdb;pdb.set_trace()
+            import pdb;pdb.set_trace()
             train_static_augmentations_pipelines, eval_static_augmentations_pipelines = \
                 create_multiple_train_eval_static_augmentation_pipelines(
                     train_augmentation_pipelines=config.train_static_augmentation_pipelines,
@@ -116,7 +116,7 @@ def train_robust_model(config):
         # input_shape=(128, 128, 3) - ok; image size
         # classes = ['Not Blond_Hair', 'Blond_Hair']; n_classes=2 - ok
         # n_training_examples=162770; still the ENTIRE train set, not jet undersampled
-        # import pdb;pdb.set_trace()
+        import pdb;pdb.set_trace()
         (train_generators, val_generators, test_generators), \
         (input_shape, n_classes, classes, n_training_examples, group_training_examples), \
         (train_dataset_aliases, val_dataset_aliases, test_dataset_aliases) = \
