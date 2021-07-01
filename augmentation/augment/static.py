@@ -444,7 +444,7 @@ class PretrainedCycleGANStaticAugmentationTFRecordPipeline(StaticAugmentation):
             load_immediately=False,  # don't load the models
             *args, **kwargs)
 
-        # import pdb;pdb.set_trace()
+        import pdb;pdb.set_trace()
         # TODO: check where it's saving the images from tfrecords
         # Base path for location of the TFRecords
         self.base_store_path = store_path
