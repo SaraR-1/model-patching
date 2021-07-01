@@ -428,7 +428,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                     batch_size=batch_size,
                                     cross_validation=cross_validation,
                                     fold=fold)
-
+    import pdb;pdb.set_trace()
     assert train_input_shape == eval_input_shape and train_n_classes == eval_n_classes \
            and train_classes == eval_classes, \
         'Train and eval sets must have the same schema (input_shape, n_classes, classes).'

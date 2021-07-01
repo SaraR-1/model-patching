@@ -79,7 +79,7 @@ def create_static_augmentation_pipeline(daug_pipeline, daug_pipeline_args, broad
                * broadcast_to
 
     # By default, just return a single augmentation pipeline
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     # This is simply calling PretrainedCycleGANStaticAugmentationTFRecordPipeline (daug) with arguments daug_args
     return [globals()[daug](*daug_args) for daug, daug_args in zip(daug_pipeline, daug_pipeline_args)]
 
@@ -444,7 +444,7 @@ class PretrainedCycleGANStaticAugmentationTFRecordPipeline(StaticAugmentation):
             load_immediately=False,  # don't load the models
             *args, **kwargs)
 
-        import pdb;pdb.set_trace()
+        # import pdb;pdb.set_trace()
         # TODO: check where it's saving the images from tfrecords
         # Base path for location of the TFRecords
         self.base_store_path = store_path
