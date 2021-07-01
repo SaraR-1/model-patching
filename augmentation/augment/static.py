@@ -79,6 +79,7 @@ def create_static_augmentation_pipeline(daug_pipeline, daug_pipeline_args, broad
                * broadcast_to
 
     # By default, just return a single augmentation pipeline
+    import pdb;pdb.set_trace()
     return [globals()[daug](*daug_args) for daug, daug_args in zip(daug_pipeline, daug_pipeline_args)]
 
 
