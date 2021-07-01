@@ -34,7 +34,7 @@ def compose_static_augmentations(static_augmentation_pipelines, datasets, aliase
     all_batch_sizes = []
     all_original_idx = []
 
-    # import pdb;pdb.set_trace()
+    import pdb;pdb.set_trace()
     # TODO: check here, single parts of each pipeline, what is it doing? What's `augmentation'
     # Loop over all the datasets and their corresponding static augmentations
     for dataset, alias, ident, dlen, batch_size, idx, aug_pipeline \
@@ -63,7 +63,7 @@ def compose_static_augmentations(static_augmentation_pipelines, datasets, aliase
         all_batch_sizes += batch_size
         all_original_idx += idx
 
-    # import pdb;pdb.set_trace()
+    import pdb;pdb.set_trace()
 
     return all_datasets, all_aliases, all_dataset_lens, all_batch_sizes, all_original_idx
 
@@ -442,7 +442,7 @@ class PretrainedCycleGANStaticAugmentationTFRecordPipeline(StaticAugmentation):
             load_immediately=False,  # don't load the models
             *args, **kwargs)
 
-        # import pdb;pdb.set_trace()
+        import pdb;pdb.set_trace()
         # TODO: check where it's saving the images from tfrecords
         # Base path for location of the TFRecords
         self.base_store_path = store_path
