@@ -508,7 +508,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
     # train_batch_sizes = [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4] - WHY?
     # train_shuffle_buffers = [5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000] - WHY?
     # train_shuffle_seeds = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3] - WHY?
-    # import pdb;pdb.set_trace()
+    import pdb;pdb.set_trace()
     train_generators = create_multiple_data_generators(datasets=train_datasets,
                                                        dataset_aliases=train_dataset_aliases,
                                                        augmentations_by_dataset=train_augmentations,
@@ -616,6 +616,7 @@ def create_data_generator(dataset,
     else:
         raise NotImplementedError
 
+    import pdb;pdb.set_trace()
     return generator
 
 
@@ -673,6 +674,7 @@ def create_multiple_data_generators(datasets,
                                                 cache_dir_postfix=cache_dir_postfix + "_" + alias.replace("/", "")
                                                                   + str(i)))
 
+    import pdb;pdb.set_trace()
     return generators
 
 
