@@ -67,14 +67,8 @@ test_group_sizes = {'Blond_Hair':
                          }
                     }
 
-
-def create_global_save_tfrec():
-    """
-    Usefull as we want to access it (but never modify) in different part of the code
-    """
-    global SAVE_TFREC_NAME
-    global LABEL_TYPE
-
+global SAVE_TFREC_NAME
+global LABEL_TYPE
 
 
 # THIS IS TERRIBLE!!! ACCESSING THE LEN BY A DICTIONARY, NOT ACTUALLY CHECKING THE INPUT DATASET
@@ -208,7 +202,6 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
 
         if save_tfrec_name is not None:
             # Crate global variable SAVE_TFREC_NAME
-            create_global_save_tfrec()
             SAVE_TFREC_NAME = save_tfrec_name
             LABEL_TYPE = label_type
 

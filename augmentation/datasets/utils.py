@@ -585,7 +585,7 @@ def create_data_generator(dataset,
 
         # save the tfrec of the undersampled subgroup, i.e. if the subgroup size is different from the original one
         subgroup_key = (*[int(i.split("=")[1]) for i in subgroup_key_pattern.findall(cache_dir_postfix)],)
-        print(subgroup_key)
+        # print(subgroup_key)
         current_subgroup_size = sum([1 for _ in dataset])
         original_subgroup_size = augmentation.datasets.custom.celeba_128.train_group_original_sizes['Blond_Hair']['Male'][
             subgroup_key]
