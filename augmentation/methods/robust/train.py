@@ -21,7 +21,18 @@ import tempfile
 
 os.environ['WANDB_MODE'] = 'offline'
 
+
+# def create_global_save_tfrec_name(value):
+#     """
+#     Usefull as we want to access it (but never modify) in different part of the code
+#     """
+#     global SAVE_TFREC_NAME
+#     SAVE_TFREC_NAME = value
+
+
 def train_robust_model(config):
+    # Crate global variable SAVE_TFREC_NAME
+    # create_global_save_tfrec_name(config.save_tfrec_name)
     # Do basic setup
     # assert len(config.logical_gpus) > 1, 'Must specify at least 2 logical GPUs for training robust models.'
     basic_setup_info = basic_setup(seed=config.seed, logical_gpu_memory_limits=config.logical_gpus)
@@ -390,7 +401,6 @@ def _train_robust_model(train_generators,
         print(f"steps_per_epoch: {steps_per_epoch}")
         print(f"len(training_groups_mask: {len(training_groups_mask)}")
         print(f"sum(training_groups_mask: {sum(training_groups_mask)}")
-
 
         for _ in range(steps_per_epoch):
             # Get batches of data from each group's training iterator

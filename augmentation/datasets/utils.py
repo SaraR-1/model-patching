@@ -7,12 +7,14 @@ import matplotlib.pyplot as plt
 from multiprocessing import cpu_count
 from types import SimpleNamespace
 import datetime
+import re
 
 import augmentation.datasets.custom.mnist
 import augmentation.datasets.custom.mnist_correlation
 import augmentation.datasets.custom.waterbirds
 import augmentation.datasets.custom.celeba_128
 
+subgroup_key_pattern = re.compile("[A-Z]=[0-9]")
 
 def dataset_len(tf_dataset, verbose=False):
     """
@@ -568,7 +570,8 @@ def create_data_generator(dataset,
                           shuffle_seed=0,
                           shuffle_before_repeat=False,
                           cache_dir=None,
-                          cache_dir_postfix=''):
+                          cache_dir_postfix='',
+                          save_tfrec_name=''):
     """Given a single tf_dataset, construct a generator that applies augmentations to that dataset."""
     if dataflow == 'in_memory':
         generator = create_parallel_dataflow_via_numpy(tf_dataset=dataset,
@@ -579,6 +582,23 @@ def create_data_generator(dataset,
     elif dataflow == 'disk_cached':
         assert cache_dir is not None, 'You must specify a cache directory when using disk_cached.'
         cache_dir = cache_dir + '_' + datetime.datetime.now().strftime('%d_%m_%y__%H_%M_%S') + cache_dir_postfix
+
+        # save the tfrec of the undersampled subgroup, i.e. if the subgroup size is different from the original one
+        subgroup_key = (*[i.split("=")[1] for i in subgroup_key_pattern.findall(cache_dir_postfix)],)
+        current_subgroup_size = sum([1 for _ in dataset])
+        original_subgroup_size = augmentation.datasets.custom.celeba_128.train_group_original_sizes['Blond_Hair']['Male'][
+            subgroup_key]
+
+        import pdb;pdb.set_trace()
+        if current_subgroup_size != original_subgroup_size:
+            save_tfrec_name = augmentation.datasets.custom.celeba_128.SAVE_TFREC_NAME
+            label_type = augmentation.datasets.custom.celeba_128.LABEL_TYPE
+            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{save_tfrec_name}{cache_dir_postfix.split('_')[3][:-1]}.tfrec"
+
+            with tf.io.TFRecordWriter(record_file) as writer:
+                for sample in dataset:
+                    tf_sample = augmentation.datasets.custom.celeba_128.customised_celeba_undersampled_tosave(sample, label_type)
+                    writer.write(tf_sample.SerializeToString())
 
         import pdb;pdb.set_trace()
         # Cache the dataset first
@@ -594,8 +614,10 @@ def create_data_generator(dataset,
                 dataset = dataset.repeat(-1)
         else:
             if repeat:
+                # It's now a repeatdataset obj, used for better observing epoch iterations?
                 dataset = dataset.repeat(-1)
             if shuffle_buffer > 0:
+                # Shuffling the dataset, note the shuffle seed is fixed!
                 dataset = dataset.shuffle(shuffle_buffer, seed=shuffle_seed)
 
         dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)

@@ -49,6 +49,12 @@ train_group_sizes = {'Blond_Hair':
                           }
                      }
 
+train_group_original_sizes = {'Blond_Hair':
+                                  {'Male':
+                                       {(0, 0): 71629, (0, 1): 66874, (1, 0): 22880, (1, 1): 1387}
+                                   }
+                              }
+
 val_group_sizes = {'Blond_Hair':
                        {'Male':
                             {(0, 0): 8535, (0, 1): 8276, (1, 0): 2874, (1, 1): 182}
@@ -60,6 +66,15 @@ test_group_sizes = {'Blond_Hair':
                              {(0, 0): 9767, (0, 1): 7535, (1, 0): 2480, (1, 1): 180}
                          }
                     }
+
+
+def create_global_save_tfrec():
+    """
+    Usefull as we want to access it (but never modify) in different part of the code
+    """
+    global SAVE_TFREC_NAME
+    global LABEL_TYPE
+
 
 
 # THIS IS TERRIBLE!!! ACCESSING THE LEN BY A DICTIONARY, NOT ACTUALLY CHECKING THE INPUT DATASET
@@ -192,12 +207,17 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
         train_dataset = train_dataset.concatenate(train_dataset_y0z0)
 
         if save_tfrec_name is not None:
+            # Crate global variable SAVE_TFREC_NAME
+            create_global_save_tfrec()
+            SAVE_TFREC_NAME = save_tfrec_name
+            LABEL_TYPE = label_type
+
             train_dataset_tosave = train_dataset
             # Save undersampled train set:
             label_selection_fn_tosave = get_label_selection_function("full")
             # Still 4054
             train_dataset_tosave = train_dataset_tosave.map(label_selection_fn_tosave, num_parallel_calls=16)
-            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{save_tfrec_name}"
+            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}.tfrec"
 
         # import pdb;pdb.set_trace()
         with tf.io.TFRecordWriter(record_file) as writer:
@@ -252,15 +272,21 @@ def _int64_feature(value):
     return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
 
 
-def customised_celeba_undersampled_tosave(train_sample):
-    # Create a dictionary with features that may be relevant.
-    feature = {
-        # 'image': _int64_feature(train_sample[0].numpy()),
-        # 'image': tf.data.Dataset.from_tensor_slices(sample[0]),
-        # 'image': _bytes_feature(tf.io.serialize_tensor(train_sample[0])),
-        'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
-        'y': _int64_feature(train_sample[1].numpy()),
-        'z': _int64_feature(train_sample[2].numpy()),
-    }
+def customised_celeba_undersampled_tosave(train_sample, label="full"):
+    if label == "full":
+        # Create a dictionary with features that may be relevant.
+        feature = {
+            # 'image': _int64_feature(train_sample[0].numpy()),
+            # 'image': tf.data.Dataset.from_tensor_slices(sample[0]),
+            # 'image': _bytes_feature(tf.io.serialize_tensor(train_sample[0])),
+            'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
+            'y': _int64_feature(train_sample[1].numpy()),
+            'z': _int64_feature(train_sample[2].numpy()),
+        }
+    else:
+        feature = {
+            'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
+            label: _int64_feature(train_sample[1].numpy())
+        }
 
     return tf.train.Example(features=tf.train.Features(feature=feature))
