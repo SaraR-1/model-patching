@@ -580,6 +580,7 @@ def create_data_generator(dataset,
         assert cache_dir is not None, 'You must specify a cache directory when using disk_cached.'
         cache_dir = cache_dir + '_' + datetime.datetime.now().strftime('%d_%m_%y__%H_%M_%S') + cache_dir_postfix
 
+        import pdb;pdb.set_trace()
         # Cache the dataset first
         dataset = dataset.cache(cache_dir)
         # You can't test the dataflow unless you manually cache, otherwise
