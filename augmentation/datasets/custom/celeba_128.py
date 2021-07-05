@@ -202,7 +202,9 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
 
         if save_tfrec_name is not None:
             # Crate global variable SAVE_TFREC_NAME
+            global SAVE_TFREC_NAME
             SAVE_TFREC_NAME = save_tfrec_name
+            global LABEL_TYPE
             LABEL_TYPE = label_type
 
             train_dataset_tosave = train_dataset
@@ -217,9 +219,6 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
                 for sample in train_dataset_tosave:
                     tf_sample = customised_celeba_undersampled_tosave(sample)
                     writer.write(tf_sample.SerializeToString())
-
-        else:
-            SAVE_TFREC_NAME, LABEL_TYPE = None, None
 
     # FINAL LEN - Here len(train_dataset) = 4054 (when loading the first of the 4 subgroups)
 
