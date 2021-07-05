@@ -591,9 +591,10 @@ def create_data_generator(dataset,
             subgroup_key]
 
         import pdb;pdb.set_trace()
-        if current_subgroup_size != original_subgroup_size:
-            save_tfrec_name = augmentation.datasets.custom.celeba_128.SAVE_TFREC_NAME
-            label_type = augmentation.datasets.custom.celeba_128.LABEL_TYPE
+        save_tfrec_name = augmentation.datasets.custom.celeba_128.SAVE_TFREC_NAME
+        label_type = augmentation.datasets.custom.celeba_128.LABEL_TYPE
+
+        if current_subgroup_size != original_subgroup_size and save_tfrec_name is not None:
             record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{save_tfrec_name}{cache_dir_postfix.split('_')[3][:-1]}.tfrec"
 
             with tf.io.TFRecordWriter(record_file) as writer:

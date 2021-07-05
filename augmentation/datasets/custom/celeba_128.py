@@ -67,8 +67,8 @@ test_group_sizes = {'Blond_Hair':
                          }
                     }
 
-global SAVE_TFREC_NAME
-global LABEL_TYPE
+SAVE_TFREC_NAME = None
+LABEL_TYPE = None
 
 
 # THIS IS TERRIBLE!!! ACCESSING THE LEN BY A DICTIONARY, NOT ACTUALLY CHECKING THE INPUT DATASET
@@ -212,11 +212,14 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
             train_dataset_tosave = train_dataset_tosave.map(label_selection_fn_tosave, num_parallel_calls=16)
             record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}.tfrec"
 
-        # import pdb;pdb.set_trace()
-        with tf.io.TFRecordWriter(record_file) as writer:
-            for sample in train_dataset_tosave:
-                tf_sample = customised_celeba_undersampled_tosave(sample)
-                writer.write(tf_sample.SerializeToString())
+            # import pdb;pdb.set_trace()
+            with tf.io.TFRecordWriter(record_file) as writer:
+                for sample in train_dataset_tosave:
+                    tf_sample = customised_celeba_undersampled_tosave(sample)
+                    writer.write(tf_sample.SerializeToString())
+
+        else:
+            SAVE_TFREC_NAME, LABEL_TYPE = None, None
 
     # FINAL LEN - Here len(train_dataset) = 4054 (when loading the first of the 4 subgroups)
 
