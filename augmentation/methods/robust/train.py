@@ -19,20 +19,10 @@ from augmentation.utilities.checkpoint import *
 from augmentation.utilities.wandb import *
 import tempfile
 
-os.environ['WANDB_MODE'] = 'offline'
-
-
-# def create_global_save_tfrec_name(value):
-#     """
-#     Usefull as we want to access it (but never modify) in different part of the code
-#     """
-#     global SAVE_TFREC_NAME
-#     SAVE_TFREC_NAME = value
+# os.environ['WANDB_MODE'] = 'offline'
 
 
 def train_robust_model(config):
-    # Crate global variable SAVE_TFREC_NAME
-    # create_global_save_tfrec_name(config.save_tfrec_name)
     # Do basic setup
     # assert len(config.logical_gpus) > 1, 'Must specify at least 2 logical GPUs for training robust models.'
     basic_setup_info = basic_setup(seed=config.seed, logical_gpu_memory_limits=config.logical_gpus)
