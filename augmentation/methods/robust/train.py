@@ -18,8 +18,12 @@ from augmentation.utilities.utils import basic_setup
 from augmentation.utilities.checkpoint import *
 from augmentation.utilities.wandb import *
 import tempfile
+from augmentation.utilities import noop_pdb
 
 # os.environ['WANDB_MODE'] = 'offline'
+# Disable breakpoints
+# os.environ["PYTHONBREAKPOINT"] = "0"
+sys.modules['pdb'] = __import__('noop_pdb')
 
 
 def train_robust_model(config):
