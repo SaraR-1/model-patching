@@ -571,7 +571,8 @@ def create_data_generator(dataset,
                           shuffle_before_repeat=False,
                           cache_dir=None,
                           cache_dir_postfix='',
-                          save_tfrec_name=''):
+                          save_tfrec_name='',
+                          train=False):
     """Given a single tf_dataset, construct a generator that applies augmentations to that dataset."""
     if dataflow == 'in_memory':
         generator = create_parallel_dataflow_via_numpy(tf_dataset=dataset,
@@ -596,7 +597,8 @@ def create_data_generator(dataset,
         # save_tfrec_name = augmentation.datasets.custom.celeba_128.SAVE_TFREC_NAME
         # label_type = augmentation.datasets.custom.celeba_128.LABEL_TYPE
         #
-        # if current_subgroup_size != original_subgroup_size and save_tfrec_name is not None:
+        ## Only check if for training set
+        # if current_subgroup_size != original_subgroup_size and save_tfrec_name is not None and "train" in cache_dir_postfix:
         #     record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{save_tfrec_name}{cache_dir_postfix.split('_')[3][:-1]}_{current_subgroup_size}.tfrec".replace(" ", "")
         #
         #     with tf.io.TFRecordWriter(record_file) as writer:
@@ -674,7 +676,7 @@ def create_multiple_data_generators(datasets,
            len(shuffle_buffers) == \
            len(shuffle_seeds), \
         "All lengths passed in must be identical."
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     generators = []
     for i, (dataset, alias, augmentations,
             gpu_augmentations, label_augmentations, batch_size,
@@ -686,6 +688,7 @@ def create_multiple_data_generators(datasets,
                                                            batch_sizes,
                                                            shuffle_buffers, shuffle_seeds)):
         # Create a data generator for this dataset
+        import pdb;pdb.set_trace()
         print(f"Creating {alias} data generator: shuffle with {shuffle_buffer}, {shuffle_seed}")
         generators.append(create_data_generator(dataset=dataset,
                                                 augmentations=augmentations,
