@@ -583,27 +583,28 @@ def create_data_generator(dataset,
         assert cache_dir is not None, 'You must specify a cache directory when using disk_cached.'
         cache_dir = cache_dir + '_' + datetime.datetime.now().strftime('%d_%m_%y__%H_%M_%S') + cache_dir_postfix
 
-        # save the tfrec of the undersampled subgroup, i.e. if the subgroup size is different from the original one
-        subgroup_key = (*[int(i.split("=")[1]) for i in subgroup_key_pattern.findall(cache_dir_postfix)],)
-        # print(subgroup_key)
-        current_subgroup_size = sum([1 for _ in dataset])
-        original_subgroup_size = augmentation.datasets.custom.celeba_128.train_group_original_sizes['Blond_Hair']['Male'][
-            subgroup_key]
-        print(f"Subgroup: {subgroup_key}, original: {original_subgroup_size}, current: {current_subgroup_size}")
+        # TODO: uncomment all the block if want to save the tfrec
+        # # save the tfrec of the undersampled subgroup, i.e. if the subgroup size is different from the original one
+        # subgroup_key = (*[int(i.split("=")[1]) for i in subgroup_key_pattern.findall(cache_dir_postfix)],)
+        # # print(subgroup_key)
+        # current_subgroup_size = sum([1 for _ in dataset])
+        # original_subgroup_size = augmentation.datasets.custom.celeba_128.train_group_original_sizes['Blond_Hair']['Male'][
+        #     subgroup_key]
+        # print(f"Subgroup: {subgroup_key}, original: {original_subgroup_size}, current: {current_subgroup_size}")
 
-        import pdb;pdb.set_trace()
-        save_tfrec_name = augmentation.datasets.custom.celeba_128.SAVE_TFREC_NAME
-        label_type = augmentation.datasets.custom.celeba_128.LABEL_TYPE
+        # import pdb;pdb.set_trace()
+        # save_tfrec_name = augmentation.datasets.custom.celeba_128.SAVE_TFREC_NAME
+        # label_type = augmentation.datasets.custom.celeba_128.LABEL_TYPE
+        #
+        # if current_subgroup_size != original_subgroup_size and save_tfrec_name is not None:
+        #     record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{save_tfrec_name}{cache_dir_postfix.split('_')[3][:-1]}_{current_subgroup_size}.tfrec".replace(" ", "")
+        #
+        #     with tf.io.TFRecordWriter(record_file) as writer:
+        #         for sample in dataset:
+        #             tf_sample = augmentation.datasets.custom.celeba_128.customised_celeba_undersampled_tosave(sample, label_type)
+        #             writer.write(tf_sample.SerializeToString())
 
-        if current_subgroup_size != original_subgroup_size and save_tfrec_name is not None:
-            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{save_tfrec_name}{cache_dir_postfix.split('_')[3][:-1]}_{current_subgroup_size}.tfrec".replace(" ", "")
-
-            with tf.io.TFRecordWriter(record_file) as writer:
-                for sample in dataset:
-                    tf_sample = augmentation.datasets.custom.celeba_128.customised_celeba_undersampled_tosave(sample, label_type)
-                    writer.write(tf_sample.SerializeToString())
-
-        import pdb;pdb.set_trace()
+        # import pdb;pdb.set_trace()
         # Cache the dataset first
         dataset = dataset.cache(cache_dir)
         # You can't test the dataflow unless you manually cache, otherwise
@@ -642,7 +643,7 @@ def create_data_generator(dataset,
     else:
         raise NotImplementedError
 
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     return generator
 
 
@@ -673,7 +674,7 @@ def create_multiple_data_generators(datasets,
            len(shuffle_buffers) == \
            len(shuffle_seeds), \
         "All lengths passed in must be identical."
-
+    import pdb;pdb.set_trace()
     generators = []
     for i, (dataset, alias, augmentations,
             gpu_augmentations, label_augmentations, batch_size,

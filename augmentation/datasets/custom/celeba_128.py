@@ -67,8 +67,12 @@ test_group_sizes = {'Blond_Hair':
                          }
                     }
 
+GROUP_ORIGINAL_SIZES = {"train": train_group_original_sizes,
+                        "val": val_group_sizes}
+
 SAVE_TFREC_NAME = None
 LABEL_TYPE = None
+
 
 
 # THIS IS TERRIBLE!!! ACCESSING THE LEN BY A DICTIONARY, NOT ACTUALLY CHECKING THE INPUT DATASET
