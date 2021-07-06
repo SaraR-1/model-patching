@@ -21,9 +21,9 @@ import tempfile
 from augmentation.utilities import noop_pdb
 
 # os.environ['WANDB_MODE'] = 'offline'
-# Disable breakpoints
-# os.environ["PYTHONBREAKPOINT"] = "0"
-# sys.modules['pdb'] = __import__('noop_pdb')
+# Disable breakpoints, run it when first breakpoint is encountered
+# pdb.set_trace = lambda: None, after type c -> won't stop at the next set_trace NICE ONE!
+
 
 
 def train_robust_model(config):
@@ -390,17 +390,17 @@ def _train_robust_model(train_generators,
         reset_metrics(aggregate_metrics)
         for metrics in metrics_by_group:
             reset_metrics(metrics)
-        print("-------------------------------------------------------------- MY PRINTS "
-              "--------------------------------------------------------------")
-        print(f"steps_per_epoch: {steps_per_epoch}")
-        print(f"len(training_groups_mask: {len(training_groups_mask)}")
-        print(f"sum(training_groups_mask: {sum(training_groups_mask)}")
+        # print("-------------------------------------------------------------- MY PRINTS "
+        #       "--------------------------------------------------------------")
+        # print(f"steps_per_epoch: {steps_per_epoch}")
+        # print(f"len(training_groups_mask: {len(training_groups_mask)}")
+        # print(f"sum(training_groups_mask: {sum(training_groups_mask)}")
 
         for _ in range(steps_per_epoch):
             # Get batches of data from each group's training iterator
             group_batches, group_targets = tuple(zip(*[tuple(map(make_floatx_tensor, next(it)))
                                                        for it in train_iterators]))
-            print(f"shape (group_batches): {tf.shape(group_batches)}")
+            # print(f"shape (group_batches): {tf.shape(group_batches)}")
             # print(f"group_batches: {group_batches}")
 
             # Compute the IRM penalty weight

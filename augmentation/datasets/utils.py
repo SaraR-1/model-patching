@@ -589,6 +589,7 @@ def create_data_generator(dataset,
         current_subgroup_size = sum([1 for _ in dataset])
         original_subgroup_size = augmentation.datasets.custom.celeba_128.train_group_original_sizes['Blond_Hair']['Male'][
             subgroup_key]
+        print(f"Subgroup: {subgroup_key}, original: {original_subgroup_size}, current: {current_subgroup_size}")
 
         import pdb;pdb.set_trace()
         save_tfrec_name = augmentation.datasets.custom.celeba_128.SAVE_TFREC_NAME
