@@ -23,7 +23,7 @@ from augmentation.utilities import noop_pdb
 # os.environ['WANDB_MODE'] = 'offline'
 # Disable breakpoints
 # os.environ["PYTHONBREAKPOINT"] = "0"
-sys.modules['pdb'] = __import__('noop_pdb')
+# sys.modules['pdb'] = __import__('noop_pdb')
 
 
 def train_robust_model(config):
