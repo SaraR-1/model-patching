@@ -34,7 +34,8 @@ def compose_static_augmentations(static_augmentation_pipelines, datasets, aliase
     all_batch_sizes = []
     all_original_idx = []
 
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
+    # Before entering the loop, len(datasets) = 4
     # TODO: check here, single parts of each pipeline, what is it doing? What's `augmentation'
     # Loop over all the datasets and their corresponding static augmentations
     for dataset, alias, ident, dlen, batch_size, idx, aug_pipeline \
@@ -54,6 +55,9 @@ def compose_static_augmentations(static_augmentation_pipelines, datasets, aliase
                 all_original_idx += idx
 
             # Call the static augmentation
+            # It calls /its/home/sr572/model-patching/augmentation/augment/static.py(186)__call__() - which calls transform!
+            # Specifically it calls /its/home/sr572/model-patching/augmentation/augment/static.py(482)transform()
+            # Inside calls /its/home/sr572/model-patching/augmentation/augment/static.py(589)build_tf_datasets()
             dataset, alias, dlen, batch_size, idx = augmentation(dataset, alias, dlen, batch_size, idx,
                                                                  **{'dataset_identifier': ident})
 
@@ -480,7 +484,7 @@ class PretrainedCycleGANStaticAugmentationTFRecordPipeline(StaticAugmentation):
                step_extractor(g_model_file.name.split("/")[-1])
 
     def transform(self, dataset, alias, dataset_len, batch_size, *args, **kwargs):
-        import pdb;pdb.set_trace()
+        # import pdb;pdb.set_trace()
         assert 'dataset_identifier' in kwargs, 'Please pass in a unique identifier for the dataset.'
         # Specific paths for the TFRecords
         dataset_identifier = kwargs['dataset_identifier'].replace("/", ".")
@@ -531,7 +535,7 @@ class PretrainedCycleGANStaticAugmentationTFRecordPipeline(StaticAugmentation):
             return [dataset_f, dataset_g], [alias_f, alias_g], [dataset_len] * 2, [batch_size] * 2
 
     def dump_tf_records(self, dataset, gen_f_store_path, gen_g_store_path):
-        import pdb;pdb.set_trace()
+        # import pdb;pdb.set_trace()
         # Load up the CycleGAN models
         self.cyclegan.load_models()
 
@@ -587,7 +591,7 @@ class PretrainedCycleGANStaticAugmentationTFRecordPipeline(StaticAugmentation):
             shard_progress += batch_size
 
     def build_tf_datasets(self, gen_f_store_path, gen_g_store_path):
-        import pdb;pdb.set_trace()
+        # import pdb;pdb.set_trace()
         # Load up the files for the CycleGAN-ed dataset
         gen_f_store_path = gen_f_store_path.replace("[", "\[").replace("]", "\]").replace("*", "\*")
         gen_g_store_path = gen_g_store_path.replace("[", "\[").replace("]", "\]").replace("*", "\*")
