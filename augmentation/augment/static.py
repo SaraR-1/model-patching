@@ -463,8 +463,10 @@ class PretrainedCycleGANStaticAugmentationTFRecordPipeline(StaticAugmentation):
         self.overwrite = overwrite
 
     def get_load_epochs(self, wandb_run_id, wandb_project, wandb_entity, wandb_ckpt_path, checkpoint_step):
+        import pdb;pdb.set_trace()
         # Create a function for doing step extraction for CycleGAN generator models
         step_extractor = particular_checkpoint_step_extractor(checkpoint_step)
+        # TODO: here we load the CycleGAN models, where do they call it from?
         f_model_file = get_most_recent_model_file(wandb_run=load_wandb_run(wandb_run_id, wandb_project, wandb_entity),
                                                   wandb_ckpt_path=wandb_ckpt_path,
                                                   model_name='generator_f',
@@ -479,6 +481,7 @@ class PretrainedCycleGANStaticAugmentationTFRecordPipeline(StaticAugmentation):
                step_extractor(g_model_file.name.split("/")[-1])
 
     def transform(self, dataset, alias, dataset_len, batch_size, *args, **kwargs):
+        import pdb;pdb.set_trace()
         assert 'dataset_identifier' in kwargs, 'Please pass in a unique identifier for the dataset.'
         # Specific paths for the TFRecords
         dataset_identifier = kwargs['dataset_identifier'].replace("/", ".")
@@ -529,6 +532,7 @@ class PretrainedCycleGANStaticAugmentationTFRecordPipeline(StaticAugmentation):
             return [dataset_f, dataset_g], [alias_f, alias_g], [dataset_len] * 2, [batch_size] * 2
 
     def dump_tf_records(self, dataset, gen_f_store_path, gen_g_store_path):
+        import pdb;pdb.set_trace()
         # Load up the CycleGAN models
         self.cyclegan.load_models()
 
@@ -584,6 +588,7 @@ class PretrainedCycleGANStaticAugmentationTFRecordPipeline(StaticAugmentation):
             shard_progress += batch_size
 
     def build_tf_datasets(self, gen_f_store_path, gen_g_store_path):
+        import pdb;pdb.set_trace()
         # Load up the files for the CycleGAN-ed dataset
         gen_f_store_path = gen_f_store_path.replace("[", "\[").replace("]", "\]").replace("*", "\*")
         gen_g_store_path = gen_g_store_path.replace("[", "\[").replace("]", "\]").replace("*", "\*")
