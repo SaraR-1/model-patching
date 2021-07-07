@@ -446,7 +446,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                 zip(eval_dataset_names, eval_dataset_versions)]
 
 
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     # TODO: Here the weird aliases with A-F etc. are created - STEP INTO FUNCTION!
     # train_dataset_aliases = ['(Y=0)(Z=0)', '(Y=0)(Z=0)(A-F)', '(Y=0)(Z=0)(A-G)', '(Y=0)(Z=1)', '(Y=0)(Z=1)(A-F)', '(Y=0)(Z=1)(A-G)', '(Y=1)(Z=0)', '(Y=1)(Z=0)(A-F)', '(Y=1)(Z=0)(A-G)', '(Y=1)(Z=1)', '(Y=1)(Z=1)(A-F)', '(Y=1)(Z=1)(A-G)']
     train_datasets, train_dataset_aliases, training_examples_by_dataset, train_batch_sizes, train_original_idx = \

@@ -34,7 +34,7 @@ def compose_static_augmentations(static_augmentation_pipelines, datasets, aliase
     all_batch_sizes = []
     all_original_idx = []
 
-    # import pdb;pdb.set_trace()
+    import pdb;pdb.set_trace()
     # TODO: check here, single parts of each pipeline, what is it doing? What's `augmentation'
     # Loop over all the datasets and their corresponding static augmentations
     for dataset, alias, ident, dlen, batch_size, idx, aug_pipeline \
@@ -463,7 +463,6 @@ class PretrainedCycleGANStaticAugmentationTFRecordPipeline(StaticAugmentation):
         self.overwrite = overwrite
 
     def get_load_epochs(self, wandb_run_id, wandb_project, wandb_entity, wandb_ckpt_path, checkpoint_step):
-        import pdb;pdb.set_trace()
         # Create a function for doing step extraction for CycleGAN generator models
         step_extractor = particular_checkpoint_step_extractor(checkpoint_step)
         # TODO: here we load the CycleGAN models, where do they call it from?
