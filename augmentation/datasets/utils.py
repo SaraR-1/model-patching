@@ -446,7 +446,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                 zip(eval_dataset_names, eval_dataset_versions)]
 
 
-    # import pdb;pdb.set_trace()
+    import pdb;pdb.set_trace()
     # TODO: Here the weird aliases with A-F etc. are created - STEP INTO FUNCTION!
     # train_dataset_aliases = ['(Y=0)(Z=0)', '(Y=0)(Z=0)(A-F)', '(Y=0)(Z=0)(A-G)', '(Y=0)(Z=1)', '(Y=0)(Z=1)(A-F)', '(Y=0)(Z=1)(A-G)', '(Y=1)(Z=0)', '(Y=1)(Z=0)(A-F)', '(Y=1)(Z=0)(A-G)', '(Y=1)(Z=1)', '(Y=1)(Z=1)(A-F)', '(Y=1)(Z=1)(A-G)']
     train_datasets, train_dataset_aliases, training_examples_by_dataset, train_batch_sizes, train_original_idx = \
@@ -458,7 +458,6 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
             dataset_lens=training_examples_by_dataset,
             batch_sizes=augmentation.augment.static.split_batch_size(batch_size, len(train_datasets)),
             keep_datasets=False)
-
     val_datasets, val_dataset_aliases, _, val_batch_sizes, val_original_idx = \
         augmentation.augment.static.compose_static_augmentations(
             static_augmentation_pipelines=eval_static_augmentations,
@@ -524,6 +523,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                                        shuffle_before_repeat=shuffle_before_repeat,
                                                        cache_dir=cache_dir,
                                                        cache_dir_postfix='__train')
+    import pdb;pdb.set_trace()
     val_generators = create_multiple_data_generators(datasets=val_datasets,
                                                      dataset_aliases=val_dataset_aliases,
                                                      augmentations_by_dataset=val_augmentations,
@@ -688,7 +688,7 @@ def create_multiple_data_generators(datasets,
                                                            batch_sizes,
                                                            shuffle_buffers, shuffle_seeds)):
         # Create a data generator for this dataset
-        import pdb;pdb.set_trace()
+        # import pdb;pdb.set_trace()
         print(f"Creating {alias} data generator: shuffle with {shuffle_buffer}, {shuffle_seed}")
         generators.append(create_data_generator(dataset=dataset,
                                                 augmentations=augmentations,
@@ -704,7 +704,7 @@ def create_multiple_data_generators(datasets,
                                                 cache_dir_postfix=cache_dir_postfix + "_" + alias.replace("/", "")
                                                                   + str(i)))
 
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     return generators
 
 
