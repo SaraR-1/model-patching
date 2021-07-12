@@ -588,6 +588,7 @@ def create_data_generator(dataset,
         subgroup_key = (*[int(i.split("=")[1]) for i in subgroup_key_pattern.findall(cache_dir_postfix)],)
         # print(subgroup_key)
         current_subgroup_size = sum([1 for _ in dataset])
+        print(f"Subgroup: {subgroup_key}")
         original_subgroup_size = augmentation.datasets.custom.celeba_128.train_group_original_sizes['Blond_Hair']['Male'][
             subgroup_key]
         print(f"Subgroup: {subgroup_key}, original: {original_subgroup_size}, current: {current_subgroup_size}")

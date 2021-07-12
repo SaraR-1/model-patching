@@ -74,7 +74,6 @@ SAVE_TFREC_NAME = None
 LABEL_TYPE = None
 
 
-
 # THIS IS TERRIBLE!!! ACCESSING THE LEN BY A DICTIONARY, NOT ACTUALLY CHECKING THE INPUT DATASET
 def get_celeba_dataset_len(y_variant, z_variant, y_label, z_label):
     if y_label == -1:
