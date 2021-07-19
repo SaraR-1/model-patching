@@ -585,6 +585,7 @@ def create_data_generator(dataset,
 
         # TODO: uncomment all the block if want to save the tfrec
         # save the tfrec of the undersampled subgroup, i.e. if the subgroup size is different from the original one
+        import pdb;pdb.set_trace()
         subgroup_key = (*[int(i.split("=")[1]) for i in subgroup_key_pattern.findall(cache_dir_postfix)],)
         # print(subgroup_key)
         current_subgroup_size = sum([1 for _ in dataset])
