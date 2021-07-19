@@ -19,7 +19,7 @@ from augmentation.utilities.checkpoint import *
 from augmentation.utilities.wandb import *
 import tempfile
 
-os.environ['WANDB_MODE'] = 'offline'
+# os.environ['WANDB_MODE'] = 'offline'
 # Disable breakpoints, run it when first breakpoint is encountered
 # pdb.set_trace = lambda: None, after type c -> won't stop at the next set_trace NICE ONE!
 

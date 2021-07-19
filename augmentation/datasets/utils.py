@@ -585,27 +585,28 @@ def create_data_generator(dataset,
 
         # TODO: uncomment all the block if want to save the tfrec
         # save the tfrec of the undersampled subgroup, i.e. if the subgroup size is different from the original one
-        import pdb;pdb.set_trace()
-        subgroup_key = (*[int(i.split("=")[1]) for i in subgroup_key_pattern.findall(cache_dir_postfix)],)
-        # print(subgroup_key)
-        current_subgroup_size = sum([1 for _ in dataset])
-        print(f"Subgroup: {subgroup_key}")
-        original_subgroup_size = augmentation.datasets.custom.celeba_128.train_group_original_sizes['Blond_Hair']['Male'][
-            subgroup_key]
-        print(f"Subgroup: {subgroup_key}, original: {original_subgroup_size}, current: {current_subgroup_size}")
-
         # import pdb;pdb.set_trace()
-        save_tfrec_name = augmentation.datasets.custom.celeba_128.SAVE_TFREC_NAME
-        label_type = augmentation.datasets.custom.celeba_128.LABEL_TYPE
+        subgroup_key = (*[int(i.split("=")[1]) for i in subgroup_key_pattern.findall(cache_dir_postfix)],)
+        # Only need to save if the static augmentation is required (i.e. not needed for erm, gdro should only save the original - not the A-F and A-G versions)
+        if len(subgroup_key) != 0:
+            current_subgroup_size = sum([1 for _ in dataset])
+            print(f"Subgroup: {subgroup_key}")
+            original_subgroup_size = augmentation.datasets.custom.celeba_128.train_group_original_sizes['Blond_Hair']['Male'][
+                subgroup_key]
+            print(f"Subgroup: {subgroup_key}, original: {original_subgroup_size}, current: {current_subgroup_size}")
 
-        # Only check if for training set
-        if current_subgroup_size != original_subgroup_size and save_tfrec_name is not None and "train" in cache_dir_postfix:
-            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{save_tfrec_name}{cache_dir_postfix.split('_')[3][:-1]}_{current_subgroup_size}.tfrec".replace(" ", "")
+            # import pdb;pdb.set_trace()
+            save_tfrec_name = augmentation.datasets.custom.celeba_128.SAVE_TFREC_NAME
+            label_type = augmentation.datasets.custom.celeba_128.LABEL_TYPE
 
-            with tf.io.TFRecordWriter(record_file) as writer:
-                for sample in dataset:
-                    tf_sample = augmentation.datasets.custom.celeba_128.customised_celeba_undersampled_tosave(sample, label_type)
-                    writer.write(tf_sample.SerializeToString())
+            # Only check if for training set
+            if current_subgroup_size != original_subgroup_size and save_tfrec_name is not None and "train" in cache_dir_postfix:
+                record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{save_tfrec_name}{cache_dir_postfix.split('_')[3][:-1]}_{current_subgroup_size}.tfrec".replace(" ", "")
+
+                with tf.io.TFRecordWriter(record_file) as writer:
+                    for sample in dataset:
+                        tf_sample = augmentation.datasets.custom.celeba_128.customised_celeba_undersampled_tosave(sample, label_type)
+                        writer.write(tf_sample.SerializeToString())
 
         # import pdb;pdb.set_trace()
         # Cache the dataset first
