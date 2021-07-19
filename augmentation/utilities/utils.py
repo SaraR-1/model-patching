@@ -23,7 +23,8 @@ def basic_setup(seed, logical_gpu_memory_limits=(4096, 10240)):
     np.set_printoptions(precision=2, suppress=True)
 
     # Set GPU growth in Tensorflow: disable for the moment
-    # set_gpu_growth()
+    # TODO: I enable it because of cuda errors
+    set_gpu_growth()
 
     # Create logical GPUs
     logical_gpus = create_logical_gpus(logical_gpu_memory_limits)
