@@ -24,10 +24,10 @@ def basic_setup(seed, logical_gpu_memory_limits=(4096, 10240)):
 
     # Set GPU growth in Tensorflow: disable for the moment
     # TODO: I enable it because of cuda errors
-    set_gpu_growth()
+    logical_gpus = set_gpu_growth()
 
     # Create logical GPUs
-    logical_gpus = create_logical_gpus(logical_gpu_memory_limits)
+    # logical_gpus = create_logical_gpus(logical_gpu_memory_limits)
 
     # Figure out the devices we can put things on
     device_0 = tf.device(logical_gpus[0].name)
@@ -71,6 +71,7 @@ def set_gpu_growth():
                 tf.config.experimental.set_memory_growth(gpu, True)
             logical_gpus = tf.config.experimental.list_logical_devices('GPU')
             print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+            return logical_gpus
         except RuntimeError as e:
             # Memory growth must be set before GPUs have been initialized
             print(e)
