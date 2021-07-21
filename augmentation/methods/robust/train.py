@@ -20,7 +20,7 @@ from augmentation.utilities.wandb import *
 import tempfile
 
 
-# os.environ['WANDB_MODE'] = 'offline'
+os.environ['WANDB_MODE'] = 'offline'
 # Disable breakpoints, run it when first breakpoint is encountered
 # pdb.set_trace = lambda: None, after type c -> won't stop at the next set_trace NICE ONE!
 
@@ -591,7 +591,7 @@ def setup_and_train_robust_model(args):
     y, z = config.train_datasets.split("/")[1, 2]
     seed_general = config.seed
     seed_undersample = config.undersample_seed
-    config.save_tfrec_name = f"{loss_name}_seed{seed_general}_seedunder_{seed_general}_{y}_{z}"
+    config.save_tfrec_name = f"{loss_name}_seed{seed_general}_seedunder_{seed_undersample}_{y}_{z}"
 
     # Train the end model
     # import pdb;pdb.set_trace()
