@@ -71,13 +71,13 @@ CELEBA_BASE_VARIANTS = ['5_o_Clock_Shadow',
 # GROUP_ORIGINAL_SIZES = {"train": train_group_original_sizes,
 #                         "val": val_group_sizes}
 
-train_group_sizes = defaultdict(dict)
+train_group_sizes = defaultdict(defaultdict(dict))
 
-train_group_original_sizes = defaultdict(dict)
+train_group_original_sizes = defaultdict(defaultdict(dict))
 
-val_group_sizes = defaultdict(dict)
+val_group_sizes = defaultdict(defaultdict(dict))
 
-test_group_sizes = defaultdict(dict)
+test_group_sizes = defaultdict(defaultdict(dict))
 
 GROUP_SIZE_DICTS = {"train_original": train_group_original_sizes,
                    "train": train_group_sizes,
