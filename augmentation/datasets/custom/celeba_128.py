@@ -71,13 +71,13 @@ CELEBA_BASE_VARIANTS = ['5_o_Clock_Shadow',
 # GROUP_ORIGINAL_SIZES = {"train": train_group_original_sizes,
 #                         "val": val_group_sizes}
 
-train_group_sizes = defaultdict(defaultdict(dict))
+train_group_sizes = defaultdict(dict)
 
-train_group_original_sizes = defaultdict(defaultdict(dict))
+train_group_original_sizes = defaultdict(dict)
 
-val_group_sizes = defaultdict(defaultdict(dict))
+val_group_sizes = defaultdict(dict)
 
-test_group_sizes = defaultdict(defaultdict(dict))
+test_group_sizes = defaultdict(dict)
 
 GROUP_SIZE_DICTS = {"train_original": train_group_original_sizes,
                    "train": train_group_sizes,
@@ -122,6 +122,11 @@ def compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, da
     def count_util(data):
         """Count entries in a dataset"""
         return sum([1 for _ in data])
+
+    # Init with right keys
+    global GROUP_SIZE_DICTS
+    if len(GROUP_SIZE_DICTS.keys()) == 0:
+        GROUP_SIZE_DICTS[dataset_name][y_variant][z_variant] = {(y_t, z_t): None for y_t, z_t in entries_to_populate}
 
     for y_t, z_t in entries_to_populate:
         dataset_subgroup = dataset.filter(lambda image, y, z: (y == y_t and z == z_t))
