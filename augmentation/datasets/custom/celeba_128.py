@@ -79,6 +79,11 @@ val_group_sizes = defaultdict(dict)
 
 test_group_sizes = defaultdict(dict)
 
+GROUP_SIZE_DICTS = {"train_original": train_group_original_sizes,
+                   "train": train_group_sizes,
+                    "val": val_group_sizes,
+                    "test": test_group_sizes}
+
 SAVE_TFREC_NAME = None
 LABEL_TYPE = None
 
@@ -101,22 +106,33 @@ def get_celeba_dataset_len(y_variant, z_variant, y_label, z_label):
            sum([test_group_sizes[y_variant][z_variant][k] for k in entries_to_sum])
 
 
-def compute_celeba_dataset_len_single(y_variant, z_variant, dataset):
+def compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, dataset, dataset_name):
     """Compute subgroup sample size for a single set"""
-    dataset_subgroup = dataset.filter(lambda image, y, z: (y == y_variant and z == z_variant))
+    if y_label == -1:
+        if z_label == -1:
+            entries_to_populate = [(0, 0), (0, 1), (1, 0), (1, 1)]
+        else:
+            entries_to_populate = [(0, z_label), (1, z_label)]
+    else:
+        if z_label == -1:
+            entries_to_populate = [(y_label, 0), (y_label, 1)]
+        else:
+            entries_to_populate = [(y_label, z_label)]
 
     def count_util(data):
         """Count entries in a dataset"""
         return sum([1 for _ in data])
 
-    return count_util(dataset_subgroup)
+    for y_t, z_t in entries_to_populate:
+        dataset_subgroup = dataset.filter(lambda image, y, z: (y == y_t and z == z_t))
+        global GROUP_SIZE_DICTS[dataset_name]
+        GROUP_SIZE_DICTS[dataset_name][y_variant][z_variant][(y_t, z_t)] = count_util(dataset_subgroup)
 
-
-def compute_celeba_dataset_len(y_variant, z_variant, train_data, val_data, test_data):
+def compute_celeba_dataset_len(y_variant, z_variant, y_label, z_label, train_data, val_data, test_data):
     """Compute subgroup sample size for the three sets: train, validation and test"""
-    return compute_celeba_dataset_len_single(y_variant, z_variant, train_data), \
-           compute_celeba_dataset_len_single(y_variant, z_variant, val_data), \
-           compute_celeba_dataset_len_single(y_variant, z_variant, test_data)
+    compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, train_data, "train")
+    compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, val_data, "val")
+    compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, test_data, "test")
 
 
 def read_celeba_tfrecord(example, batched=True, parallelism=8):
@@ -219,8 +235,9 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
 
     import pdb;pdb.set_trace()
     # Compute the sample size before undersampling the dataset
-    global train_group_original_sizes
-    train_group_original_sizes[y_label][z_label][(y_variant, z_variant)] = compute_celeba_dataset_len(y_variant, z_variant, train_dataset)
+    # global train_group_original_sizes
+    # train_group_original_sizes[y_variant][z_variant][(y_label, z_label)] = compute_celeba_dataset_len_single(y_label, z_label, train_dataset)
+    compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, train_dataset, "train_original")
 
     # import pdb;pdb.set_trace()
     # Filter out the Y0Z0 examples and then add a subset of them back in
@@ -271,10 +288,16 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
     #                                                                               y_label,
     #                                                                               z_label)
     # Actually compute the sample size, DO NOT TAKE IT FROM A PREDEFINED DICTIONARY - NOT GENERALISABLE
-    train_dataset_len, val_dataset_len, test_dataset_len = compute_celeba_dataset_len(y_variant, z_variant,
-                                                                                      train_dataset,
-                                                                                      val_dataset,
-                                                                                      test_dataset)
+    # train_dataset_len, val_dataset_len, test_dataset_len = compute_celeba_dataset_len(y_variant, z_variant,
+    #                                                                                   train_dataset,
+    #                                                                                   val_dataset,
+    #                                                                                   test_dataset)
+
+    compute_celeba_dataset_len(y_variant, z_variant, y_label, z_label, train_dataset, val_dataset, test_dataset)
+    train_dataset_len, val_dataset_len, test_dataset_len = get_celeba_dataset_len(y_variant,
+                                                                                  z_variant,
+                                                                                  y_label,
+                                                                                  z_label)
 
     # import pdb;pdb.set_trace()
     # Make a dataset info namespace to ensure downstream compatibility
