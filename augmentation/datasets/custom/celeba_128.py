@@ -125,7 +125,7 @@ def compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, da
 
     # Init with right keys
     global GROUP_SIZE_DICTS
-    if len(GROUP_SIZE_DICTS.keys()) == 0:
+    if len(GROUP_SIZE_DICTS[dataset_name].keys()) == 0:
         GROUP_SIZE_DICTS[dataset_name][y_variant][z_variant] = {(y_t, z_t): None for y_t, z_t in entries_to_populate}
 
     for y_t, z_t in entries_to_populate:
@@ -239,11 +239,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
         val_dataset = val_dataset.filter(lambda image, y, z: (z == z_label))
         test_dataset = test_dataset.filter(lambda image, y, z: (z == z_label))
 
-    import pdb;
-    pdb.set_trace()
     # Compute the sample size before undersampling the dataset
-    # global train_group_original_sizes
-    # train_group_original_sizes[y_variant][z_variant][(y_label, z_label)] = compute_celeba_dataset_len_single(y_label, z_label, train_dataset)
     compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, train_dataset, "train_original")
 
     # import pdb;pdb.set_trace()
@@ -299,8 +295,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
     #                                                                                   train_dataset,
     #                                                                                   val_dataset,
     #                                                                                   test_dataset)
-    import pdb;
-    pdb.set_trace()
+    import pdb;pdb.set_trace()
     compute_celeba_dataset_len(y_variant, z_variant, y_label, z_label, train_dataset, val_dataset, test_dataset)
     train_dataset_len, val_dataset_len, test_dataset_len = get_celeba_dataset_len(y_variant,
                                                                                   z_variant,
