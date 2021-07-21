@@ -1,6 +1,7 @@
 from types import SimpleNamespace
 import tensorflow as tf
 import augmentation.datasets.utils
+from collections import defaultdict
 
 CELEBA_BASE_VARIANTS = ['5_o_Clock_Shadow',
                         'Arched_Eyebrows',
@@ -43,32 +44,40 @@ CELEBA_BASE_VARIANTS = ['5_o_Clock_Shadow',
                         'Wearing_Necktie',
                         'Young']
 
-train_group_sizes = {'Blond_Hair':
-                         {'Male':
-                              {(0, 0): 4054, (0, 1): 66874, (1, 0): 22880, (1, 1): 1387}  # 71629
-                          }
-                     }
+# train_group_sizes = {'Blond_Hair':
+#                          {'Male':
+#                               {(0, 0): 4054, (0, 1): 66874, (1, 0): 22880, (1, 1): 1387}  # 71629
+#                           }
+#                      }
+#
+# train_group_original_sizes = {'Blond_Hair':
+#                                   {'Male':
+#                                        {(0, 0): 71629, (0, 1): 66874, (1, 0): 22880, (1, 1): 1387}
+#                                    }
+#                               }
+#
+# val_group_sizes = {'Blond_Hair':
+#                        {'Male':
+#                             {(0, 0): 8535, (0, 1): 8276, (1, 0): 2874, (1, 1): 182}
+#                         }
+#                    }
+#
+# test_group_sizes = {'Blond_Hair':
+#                         {'Male':
+#                              {(0, 0): 9767, (0, 1): 7535, (1, 0): 2480, (1, 1): 180}
+#                          }
+#                     }
 
-train_group_original_sizes = {'Blond_Hair':
-                                  {'Male':
-                                       {(0, 0): 71629, (0, 1): 66874, (1, 0): 22880, (1, 1): 1387}
-                                   }
-                              }
+# GROUP_ORIGINAL_SIZES = {"train": train_group_original_sizes,
+#                         "val": val_group_sizes}
 
-val_group_sizes = {'Blond_Hair':
-                       {'Male':
-                            {(0, 0): 8535, (0, 1): 8276, (1, 0): 2874, (1, 1): 182}
-                        }
-                   }
+train_group_sizes = defaultdict(dict)
 
-test_group_sizes = {'Blond_Hair':
-                        {'Male':
-                             {(0, 0): 9767, (0, 1): 7535, (1, 0): 2480, (1, 1): 180}
-                         }
-                    }
+train_group_original_sizes = defaultdict(dict)
 
-GROUP_ORIGINAL_SIZES = {"train": train_group_original_sizes,
-                        "val": val_group_sizes}
+val_group_sizes = defaultdict(dict)
+
+test_group_sizes = defaultdict(dict)
 
 SAVE_TFREC_NAME = None
 LABEL_TYPE = None
@@ -90,6 +99,24 @@ def get_celeba_dataset_len(y_variant, z_variant, y_label, z_label):
     return sum([train_group_sizes[y_variant][z_variant][k] for k in entries_to_sum]), \
            sum([val_group_sizes[y_variant][z_variant][k] for k in entries_to_sum]), \
            sum([test_group_sizes[y_variant][z_variant][k] for k in entries_to_sum])
+
+
+def compute_celeba_dataset_len_single(y_variant, z_variant, dataset):
+    """Compute subgroup sample size for a single set"""
+    dataset_subgroup = dataset.filter(lambda image, y, z: (y == y_variant and z == z_variant))
+
+    def count_util(data):
+        """Count entries in a dataset"""
+        return sum([1 for _ in data])
+
+    return count_util(dataset_subgroup)
+
+
+def compute_celeba_dataset_len(y_variant, z_variant, train_data, val_data, test_data):
+    """Compute subgroup sample size for the three sets: train, validation and test"""
+    return compute_celeba_dataset_len_single(y_variant, z_variant, train_data), \
+           compute_celeba_dataset_len_single(y_variant, z_variant, val_data), \
+           compute_celeba_dataset_len_single(y_variant, z_variant, test_data)
 
 
 def read_celeba_tfrecord(example, batched=True, parallelism=8):
@@ -190,6 +217,10 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
         val_dataset = val_dataset.filter(lambda image, y, z: (z == z_label))
         test_dataset = test_dataset.filter(lambda image, y, z: (z == z_label))
 
+    import pdb;pdb.set_trace()
+    # Compute the sample size before undersampling the dataset
+    globals()train_group_original_sizes[y_label][z_label][(y_variant, z_variant)] = compute_celeba_dataset_len(y_variant, z_variant, train_dataset)
+
     # import pdb;pdb.set_trace()
     # Filter out the Y0Z0 examples and then add a subset of them back in
     # here len(train_dataset) = 71629 (when loading the first of the 4 subgroups)
@@ -234,10 +265,15 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
 
     # Compute the length of the training dataset
     # Here ERROR (MOST LIKELY) train_dataset_len = 71629
-    train_dataset_len, val_dataset_len, test_dataset_len = get_celeba_dataset_len(y_variant,
-                                                                                  z_variant,
-                                                                                  y_label,
-                                                                                  z_label)
+    # train_dataset_len, val_dataset_len, test_dataset_len = get_celeba_dataset_len(y_variant,
+    #                                                                               z_variant,
+    #                                                                               y_label,
+    #                                                                               z_label)
+    # Actually compute the sample size, DO NOT TAKE IT FROM A PREDEFINED DICTIONARY - NOT GENERALISABLE
+    train_dataset_len, val_dataset_len, test_dataset_len = compute_celeba_dataset_len(y_variant, z_variant,
+                                                                                      train_dataset,
+                                                                                      val_dataset,
+                                                                                      test_dataset)
 
     # import pdb;pdb.set_trace()
     # Make a dataset info namespace to ensure downstream compatibility
