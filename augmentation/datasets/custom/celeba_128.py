@@ -219,7 +219,8 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
 
     import pdb;pdb.set_trace()
     # Compute the sample size before undersampling the dataset
-    globals()train_group_original_sizes[y_label][z_label][(y_variant, z_variant)] = compute_celeba_dataset_len(y_variant, z_variant, train_dataset)
+    global train_group_original_sizes
+    train_group_original_sizes[y_label][z_label][(y_variant, z_variant)] = compute_celeba_dataset_len(y_variant, z_variant, train_dataset)
 
     # import pdb;pdb.set_trace()
     # Filter out the Y0Z0 examples and then add a subset of them back in
