@@ -277,7 +277,6 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
 
     # FINAL LEN - Here len(train_dataset) = 4054 (when loading the first of the 4 subgroups)
     # N.B. important compute it here before losing the information about z (after label_selection_fn)
-    import pdb;pdb.set_trace()
     compute_celeba_dataset_len(y_variant, z_variant, y_label, z_label, train_dataset, val_dataset, test_dataset)
     # Get the label selection function and apply it
     label_selection_fn = get_label_selection_function(label_type)
@@ -288,15 +287,6 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
 
     # Compute the length of the training dataset
     # Here ERROR (MOST LIKELY) train_dataset_len = 71629
-    # train_dataset_len, val_dataset_len, test_dataset_len = get_celeba_dataset_len(y_variant,
-    #                                                                               z_variant,
-    #                                                                               y_label,
-    #                                                                               z_label)
-    # Actually compute the sample size, DO NOT TAKE IT FROM A PREDEFINED DICTIONARY - NOT GENERALISABLE
-    # train_dataset_len, val_dataset_len, test_dataset_len = compute_celeba_dataset_len(y_variant, z_variant,
-    #                                                                                   train_dataset,
-    #                                                                                   val_dataset,
-    #                                                                                   test_dataset)
     train_dataset_len, val_dataset_len, test_dataset_len = get_celeba_dataset_len(y_variant,
                                                                                   z_variant,
                                                                                   y_label,
