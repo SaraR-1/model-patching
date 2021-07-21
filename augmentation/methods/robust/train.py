@@ -588,7 +588,7 @@ def setup_and_train_robust_model(args):
     pdb.set_trace()
     # if config.save_tfrec_name:
     loss_name = config._config_path.split("/")[-2]
-    y, z = config.train_datasets.split("/")[1, 2]
+    y, z = config.train_datasets[0].split("/")[1:3]
     seed_general = config.seed
     seed_undersample = config.undersample_seed
     config.save_tfrec_name = f"{loss_name}_seed{seed_general}_seedunder_{seed_undersample}_{y}_{z}"
