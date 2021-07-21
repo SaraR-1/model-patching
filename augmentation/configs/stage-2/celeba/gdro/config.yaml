@@ -13,6 +13,8 @@ logical_gpus: [14336]
 
 # Random seed
 seed: 3
+# -1 No shuffle before undersampling performed
+undersample_seed: -1
 
 # Architecture
 model_source: cm

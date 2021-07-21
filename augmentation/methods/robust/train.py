@@ -19,10 +19,10 @@ from augmentation.utilities.checkpoint import *
 from augmentation.utilities.wandb import *
 import tempfile
 
+
 # os.environ['WANDB_MODE'] = 'offline'
 # Disable breakpoints, run it when first breakpoint is encountered
 # pdb.set_trace = lambda: None, after type c -> won't stop at the next set_trace NICE ONE!
-
 
 
 def train_robust_model(config):
@@ -583,9 +583,17 @@ def train_step_robust(model,
 def setup_and_train_robust_model(args):
     # Load up the config
     config = recursively_create_config_simple_namespace(args.config, args.template_config)
+    # Useful for save_name
+    import pdb;
+    pdb.set_trace()
+    # if config.save_tfrec_name:
+    loss_name = config._config_path.split("/")[-2]
+    y, z = config.train_datasets.split("/")[1, 2]
+    seed_general = config.seed
+    seed_undersample = config.undersample_seed
+    config.save_tfrec_name = f"{loss_name}_seed{seed_general}_seedunder_{seed_general}_{y}_{z}"
 
     # Train the end model
-    # breakpoint()
     # import pdb;pdb.set_trace()
     train_robust_model(config)
 

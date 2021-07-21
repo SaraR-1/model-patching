@@ -19,6 +19,8 @@ dtype: float32
 
 # Random seed: set a seed for the experiment, our final numbers are reported on seeds 2, 3 and 4.
 seed: 1
+# Random seed controlling the shuffle before undersampling. Default: -1 No shuffle before undersampling performed
+undersample_seed: -1
 
 # Architecture
 model_source: cm # uses a model from the classification-models repository
