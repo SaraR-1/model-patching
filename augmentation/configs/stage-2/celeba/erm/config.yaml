@@ -79,7 +79,7 @@ train_dataset_aliases:
 train_datadirs:
   - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
 max_shuffle_buffer: 40000
-#save_tfrec_name: 'undersampled_4054_encoded_erm_seed3'
+save_tfrec_name: 'temp_erm_seed3_oldconfig'
 
 eval_datasets:
   - 'celeb_a_128/Blond_Hair/Male/1.0/0/0/y'

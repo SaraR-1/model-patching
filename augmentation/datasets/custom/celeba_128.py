@@ -242,14 +242,14 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name, un
     # Compute the sample size before undersampling the dataset
     compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, train_dataset, "train_original")
 
-    import pdb;pdb.set_trace()
-    # Filter out the Y0Z0 examples and then add a subset of them back in
+    # import pdb;pdb.set_trace()
+    # Filter out cthe Y0Z0 examples and then add a subset of them back in
     # here len(train_dataset) = 71629 (when loading the first of the 4 subgroups)
     if n_y0z0_examples > 0:
         # Take out examples from Y = 0, Z = 0
         # here len(train_dataset) = 4054 (when loading the first of the 4 subgroups)
         # Take the FIRST 4054 examples - BUT, WHEN IS IT SHUFFLING THE TRAINING SET?
-        y_t, z_t = 0, 0  # TODO: Change it to be not hard coding
+        y_t, z_t = 0, 0  # TODO: Change it to be not hard coding - if y and z not -1 then current, otherwise 0,0 hard coded
         if undersample_shuffle_seed != -1:
             train_dataset_y0z0 = train_dataset.filter(lambda image, y, z: (y == y_t and z == z_t)).take(n_y0z0_examples)
         else:
