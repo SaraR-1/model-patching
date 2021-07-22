@@ -6,7 +6,7 @@ mode: train
 wandb_entity: predictive-analytics-lab
 wandb_project: model-patching
 wandb_group: stage-2
-wandb_job_type: celeba_good
+wandb_job_type: celeba_debug
 
 # Logical GPUs
 logical_gpus: [14336]
