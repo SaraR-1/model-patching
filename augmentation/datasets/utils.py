@@ -16,6 +16,7 @@ import augmentation.datasets.custom.celeba_128
 
 subgroup_key_pattern = re.compile("[A-Z]=[0-9]")
 
+
 def dataset_len(tf_dataset, verbose=False):
     """
     Compute the length of a TF dataset.
@@ -229,7 +230,8 @@ CUSTOM_DATASET_PREFIXES = ['mnist_spurious',
                            ]
 
 
-def load_dataset(dataset_name, dataset_version, data_dir, validation_frac, cross_validation=False, fold=None, save_tfrec_name=None):
+def load_dataset(dataset_name, dataset_version, data_dir, validation_frac, cross_validation=False, fold=None,
+                 save_tfrec_name=None, undersample_shuffle_seed=-1):
     """
     The main entry point to load any dataset.
     """
@@ -237,7 +239,8 @@ def load_dataset(dataset_name, dataset_version, data_dir, validation_frac, cross
     # For a custom dataset, call the custom dataset loader - FOR MY SETTING ENTERS THIS IF
     if np.any([dataset_name.startswith(e) for e in CUSTOM_DATASET_PREFIXES]):
         assert cross_validation is False, 'Cross-validation is not supported for the custom datasets.'
-        return load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac, save_tfrec_name)
+        return load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac, save_tfrec_name,
+                                   undersample_shuffle_seed)
 
     # Set up the dataset
     # import pdb;pdb.set_trace()
@@ -276,9 +279,11 @@ def fetch_datasets_for_trainer(dataset,
                                batch_size,
                                cross_validation=False,
                                fold=None,
-                               save_tfrec_name=None):
+                               save_tfrec_name=None,
+                               undersample_shuffle_seed=-1):
     # Load the dataset payload
-    dataset_payload = load_dataset(dataset, dataset_version, datadir, validation_frac, cross_validation, fold, save_tfrec_name)
+    dataset_payload = load_dataset(dataset, dataset_version, datadir, validation_frac, cross_validation, fold,
+                                   save_tfrec_name, undersample_shuffle_seed)
 
     # Apply modifiers on the datasets
     # dataset_payload = apply_modifier_to_dataset_payload(dataset_payload, train_dataset_modifier, eval_dataset_modifier)
@@ -298,7 +303,8 @@ def fetch_list_of_datasets(datasets,
                            batch_size,
                            cross_validation=False,
                            fold=None,
-                           save_tfrec_name=None):
+                           save_tfrec_name=None,
+                           undersample_shuffle_seed=-1):
     dataset_splits, training_examples_by_dataset = [], []
     input_shape, n_classes, classes = None, None, None
 
@@ -314,7 +320,8 @@ def fetch_list_of_datasets(datasets,
                                          batch_size,
                                          cross_validation,
                                          fold,
-                                         save_tfrec_name)
+                                         save_tfrec_name,
+                                         undersample_shuffle_seed)
         dataset_splits.append(splits)
         if input_shape is None:
             input_shape, n_classes, classes = input_shape_, n_classes_, classes_
@@ -335,7 +342,8 @@ def fetch_list_of_train_datasets(train_datasets,
                                  batch_size,
                                  cross_validation=False,
                                  fold=None,
-                                 save_tfrec_name=None):
+                                 save_tfrec_name=None,
+                                 undersample_shuffle_seed=-1):
     # Fetch the list of training datasets
     dataset_splits, training_examples_by_dataset, input_shape, n_classes, classes = \
         fetch_list_of_datasets(datasets=train_datasets,
@@ -345,7 +353,8 @@ def fetch_list_of_train_datasets(train_datasets,
                                batch_size=batch_size,
                                cross_validation=cross_validation,
                                fold=fold,
-                               save_tfrec_name=save_tfrec_name)
+                               save_tfrec_name=save_tfrec_name,
+                               undersample_shuffle_seed=undersample_shuffle_seed)
 
     # Grab the train datasets
     train_datasets, _, _ = zip(*dataset_splits)
@@ -373,7 +382,8 @@ def fetch_list_of_eval_datasets(eval_datasets,
                                batch_size=batch_size,
                                cross_validation=cross_validation,
                                fold=fold,
-                               save_tfrec_name=None) # Do not save for "evaluation" dataset
+                               save_tfrec_name=None, # Do not save for "evaluation" dataset
+                               undersample_shuffle_seed=-1)  # Do not shuffle for "evaluation" dataset
 
     # Grab the train datasets
     _, val_datasets, test_datasets = zip(*dataset_splits)
@@ -404,7 +414,8 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                               shuffle_before_repeat=False,
                                               cross_validation=False,
                                               fold=None,
-                                              save_tfrec_name=None):
+                                              save_tfrec_name=None,
+                                              undersample_shuffle_seed=-1):
     # Fetch the list of training datasets
     print("Fetching training datasets.", flush=True)
     # training_examples_by_dataset = [71629, 66874, 22880, 1387]
@@ -417,7 +428,8 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                      batch_size=batch_size,
                                      cross_validation=cross_validation,
                                      fold=fold,
-                                     save_tfrec_name=save_tfrec_name)
+                                     save_tfrec_name=save_tfrec_name,
+                                     undersample_shuffle_seed=undersample_shuffle_seed)
     # Check the train_dataset before "applying" the aliases
     # import pdb;pdb.set_trace()
     # Fetch the list of evaluation datasets
@@ -444,7 +456,6 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                zip(eval_dataset_names, eval_dataset_versions)]
     test_dataset_identifiers = [f'[{name}].[{version}].test' for name, version in
                                 zip(eval_dataset_names, eval_dataset_versions)]
-
 
     # import pdb;pdb.set_trace()
     # TODO: Here the weird aliases with A-F etc. are created - STEP INTO FUNCTION!
@@ -490,8 +501,6 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
     val_gpu_augmentations = [eval_gpu_augmentations[i] for i in val_original_idx]
     test_augmentations = [eval_augmentations[i] for i in test_original_idx]
     test_gpu_augmentations = [eval_gpu_augmentations[i] for i in test_original_idx]
-
-
 
     # Create the generators
     if max_shuffle_buffer < 0:
@@ -591,7 +600,8 @@ def create_data_generator(dataset,
         if len(subgroup_key) != 0:
             current_subgroup_size = sum([1 for _ in dataset])
             print(f"Subgroup: {subgroup_key}")
-            original_subgroup_size = augmentation.datasets.custom.celeba_128.train_group_original_sizes['Blond_Hair']['Male'][
+            original_subgroup_size = \
+            augmentation.datasets.custom.celeba_128.train_group_original_sizes['Blond_Hair']['Male'][
                 subgroup_key]
             print(f"Subgroup: {subgroup_key}, original: {original_subgroup_size}, current: {current_subgroup_size}")
 
@@ -601,11 +611,13 @@ def create_data_generator(dataset,
 
             # Only check if for training set
             if current_subgroup_size != original_subgroup_size and save_tfrec_name is not None and "train" in cache_dir_postfix:
-                record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{save_tfrec_name}{cache_dir_postfix.split('_')[3][:-1]}_{current_subgroup_size}.tfrec".replace(" ", "")
+                record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{save_tfrec_name}{cache_dir_postfix.split('_')[3][:-1]}_{current_subgroup_size}.tfrec".replace(
+                    " ", "")
 
                 with tf.io.TFRecordWriter(record_file) as writer:
                     for sample in dataset:
-                        tf_sample = augmentation.datasets.custom.celeba_128.customised_celeba_undersampled_tosave(sample, label_type)
+                        tf_sample = augmentation.datasets.custom.celeba_128.customised_celeba_undersampled_tosave(
+                            sample, label_type)
                         writer.write(tf_sample.SerializeToString())
 
         # import pdb;pdb.set_trace()
@@ -716,7 +728,9 @@ def get_dataset_aliases(dataset_aliases, datasets):
     else:
         return datasets
 
-def load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac, save_tfrec_name):
+
+def load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac, save_tfrec_name,
+                        undersample_shuffle_seed):
     """
     Load up a custom dataset.
     """
@@ -774,7 +788,7 @@ def load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac
         return augmentation.datasets.custom.celeba_128.load_celeba_128(dataset_name,
                                                                        dataset_version,
                                                                        data_dir,
-                                                                       save_tfrec_name)
+                                                                       save_tfrec_name,
+                                                                       undersample_shuffle_seed)
     else:
         raise NotImplementedError
-

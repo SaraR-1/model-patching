@@ -178,7 +178,7 @@ def get_label_selection_function(label_type):
         raise NotImplementedError
 
 
-def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
+def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name, undersample_shuffle_seed):
     assert dataset_name.startswith('celeb_a_128'), \
         f'Dataset name is {dataset_name}, ' \
         f'should be celeb_a_128/<y_task>/<z_task>/<z_frac>/<which_y>/<which_z>/<label_type>/<optional_take_from_Y0Z0>'
@@ -242,14 +242,22 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name):
     # Compute the sample size before undersampling the dataset
     compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, train_dataset, "train_original")
 
-    # import pdb;pdb.set_trace()
+    import pdb;pdb.set_trace()
     # Filter out the Y0Z0 examples and then add a subset of them back in
     # here len(train_dataset) = 71629 (when loading the first of the 4 subgroups)
     if n_y0z0_examples > 0:
         # Take out examples from Y = 0, Z = 0
         # here len(train_dataset) = 4054 (when loading the first of the 4 subgroups)
         # Take the FIRST 4054 examples - BUT, WHEN IS IT SHUFFLING THE TRAINING SET?
-        train_dataset_y0z0 = train_dataset.filter(lambda image, y, z: (y == 0 and z == 0)).take(n_y0z0_examples)
+        y_t, z_t = 0, 0  # TODO: Change it to be not hard coding
+        if undersample_shuffle_seed != -1:
+            train_dataset_y0z0 = train_dataset.filter(lambda image, y, z: (y == y_t and z == z_t)).take(n_y0z0_examples)
+        else:
+            train_dataset_y0z0 = train_dataset.filter(lambda image, y, z: (y == y_t and z == z_t))
+            # SHUFFLE
+            shuffle_buffer = train_group_original_sizes[y_variant][z_variant][(y_t, z_t)]
+            train_dataset_y0z0 = train_dataset_y0z0.shuffle(shuffle_buffer, seed=undersample_shuffle_seed).take(n_y0z0_examples)
+
         # Keep only examples from groups other than Y = 0, Z = 0
         train_dataset = train_dataset.filter(lambda image, y, z: (y != 0 or z != 0))
         # Add the subset of Y = 0, Z = 0 examples back into the train dataset

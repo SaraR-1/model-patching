@@ -148,7 +148,8 @@ def train_robust_model(config):
                                                       train_shuffle_seeds=config.train_shuffle_seeds,
                                                       cross_validation=config.cross_validation,
                                                       fold=fold,
-                                                      save_tfrec_name=config.save_tfrec_name)
+                                                      save_tfrec_name=config.save_tfrec_name,
+                                                      undersample_shuffle_seed=config.undersample_shuffle_seed)
 
         with devices[1]:
             # Create the model
@@ -584,14 +585,12 @@ def setup_and_train_robust_model(args):
     # Load up the config
     config = recursively_create_config_simple_namespace(args.config, args.template_config)
     # Useful for save_name
-    import pdb;
-    pdb.set_trace()
-    # if config.save_tfrec_name:
-    loss_name = config._config_path.split("/")[-2]
-    y, z = config.train_datasets[0].split("/")[1:3]
-    seed_general = config.seed
-    seed_undersample = config.undersample_seed
-    config.save_tfrec_name = f"{loss_name}_seed{seed_general}_seedunder_{seed_undersample}_{y}_{z}"
+    if config.save_tfrec_name is None:
+        loss_name = config._config_path.split("/")[-2]
+        y, z = config.train_datasets[0].split("/")[1:3]
+        seed_general = config.seed
+        seed_undersample = config.undersample_seed
+        config.save_tfrec_name = f"{loss_name}_seeds_{y}_{z}_{seed_general}_{seed_undersample}"
 
     # Train the end model
     # import pdb;pdb.set_trace()
