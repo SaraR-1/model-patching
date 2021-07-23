@@ -149,7 +149,10 @@ def train_robust_model(config):
                                                       cross_validation=config.cross_validation,
                                                       fold=fold,
                                                       save_tfrec_name=config.save_tfrec_name,
-                                                      undersample_shuffle_seed=config.undersample_seed)
+                                                      undersampling_info={
+                                                          "undersample_shuffle_seed": config.undersample_seed,
+                                                          "train_undersample": config.train_undersample}
+                                                      )
 
         with devices[1]:
             # Create the model
@@ -593,7 +596,8 @@ def setup_and_train_robust_model(args):
         config.save_tfrec_name = f"{loss_name}_seeds_{y}_{z}_{seed_general}_{seed_undersample}"
 
     # Train the end model
-    import pdb;pdb.set_trace()
+    import pdb;
+    pdb.set_trace()
     train_robust_model(config)
 
 

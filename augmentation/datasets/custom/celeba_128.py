@@ -178,7 +178,10 @@ def get_label_selection_function(label_type):
         raise NotImplementedError
 
 
-def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name, undersample_shuffle_seed):
+def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name, undersampling_info):
+    undersample_shuffle_seed = undersampling_info["undersample_shuffle_seed"]
+    train_undersample = undersampling_info["train_undersample"]
+
     assert dataset_name.startswith('celeb_a_128'), \
         f'Dataset name is {dataset_name}, ' \
         f'should be celeb_a_128/<y_task>/<z_task>/<z_frac>/<which_y>/<which_z>/<label_type>/<optional_take_from_Y0Z0>'
@@ -242,7 +245,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name, un
     # Compute the sample size before undersampling the dataset
     compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, train_dataset, "train_original")
 
-    # import pdb;pdb.set_trace()
+    import pdb;pdb.set_trace()
     # Filter out cthe Y0Z0 examples and then add a subset of them back in
     # here len(train_dataset) = 71629 (when loading the first of the 4 subgroups)
     if n_y0z0_examples > 0:
@@ -261,15 +264,24 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name, un
         # Take out examples from Y = 0, Z = 0
         # here len(train_dataset) = 4054 (when loading the first of the 4 subgroups)
         # Take the FIRST 4054 examples - BUT, WHEN IS IT SHUFFLING THE TRAINING SET?
-        # TODO: Actually, need a loop if we need to undersample more than a subgroup
         if y_label == -1 and z_label == -1:
-            y_t, z_t = 0, 0  # TODO: Change it to be not hard coding - if y and z not -1 then current, otherwise 0,0 hard coded
-            n_y0z0_examples = 4054 # TODO: Change it to be not hard coding
-            train_dataset_y0z0 = undersampling_util(y_t, z_t, n_y0z0_examples)
-            # Keep only examples from groups other than Y = 0, Z = 0
-            train_dataset = train_dataset.filter(lambda image, y, z: (y != 0 or z != 0))
-            # Add the subset of Y = 0, Z = 0 examples back into the train dataset
-            train_dataset = train_dataset.concatenate(train_dataset_y0z0)
+            # If train_undersample is not defined, old behaviour
+            if train_undersample.count(None) == len(train_undersample):
+                train_dataset_y0z0 = undersampling_util(0, 0, 4054)
+                # Keep only examples from groups other than Y = 0, Z = 0
+                train_dataset = train_dataset.filter(lambda image, y, z: (y != 0 or z != 0))
+                # Add the subset of Y = 0, Z = 0 examples back into the train dataset
+                train_dataset = train_dataset.concatenate(train_dataset_y0z0)
+            else:
+                # TODO: Actually, need a loop if we need to undersample more than a subgroup
+                # TODO: If more than one subgroup is undersampled, the concatenation doesn't work
+                for undersample in train_undersample:
+                    y_t, z_t, train_dataset_y0z0 = undersample.split("/")
+                    train_dataset_y0z0 = undersampling_util(y_t, z_t, n_y0z0_examples)
+                    # Keep only examples from groups other than Y = 0, Z = 0
+                    train_dataset = train_dataset.filter(lambda image, y, z: (y != y_t or z != z_t))
+                    # Add the subset of Y = 0, Z = 0 examples back into the train dataset
+                    train_dataset = train_dataset.concatenate(train_dataset_y0z0)
         else:
             train_dataset_y0z0 = undersampling_util(y_label, z_label, n_y0z0_examples)
             train_dataset = train_dataset_y0z0

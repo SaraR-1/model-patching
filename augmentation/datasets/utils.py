@@ -231,7 +231,7 @@ CUSTOM_DATASET_PREFIXES = ['mnist_spurious',
 
 
 def load_dataset(dataset_name, dataset_version, data_dir, validation_frac, cross_validation=False, fold=None,
-                 save_tfrec_name=None, undersample_shuffle_seed=-1):
+                 save_tfrec_name=None, undersampling_info=None):
     """
     The main entry point to load any dataset.
     """
@@ -240,7 +240,7 @@ def load_dataset(dataset_name, dataset_version, data_dir, validation_frac, cross
     if np.any([dataset_name.startswith(e) for e in CUSTOM_DATASET_PREFIXES]):
         assert cross_validation is False, 'Cross-validation is not supported for the custom datasets.'
         return load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac, save_tfrec_name,
-                                   undersample_shuffle_seed)
+                                   undersampling_info)
 
     # Set up the dataset
     # import pdb;pdb.set_trace()
@@ -280,10 +280,10 @@ def fetch_datasets_for_trainer(dataset,
                                cross_validation=False,
                                fold=None,
                                save_tfrec_name=None,
-                               undersample_shuffle_seed=-1):
+                               undersampling_info=None):
     # Load the dataset payload
     dataset_payload = load_dataset(dataset, dataset_version, datadir, validation_frac, cross_validation, fold,
-                                   save_tfrec_name, undersample_shuffle_seed)
+                                   save_tfrec_name, undersampling_info)
 
     # Apply modifiers on the datasets
     # dataset_payload = apply_modifier_to_dataset_payload(dataset_payload, train_dataset_modifier, eval_dataset_modifier)
@@ -304,7 +304,7 @@ def fetch_list_of_datasets(datasets,
                            cross_validation=False,
                            fold=None,
                            save_tfrec_name=None,
-                           undersample_shuffle_seed=-1):
+                           undersampling_info=None):
     dataset_splits, training_examples_by_dataset = [], []
     input_shape, n_classes, classes = None, None, None
 
@@ -321,7 +321,7 @@ def fetch_list_of_datasets(datasets,
                                          cross_validation,
                                          fold,
                                          save_tfrec_name,
-                                         undersample_shuffle_seed)
+                                         undersampling_info)
         dataset_splits.append(splits)
         if input_shape is None:
             input_shape, n_classes, classes = input_shape_, n_classes_, classes_
@@ -343,7 +343,7 @@ def fetch_list_of_train_datasets(train_datasets,
                                  cross_validation=False,
                                  fold=None,
                                  save_tfrec_name=None,
-                                 undersample_shuffle_seed=-1):
+                                 undersampling_info=None):
     # Fetch the list of training datasets
     dataset_splits, training_examples_by_dataset, input_shape, n_classes, classes = \
         fetch_list_of_datasets(datasets=train_datasets,
@@ -354,7 +354,7 @@ def fetch_list_of_train_datasets(train_datasets,
                                cross_validation=cross_validation,
                                fold=fold,
                                save_tfrec_name=save_tfrec_name,
-                               undersample_shuffle_seed=undersample_shuffle_seed)
+                               undersampling_info=undersampling_info)
 
     # Grab the train datasets
     train_datasets, _, _ = zip(*dataset_splits)
@@ -382,8 +382,9 @@ def fetch_list_of_eval_datasets(eval_datasets,
                                batch_size=batch_size,
                                cross_validation=cross_validation,
                                fold=fold,
-                               save_tfrec_name=None, # Do not save for "evaluation" dataset
-                               undersample_shuffle_seed=-1)  # Do not shuffle for "evaluation" dataset
+                               save_tfrec_name=None,  # Do not save for "evaluation" dataset
+                               undersampling_info={"undersample_shuffle_seed": -1,
+                                                   "train_undersample": [None]})  # Do not shuffle for 'evaluation' dataset
 
     # Grab the train datasets
     _, val_datasets, test_datasets = zip(*dataset_splits)
@@ -415,7 +416,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                               cross_validation=False,
                                               fold=None,
                                               save_tfrec_name=None,
-                                              undersample_shuffle_seed=-1):
+                                              undersampling_info=None):
     # Fetch the list of training datasets
     print("Fetching training datasets.", flush=True)
     # training_examples_by_dataset = [71629, 66874, 22880, 1387]
@@ -429,7 +430,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                      cross_validation=cross_validation,
                                      fold=fold,
                                      save_tfrec_name=save_tfrec_name,
-                                     undersample_shuffle_seed=undersample_shuffle_seed)
+                                     undersampling_info=undersampling_info)
     # Check the train_dataset before "applying" the aliases
     # import pdb;pdb.set_trace()
     # Fetch the list of evaluation datasets
@@ -601,8 +602,8 @@ def create_data_generator(dataset,
             current_subgroup_size = sum([1 for _ in dataset])
             print(f"Subgroup: {subgroup_key}")
             original_subgroup_size = \
-            augmentation.datasets.custom.celeba_128.train_group_original_sizes['Blond_Hair']['Male'][
-                subgroup_key]
+                augmentation.datasets.custom.celeba_128.train_group_original_sizes['Blond_Hair']['Male'][
+                    subgroup_key]
             print(f"Subgroup: {subgroup_key}, original: {original_subgroup_size}, current: {current_subgroup_size}")
 
             # import pdb;pdb.set_trace()
@@ -730,7 +731,7 @@ def get_dataset_aliases(dataset_aliases, datasets):
 
 
 def load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac, save_tfrec_name,
-                        undersample_shuffle_seed):
+                        undersampling_info):
     """
     Load up a custom dataset.
     """
@@ -789,6 +790,6 @@ def load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac
                                                                        dataset_version,
                                                                        data_dir,
                                                                        save_tfrec_name,
-                                                                       undersample_shuffle_seed)
+                                                                       undersampling_info)
     else:
         raise NotImplementedError
