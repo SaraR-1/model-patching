@@ -70,28 +70,18 @@ cross_validation: False
 validation_frac: 0.
 
 # Dataset settings
+train_undersample:
+  - '0/0/4054'
 train_datasets:
-  - 'celeb_a_128/Blond_Hair/Male/1.0/0/0/y/4054'
-  - 'celeb_a_128/Blond_Hair/Male/1.0/0/1/y'
-  - 'celeb_a_128/Blond_Hair/Male/1.0/1/0/y'
-  - 'celeb_a_128/Blond_Hair/Male/1.0/1/1/y'
+  - 'celeb_a_128/Blond_Hair/Male/1.0/-1/-1/y/1' # if -1/-1: 1 just a key/flag for undersampling, then will take the subgroup and size from train_undersample
 train_dataset_versions:
   - '2.*.*'
-  - '2.*.*'
-  - '2.*.*'
-  - '2.*.*'
 train_dataset_aliases:
-  - '(Y=0)(Z=0)'
-  - '(Y=0)(Z=1)'
-  - '(Y=1)(Z=0)'
-  - '(Y=1)(Z=1)'
+  - ''
 train_datadirs:
   - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
-  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
-  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
-  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
 max_shuffle_buffer: 40000
-save_tfrec_name: 'temp_erm_seed3'
+save_tfrec_name: 'temp_erm_seed3_oldconfig'
 
 eval_datasets:
   - 'celeb_a_128/Blond_Hair/Male/1.0/0/0/y'

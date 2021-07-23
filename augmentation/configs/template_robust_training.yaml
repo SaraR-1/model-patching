@@ -77,6 +77,8 @@ cross_validation: False
 validation_frac: 0.0
 
 # Train dataset settings
+train_undersample:
+  - null # Very important for erm (when loading all the data together, independently of the subgroup), not used in the other methods
 train_datasets:
   - mnist
 train_dataset_versions:
