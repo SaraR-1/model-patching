@@ -596,8 +596,7 @@ def setup_and_train_robust_model(args):
         config.save_tfrec_name = f"{loss_name}_seeds_{y}_{z}_{seed_general}_{seed_undersample}"
 
     # Train the end model
-    import pdb;
-    pdb.set_trace()
+    # import pdb;pdb.set_trace()
     train_robust_model(config)
 
 
