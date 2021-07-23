@@ -276,7 +276,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name, un
                 # TODO: Actually, need a loop if we need to undersample more than a subgroup
                 # TODO: If more than one subgroup is undersampled, the concatenation doesn't work
                 for undersample in train_undersample:
-                    y_t, z_t, train_dataset_y0z0 = undersample.split("/")
+                    y_t, z_t, n_y0z0_examples = [int(x) for x in undersample.split("/")]
                     train_dataset_y0z0 = undersampling_util(y_t, z_t, n_y0z0_examples)
                     # Keep only examples from groups other than Y = 0, Z = 0
                     train_dataset = train_dataset.filter(lambda image, y, z: (y != y_t or z != z_t))
