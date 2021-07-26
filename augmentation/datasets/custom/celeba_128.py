@@ -245,7 +245,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name, un
     # Compute the sample size before undersampling the dataset
     compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, train_dataset, "train_original")
 
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     # Filter out cthe Y0Z0 examples and then add a subset of them back in
     # here len(train_dataset) = 71629 (when loading the first of the 4 subgroups)
     if n_subgroup_examples > 0:
@@ -298,7 +298,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name, un
             label_selection_fn_tosave = get_label_selection_function("full")
             # Still 4054
             train_dataset_tosave = train_dataset_tosave.map(label_selection_fn_tosave, num_parallel_calls=16)
-            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}.tfrec"
+            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}.tfrec"
 
             # import pdb;pdb.set_trace()
             with tf.io.TFRecordWriter(record_file) as writer:

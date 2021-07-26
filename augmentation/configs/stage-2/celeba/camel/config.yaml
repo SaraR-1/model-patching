@@ -6,7 +6,7 @@ mode: train
 wandb_entity: predictive-analytics-lab
 wandb_project: model-patching
 wandb_group: stage-2
-wandb_job_type: celeba_debug
+wandb_job_type: celeba_good
 
 # Logical GPUs
 logical_gpus: [14336]
@@ -58,7 +58,7 @@ weight_decay_rate: 0.05
 max_global_grad_norm: -1
 
 # Training details
-n_epochs: 1 #100
+n_epochs: 100 #100
 batch_size: 16
 baseline_batch_size: 128
 
