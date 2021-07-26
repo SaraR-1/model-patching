@@ -245,7 +245,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name, un
     # Compute the sample size before undersampling the dataset
     compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, train_dataset, "train_original")
 
-    # import pdb;pdb.set_trace()
+    import pdb;pdb.set_trace()
     # Filter out cthe Y0Z0 examples and then add a subset of them back in
     # here len(train_dataset) = 71629 (when loading the first of the 4 subgroups)
     if n_subgroup_examples > 0:
