@@ -91,7 +91,6 @@ def train_robust_model(config):
                     broadcast_train_to=len(config.train_datasets),
                     broadcast_eval_to=len(config.eval_datasets))
         # import pdb;pdb.set_trace()
-        # TODO: here first time in code using aliases
         # Get the dataset generators
         # CONFIG
         # config.train_dataset_aliases = ['(Y=0)(Z=0)', '(Y=0)(Z=1)', '(Y=1)(Z=0)', '(Y=1)(Z=1)']
