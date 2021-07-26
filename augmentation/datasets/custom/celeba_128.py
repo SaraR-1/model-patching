@@ -250,7 +250,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name, un
     # here len(train_dataset) = 71629 (when loading the first of the 4 subgroups)
     if n_subgroup_examples > 0:
         def undersampling_util(y_t, z_t, n_examples):
-            if undersample_shuffle_seed != -1:
+            if undersample_shuffle_seed == -1:
                 train_dataset_y0z0 = train_dataset.filter(lambda image, y, z: (y == y_t and z == z_t)).take(
                     n_examples)
             else:
