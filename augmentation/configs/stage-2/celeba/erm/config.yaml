@@ -58,7 +58,7 @@ weight_decay_rate: 0.05
 max_global_grad_norm: -1
 
 # Training details
-n_epochs: 1 # 100
+n_epochs: 100 # 100
 batch_size: 16
 baseline_batch_size: 128
 
@@ -79,7 +79,7 @@ train_dataset_aliases:
 train_datadirs:
   - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
 max_shuffle_buffer: 40000
-save_tfrec_name: 'temp_erm_seed3_oldconfig'
+#save_tfrec_name: 'temp_erm_seed3_oldconfig'
 
 eval_datasets:
   - 'celeb_a_128/Blond_Hair/Male/1.0/0/0/y'
