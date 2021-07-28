@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="Always" serverName="sr572@turing:22">
+    <serverData>
+      <paths name="sr572@goedel:22">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/pycharm_project_132" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="sr572@hydra:22">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/pycharm_project_899" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="sr572@turing:22">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/pycharm_project_477" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
+  </component>
+</project>
