@@ -111,6 +111,9 @@ def train_robust_model(config):
                                                       shuffle_before_repeat=config.shuffle_before_repeat,
                                                       max_shuffle_buffer=config.max_shuffle_buffer,
                                                       train_shuffle_seeds=config.train_shuffle_seeds,
+                                                      undersampling_info={
+                                                          "undersample_shuffle_seed": config.undersample_seed,
+                                                          "save_tfrec_name": config.save_tfrec_name},
                                                       cross_validation=config.cross_validation,
                                                       fold=fold)
 
@@ -522,6 +525,14 @@ def train_step_robust(model,
 def setup_and_train_robust_model(args):
     # Load up the config
     config = recursively_create_config_simple_namespace(args.config, args.template_config)
+
+    # Useful for save_name
+    if config.save_tfrec_name is None:
+        loss_name = config._config_path.split("/")[-2]
+        y, z = config.train_datasets[0].split("/")[1:3]
+        seed_general = config.seed
+        seed_undersample = config.undersample_seed
+        config.save_tfrec_name = f"{loss_name}_seeds_{y}_{z}_{seed_general}_{seed_undersample}"
 
     # Train the end model
     train_robust_model(config)

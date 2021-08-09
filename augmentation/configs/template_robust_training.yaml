@@ -88,6 +88,9 @@ train_shuffle_seeds: null
 max_shuffle_buffer: -1
 shuffle_before_repeat: False
 
+save_tfrec_name: ""
+undersample_seed: -1
+
 # Eval dataset settings
 eval_datasets:
   - mnist
