@@ -527,7 +527,7 @@ def setup_and_train_robust_model(args):
     config = recursively_create_config_simple_namespace(args.config, args.template_config)
 
     # Useful for save_name
-    if config.save_tfrec_name is None:
+    if (config.save_tfrec_name is None) or (len(config.save_tfrec_name)==0):
         loss_name = config._config_path.split("/")[-2]
         y, z = config.train_datasets[0].split("/")[1:3]
         seed_general = config.seed
