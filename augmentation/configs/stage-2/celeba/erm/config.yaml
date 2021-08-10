@@ -6,13 +6,13 @@ mode: train
 wandb_entity: predictive-analytics-lab
 wandb_project: model-patching
 wandb_group: stage-2
-wandb_job_type: celeba
+wandb_job_type: celeba_good
 
 # Logical GPUs
 logical_gpus: [14336]
 
 # Random seed
-seed: 1
+seed: 3
 
 # Architecture
 model_source: cm
@@ -75,8 +75,9 @@ train_dataset_versions:
 train_dataset_aliases:
   - ''
 train_datadirs:
-  - /home/celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
 max_shuffle_buffer: 40000
+undersample_seed: 1
 
 eval_datasets:
   - 'celeb_a_128/Blond_Hair/Male/1.0/0/0/y'
@@ -95,10 +96,10 @@ eval_dataset_aliases:
   - '(Y=1)(Z=1)'
 # eval_dataset_modifier: ''
 eval_datadirs:
-  - /home/celeba_tfrecord_128
-  - /home/celeba_tfrecord_128
-  - /home/celeba_tfrecord_128
-  - /home/celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
+  - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
 
 # Static augmentations
 train_static_augmentation_pipelines:
@@ -130,10 +131,10 @@ eval_gpu_augmentation_pipelines_args:
 
 # Dataflow settings
 dataflow: disk_cached
-cache_dir: /home/tfcache/
+cache_dir: ./tfcache/
 
 # Path to checkpoints in wandb.run directory
 checkpoint_path: '/checkpoints/'
 
 # Checkpoint every _ epochs
-checkpoint_freq: 1
+checkpoint_freq: 2

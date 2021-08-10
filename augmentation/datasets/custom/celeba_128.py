@@ -232,25 +232,25 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         # Add the subset of Y = 0, Z = 0 examples back into the train dataset
         train_dataset = train_dataset.concatenate(train_dataset_y0z0)
 
-    if save_tfrec_name != "":
-        # Crate global variable SAVE_TFREC_NAME
-        global SAVE_TFREC_NAME
-        SAVE_TFREC_NAME = save_tfrec_name
-        # global LABEL_TYPE
-        # LABEL_TYPE = label_type
+        if save_tfrec_name != "":
+            # Crate global variable SAVE_TFREC_NAME
+            global SAVE_TFREC_NAME
+            SAVE_TFREC_NAME = save_tfrec_name
+            # global LABEL_TYPE
+            # LABEL_TYPE = label_type
 
-        train_dataset_tosave = train_dataset
-        # Save undersampled train set:
-        label_selection_fn_tosave = get_label_selection_function("full")
-        # Still 4054
-        train_dataset_tosave = train_dataset_tosave.map(label_selection_fn_tosave, num_parallel_calls=16)
-        record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}.tfrec"
+            train_dataset_tosave = train_dataset
+            # Save undersampled train set:
+            label_selection_fn_tosave = get_label_selection_function("full")
+            # Still 4054
+            train_dataset_tosave = train_dataset_tosave.map(label_selection_fn_tosave, num_parallel_calls=16)
+            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}.tfrec"
 
-        # import pdb;pdb.set_trace()
-        with tf.io.TFRecordWriter(record_file) as writer:
-            for sample in train_dataset_tosave:
-                tf_sample = customised_celeba_undersampled_tosave(sample)
-                writer.write(tf_sample.SerializeToString())
+            # import pdb;pdb.set_trace()
+            with tf.io.TFRecordWriter(record_file) as writer:
+                for sample in train_dataset_tosave:
+                    tf_sample = customised_celeba_undersampled_tosave(sample)
+                    writer.write(tf_sample.SerializeToString())
 
     # N.B. important compute it here before losing the information about z (after label_selection_fn)
     compute_celeba_dataset_len(y_variant, z_variant, y_label, z_label, train_dataset, val_dataset, test_dataset)
