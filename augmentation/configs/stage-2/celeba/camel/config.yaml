@@ -56,7 +56,7 @@ weight_decay_rate: 0.05
 max_global_grad_norm: -1
 
 # Training details
-n_epochs: 100
+n_epochs: 1
 batch_size: 16
 baseline_batch_size: 128
 
