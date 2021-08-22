@@ -3,7 +3,7 @@ prefix: robust
 mode: train
 
 # Weights and Biases
-wandb_entity: hazy-research
+wandb_entity: predictive-analytics-lab
 wandb_project: model-patching
 wandb_group: stage-2
 wandb_job_type: waterbirds
@@ -12,7 +12,7 @@ wandb_job_type: waterbirds
 logical_gpus: [14336]
 
 # Random seed
-seed: 1
+seed: 3
 
 # Architecture
 model_source: cm
@@ -75,7 +75,7 @@ train_dataset_versions:
 train_dataset_aliases:
   - ''
 train_datadirs:
-  - /home/waterbirds_tfrecord_224
+  - /srv/galene0/sr572/Waterbirds/waterbirds_tfrecord_224
 # max_shuffle_buffer: -1
 
 eval_datasets:
@@ -95,10 +95,10 @@ eval_dataset_aliases:
   - '(Y=1)(Z=1)'
 # eval_dataset_modifier: ''
 eval_datadirs:
-  - /home/waterbirds_tfrecord_224
-  - /home/waterbirds_tfrecord_224
-  - /home/waterbirds_tfrecord_224
-  - /home/waterbirds_tfrecord_224
+  - /srv/galene0/sr572/Waterbirds/waterbirds_tfrecord_224
+  - /srv/galene0/sr572/Waterbirds/waterbirds_tfrecord_224
+  - /srv/galene0/sr572/Waterbirds/waterbirds_tfrecord_224
+  - /srv/galene0/sr572/Waterbirds/waterbirds_tfrecord_224
 
 
 # Static augmentations
@@ -131,10 +131,10 @@ eval_gpu_augmentation_pipelines_args:
 
 # Dataflow settings
 dataflow: disk_cached
-cache_dir: /home/tfcache/
+cache_dir: ./tfcache/
 
 # Path to checkpoints in wandb.run directory
 checkpoint_path: '/checkpoints/'
 
 # Checkpoint every _ epochs
-checkpoint_freq: 1
+checkpoint_freq: 2
