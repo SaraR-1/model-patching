@@ -28,6 +28,7 @@ def dataset_len(tf_dataset, verbose=False):
 
 def get_dataset_from_list_files_dataset(list_files_dataset, proc_batch, tfrecord_example_reader, sequential=False):
     num_parallel_reads = cpu_count()
+    print(num_parallel_reads)
     if sequential:
         num_parallel_reads = 1
     # Load up the TFRecord dataset with parallel reads: this will interleave unless sequential is set to True
