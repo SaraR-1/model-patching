@@ -80,7 +80,7 @@ def load_base_variant(data_dir, y_label, z_label, label_type, proc_batch=128):
     waterbirds_dataset = augmentation.datasets.utils. \
         get_dataset_from_list_files_dataset(waterbirds_dataset, proc_batch=proc_batch,
                                             tfrecord_example_reader=read_waterbirds_tfrecord).unbatch()
-
+    import pdb;pdb.set_trace()
     # Split the data into train, validation and test
     waterbirds_train = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
                                                  (split == 0))
