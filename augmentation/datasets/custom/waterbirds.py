@@ -141,9 +141,20 @@ def sample_shuffle(waterbirds_dataset, sample_shuffle_seed):
         image.set_shape((None, None, 3))
         return image, img_id, img_filename, place_filename, y, tf.constant(new_split, dtype=split.dtype), place
 
+    def set_shapes(image, img_id, img_filename, place_filename, y, split, place):
+        img_id.set_shape([])
+        image.set_shape((None, None, 3))
+        img_filename.set_shape([])
+        place_filename.set_shape([])
+        y.set_shape([])
+        split.set_shape([])
+        place.set_shape([])
+        return image, img_id, img_filename, place_filename, y, split, place
+
     # Overwrite the split attribute with the new shuffled split
     map_f_return_types = [tf.uint8, tf.int64, tf.string, tf.string, tf.int64, tf.int64, tf.int64]
     waterbirds_dataset = waterbirds_dataset.map(lambda *x: tf.py_function(pop_new_split, x, map_f_return_types))
+    waterbirds_dataset = waterbirds_dataset.map(set_shapes)
 
     # Define the new split df
     split_new = pd.DataFrame.from_dict(waterbirds_shuffle_idx_dict, orient='index', columns=["split"])
@@ -181,6 +192,7 @@ def load_base_variant(data_dir, y_label, z_label, label_type, proc_batch=128, sa
     waterbirds_train = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place: (split == group_map["train"]))
     waterbirds_val = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place: (split == group_map["val"]))
     waterbirds_test = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place: (split == group_map["test"]))
+
     # import pdb;pdb.set_trace()
     # Write only if it's the first time (no dot rewrite after defining eval/test/subset of train
     if sample_shuffle_seed != -1 and not (save_datadir / "waterbirds_dataset_split.csv").is_file():
