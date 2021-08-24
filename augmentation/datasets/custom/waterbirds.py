@@ -256,7 +256,7 @@ def load_waterbirds(dataset_name, dataset_version, data_dir, sample_shuffle_seed
     if dataset_version == '1.*.*':
         # Load up the basic dataset
         waterbirds_train, waterbirds_val, waterbirds_test = load_base_variant(data_dir, y_label, z_label, label_type,
-                                                                              sample_shuffle_seed)
+                                                                              sample_shuffle_seed=sample_shuffle_seed)
 
         # Compute the lengths of the dataset
         train_dataset_len, val_dataset_len, test_dataset_len = get_waterbirds_dataset_len(y_label, z_label)
