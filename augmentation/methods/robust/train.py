@@ -537,6 +537,7 @@ def setup_and_train_robust_model(args):
         seed_undersample = config.undersample_seed
         config.save_tfrec_name = f"{loss_name}_seeds_{y}_{z}_{seed_general}_{seed_undersample}"
 
+    print(config)
     # Train the end model
     train_robust_model(config)
 
