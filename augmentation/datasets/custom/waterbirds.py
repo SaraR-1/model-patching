@@ -176,15 +176,11 @@ def load_base_variant(data_dir, y_label, z_label, label_type, proc_batch=128, sa
         waterbirds_dataset, split_new = sample_shuffle(waterbirds_dataset, sample_shuffle_seed)
         save_datadir = Path(f"/srv/galene0/sr572/Waterbirds/sample_shuffle_{sample_shuffle_seed}")
         Path(save_datadir).mkdir(parents=True, exist_ok=True)
-    else:
-        # Split the data into train, validation and test
-        waterbirds_train = waterbirds_dataset.filter(
-            lambda image, img_id, img_filename, place_filename, y, split, place:
-            (split == group_map["train"]))
-        waterbirds_val = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
-                                                   (split == group_map["val"]))
-        waterbirds_test = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
-                                                    (split == group_map["test"]))
+
+    # Split the data into train, validation and test
+    waterbirds_train = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place: (split == group_map["train"]))
+    waterbirds_val = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place: (split == group_map["val"]))
+    waterbirds_test = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place: (split == group_map["test"]))
     # import pdb;pdb.set_trace()
     # Write only if it's the first time (no dot rewrite after defining eval/test/subset of train
     if sample_shuffle_seed != -1 and not (save_datadir / "waterbirds_dataset_split.csv").is_file():
