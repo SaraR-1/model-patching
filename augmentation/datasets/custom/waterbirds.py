@@ -230,7 +230,9 @@ def load_base_variant(data_dir, y_label, z_label, label_type, proc_batch=128, sa
         Path(save_datadir).mkdir(parents=True, exist_ok=True)
 
         # Split the data into train, validation and test
-        waterbirds_train = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place: (filter_isin(img_id, waterbirds_shuffle_idx_dataflag_dict["train"])))
+        import pdb;pdb.set_trace()
+        waterbirds_train = waterbirds_dataset.filter(lambda *x: filter_isin(x, waterbirds_shuffle_idx_dataflag_dict["train"]))
+        # waterbirds_train = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place: (filter_isin(img_id, waterbirds_shuffle_idx_dataflag_dict["train"])))
         waterbirds_val = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place: (filter_isin(img_id, waterbirds_shuffle_idx_dataflag_dict["val"])))
         waterbirds_test = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place: (filter_isin(img_id, waterbirds_shuffle_idx_dataflag_dict["test"])))
 
