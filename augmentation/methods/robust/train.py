@@ -19,7 +19,7 @@ from augmentation.utilities.checkpoint import *
 from augmentation.utilities.wandb import *
 import tempfile
 
-os.environ['WANDB_MODE'] = 'offline'
+# os.environ['WANDB_MODE'] = 'offline'
 
 
 def train_robust_model(config):
@@ -88,7 +88,6 @@ def train_robust_model(config):
                     broadcast_eval_to=len(config.eval_datasets))
 
         # Get the dataset generators
-        print(f"SAMPLE SHUFFLE SEED ARGUMENT: {config.sample_shuffle_seed}")
         (train_generators, val_generators, test_generators), \
         (input_shape, n_classes, classes, n_training_examples, group_training_examples), \
         (train_dataset_aliases, val_dataset_aliases, test_dataset_aliases) = \

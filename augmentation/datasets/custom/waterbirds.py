@@ -165,7 +165,6 @@ def sample_shuffle_write_data_csv(data, save_filename):
 
 
 def load_base_variant(data_dir, y_label, z_label, label_type, proc_batch=128, sample_shuffle_seed=None):
-    print(f"SAMPLE SHUFFLE SEED ARGUMENT: {sample_shuffle_seed}")
     # Load up the list of .tfrec files for the train/val/test sets
     waterbirds_dataset = tf.data.Dataset.list_files(f'{data_dir}/*.tfrec', shuffle=False)
 
@@ -175,6 +174,8 @@ def load_base_variant(data_dir, y_label, z_label, label_type, proc_batch=128, sa
                                             tfrecord_example_reader=read_waterbirds_tfrecord).unbatch()
     if sample_shuffle_seed != -1:
         waterbirds_dataset, split_new = sample_shuffle(waterbirds_dataset, sample_shuffle_seed)
+        save_datadir = Path(f"/srv/galene0/sr572/Waterbirds/sample_shuffle_{sample_shuffle_seed}")
+        Path(save_datadir).mkdir(parents=True, exist_ok=True)
 
     # Split the data into train, validation and test
     waterbirds_train = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
@@ -183,11 +184,9 @@ def load_base_variant(data_dir, y_label, z_label, label_type, proc_batch=128, sa
                                                (split == group_map["val"]))
     waterbirds_test = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
                                                 (split == group_map["test"]))
-    import pdb;pdb.set_trace()
-    if sample_shuffle_seed != -1:
-        print(sample_shuffle_seed)
-        save_datadir = Path(f"/srv/galene0/sr572/Waterbirds/sample_shuffle_{sample_shuffle_seed}")
-        Path(save_datadir).mkdir(parents=True, exist_ok=True)
+    # import pdb;pdb.set_trace()
+    # Write only if it's the first time (no dot rewrite after defining eval/test/subset of train
+    if sample_shuffle_seed != -1 and not (save_datadir / "waterbirds_dataset_split.csv").is_file():
         split_new.to_csv(Path(save_datadir) / "waterbirds_dataset_split.csv", sep=" ", index=False)
 
         for data, data_flag in zip([waterbirds_train, waterbirds_val, waterbirds_test], ["train", "val", "test"]):
@@ -242,7 +241,6 @@ def get_waterbirds_dataset_len(y_label, z_label):
 
 
 def load_waterbirds(dataset_name, dataset_version, data_dir, sample_shuffle_seed):
-    print(f"SAMPLE SHUFFLE SEED ARGUMENT: {sample_shuffle_seed}")
     assert dataset_name.startswith(
         'waterbirds'), f'Dataset name is {dataset_name}, should be waterbirds/<which_y>/<which_z>/<y or z>'
 

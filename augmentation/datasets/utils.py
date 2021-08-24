@@ -236,7 +236,6 @@ def load_dataset(dataset_name, dataset_version, data_dir, validation_frac,
     """
 
     # For a custom dataset, call the custom dataset loader
-    print(f"SAMPLE SHUFFLE SEED ARGUMENT: {sample_shuffle_seed}")
     if np.any([dataset_name.startswith(e) for e in CUSTOM_DATASET_PREFIXES]):
         assert cross_validation is False, 'Cross-validation is not supported for the custom datasets.'
         return load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac, undersampling_info,
@@ -280,7 +279,6 @@ def fetch_datasets_for_trainer(dataset,
                                cross_validation=False,
                                fold=None):
     # Load the dataset payload
-    print(f"SAMPLE SHUFFLE SEED ARGUMENT: {sample_shuffle_seed}")
     dataset_payload = load_dataset(dataset, dataset_version, datadir, validation_frac,
                                    undersampling_info, sample_shuffle_seed,
                                    cross_validation, fold)
@@ -308,7 +306,6 @@ def fetch_list_of_datasets(datasets,
     dataset_splits, training_examples_by_dataset = [], []
     input_shape, n_classes, classes = None, None, None
 
-    print(f"SAMPLE SHUFFLE SEED ARGUMENT: {sample_shuffle_seed}")
     # Loop over all the datasets
     for dataset, dataset_version, datadir in zip(datasets, dataset_versions, datadirs):
         # Fetch the dataset
@@ -346,7 +343,6 @@ def fetch_list_of_train_datasets(train_datasets,
                                  cross_validation=False,
                                  fold=None):
     # Fetch the list of training datasets
-    print(f"SAMPLE SHUFFLE SEED ARGUMENT: {sample_shuffle_seed}")
     dataset_splits, training_examples_by_dataset, input_shape, n_classes, classes = \
         fetch_list_of_datasets(datasets=train_datasets,
                                dataset_versions=train_dataset_versions,
@@ -422,7 +418,6 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                               fold=None):
     # Fetch the list of training datasets
     print("Fetching training datasets.", flush=True)
-    print(f"SAMPLE SHUFFLE SEED ARGUMENT: {sample_shuffle_seed}")
     train_datasets, (training_examples_by_dataset, n_training_examples,
                      train_input_shape, train_n_classes, train_classes) = \
         fetch_list_of_train_datasets(train_datasets=train_dataset_names,
@@ -760,7 +755,6 @@ def load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac
                                                                                      data_dir,
                                                                                      validation_frac)
     elif dataset_name.startswith('waterbirds'):
-        print(f"SAMPLE SHUFFLE SEED ARGUMENT: {sample_shuffle_seed}")
         return augmentation.datasets.custom.waterbirds.load_waterbirds(dataset_name,
                                                                        dataset_version,
                                                                        data_dir,
