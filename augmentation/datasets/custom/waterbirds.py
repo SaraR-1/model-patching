@@ -165,6 +165,7 @@ def sample_shuffle_write_data_csv(data, save_filename):
 
 
 def load_base_variant(data_dir, y_label, z_label, label_type, proc_batch=128, sample_shuffle_seed=None):
+    print(f"SAMPLE SHUFFLE SEED ARGUMENT: {sample_shuffle_seed}")
     # Load up the list of .tfrec files for the train/val/test sets
     waterbirds_dataset = tf.data.Dataset.list_files(f'{data_dir}/*.tfrec', shuffle=False)
 
@@ -241,6 +242,7 @@ def get_waterbirds_dataset_len(y_label, z_label):
 
 
 def load_waterbirds(dataset_name, dataset_version, data_dir, sample_shuffle_seed):
+    print(f"SAMPLE SHUFFLE SEED ARGUMENT: {sample_shuffle_seed}")
     assert dataset_name.startswith(
         'waterbirds'), f'Dataset name is {dataset_name}, should be waterbirds/<which_y>/<which_z>/<y or z>'
 

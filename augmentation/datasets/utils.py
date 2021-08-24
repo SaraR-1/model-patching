@@ -236,6 +236,7 @@ def load_dataset(dataset_name, dataset_version, data_dir, validation_frac,
     """
 
     # For a custom dataset, call the custom dataset loader
+    print(f"SAMPLE SHUFFLE SEED ARGUMENT: {sample_shuffle_seed}")
     if np.any([dataset_name.startswith(e) for e in CUSTOM_DATASET_PREFIXES]):
         assert cross_validation is False, 'Cross-validation is not supported for the custom datasets.'
         return load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac, undersampling_info,
@@ -279,6 +280,7 @@ def fetch_datasets_for_trainer(dataset,
                                cross_validation=False,
                                fold=None):
     # Load the dataset payload
+    print(f"SAMPLE SHUFFLE SEED ARGUMENT: {sample_shuffle_seed}")
     dataset_payload = load_dataset(dataset, dataset_version, datadir, validation_frac,
                                    undersampling_info, sample_shuffle_seed,
                                    cross_validation, fold)
@@ -758,6 +760,7 @@ def load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac
                                                                                      data_dir,
                                                                                      validation_frac)
     elif dataset_name.startswith('waterbirds'):
+        print(f"SAMPLE SHUFFLE SEED ARGUMENT: {sample_shuffle_seed}")
         return augmentation.datasets.custom.waterbirds.load_waterbirds(dataset_name,
                                                                        dataset_version,
                                                                        data_dir,
