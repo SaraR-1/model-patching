@@ -158,6 +158,7 @@ def sample_shuffle(waterbirds_dataset, sample_shuffle_seed):
 
 def sample_shuffle_write_data_csv(data, save_filename):
     data_new = pd.DataFrame(columns=["filename", "id", "y", "z", "class", "domain"])
+    import pdb;pdb.set_trace()
     for idx, (image, img_id, img_filename, place_filename, y, split, place) in enumerate(data):
         data_new.loc[idx] = [f'{img_id.numpy():05}.jpg', img_id.numpy(), y.numpy(), split.numpy(),
                              WATERBIRDS_CLASSES[y.numpy()], WATERBIRDS_DOMAINS[split.numpy()]]
@@ -183,7 +184,7 @@ def load_base_variant(data_dir, y_label, z_label, label_type, proc_batch=128, sa
                                                (split == group_map["val"]))
     waterbirds_test = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
                                                 (split == group_map["test"]))
-    # import pdb;pdb.set_trace()
+    import pdb;pdb.set_trace()
     if sample_shuffle_seed != -1:
         save_datadir = Path(f"/srv/galene0/sr572/Waterbirds/sample_shuffle_{sample_shuffle_seed}")
         Path(save_datadir).mkdir(parents=True, exist_ok=True)
