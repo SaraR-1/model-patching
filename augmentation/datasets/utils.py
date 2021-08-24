@@ -306,6 +306,7 @@ def fetch_list_of_datasets(datasets,
     dataset_splits, training_examples_by_dataset = [], []
     input_shape, n_classes, classes = None, None, None
 
+    print(f"SAMPLE SHUFFLE SEED ARGUMENT: {sample_shuffle_seed}")
     # Loop over all the datasets
     for dataset, dataset_version, datadir in zip(datasets, dataset_versions, datadirs):
         # Fetch the dataset
@@ -343,6 +344,7 @@ def fetch_list_of_train_datasets(train_datasets,
                                  cross_validation=False,
                                  fold=None):
     # Fetch the list of training datasets
+    print(f"SAMPLE SHUFFLE SEED ARGUMENT: {sample_shuffle_seed}")
     dataset_splits, training_examples_by_dataset, input_shape, n_classes, classes = \
         fetch_list_of_datasets(datasets=train_datasets,
                                dataset_versions=train_dataset_versions,
@@ -418,6 +420,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                               fold=None):
     # Fetch the list of training datasets
     print("Fetching training datasets.", flush=True)
+    print(f"SAMPLE SHUFFLE SEED ARGUMENT: {sample_shuffle_seed}")
     train_datasets, (training_examples_by_dataset, n_training_examples,
                      train_input_shape, train_n_classes, train_classes) = \
         fetch_list_of_train_datasets(train_datasets=train_dataset_names,
