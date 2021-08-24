@@ -180,6 +180,7 @@ def load_base_variant(data_dir, y_label, z_label, label_type, proc_batch=128, sa
     # Split the data into train, validation and test
     waterbirds_train = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
                                                  (split == group_map["train"]))
+    print(f"Train Size: {sum([1 for _ in waterbirds_train])}")
     waterbirds_val = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
                                                (split == group_map["val"]))
     waterbirds_test = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
