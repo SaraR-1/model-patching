@@ -107,7 +107,7 @@ def get_label_selection_function(label_type):
 #         all_og[all_og["id"].isin(split_new_dict[data_flag])].to_csv(file_name, sep=" ", index=False)
 
 
-def sample_shuffle(waterbirds_dataset, sample_shuffle_seed):
+def sample_shuffle_old(waterbirds_dataset, sample_shuffle_seed):
     shuffle_buffer = 4000
     # Save the original dataset
     # waterbirds_dataset_og = waterbirds_dataset
@@ -123,7 +123,9 @@ def sample_shuffle(waterbirds_dataset, sample_shuffle_seed):
         # z is identified as place
         # Only interested in the img_idx: img[1].numpy()
         subgroup_idx_list = [img[1].numpy() for img in
-                             waterbirds_dataset_shuffle.filter(lambda image, img_id, img_filename, place_filename, y, split, place: (y == y_t) and (place == z_t))]
+                             waterbirds_dataset_shuffle.filter(
+                                 lambda image, img_id, img_filename, place_filename, y, split, place: (y == y_t) and (
+                                         place == z_t))]
         # Write train idx
         for idx in subgroup_idx_list[:group_size["train"][subgroup]]:
             waterbirds_shuffle_idx_dict[idx] = group_map["train"]
@@ -154,6 +156,46 @@ def sample_shuffle(waterbirds_dataset, sample_shuffle_seed):
     return waterbirds_dataset, split_new
 
 
+def sample_shuffle(waterbirds_dataset, sample_shuffle_seed):
+    shuffle_buffer = 4000
+    # Save the original dataset
+    # waterbirds_dataset_og = waterbirds_dataset
+
+    # Shuffle data
+    waterbirds_dataset_shuffle = waterbirds_dataset.shuffle(buffer_size=shuffle_buffer, seed=sample_shuffle_seed)
+    assert sum([1 for _ in waterbirds_dataset]) == sum([1 for _ in waterbirds_dataset_shuffle])
+
+    waterbirds_shuffle_idx_dict = {}
+    waterbirds_shuffle_idx_dataflag_dict = {data_flag: [] for data_flag in ["train", "val", "test"]}
+    for subgroup in group_size["train"].keys():
+        # import pdb;pdb.set_trace()
+        y_t, z_t = subgroup
+        # z is identified as place
+        # Only interested in the img_idx: img[1].numpy()
+        subgroup_idx_list = [img[1].numpy() for img in
+                             waterbirds_dataset_shuffle.filter(
+                                 lambda image, img_id, img_filename, place_filename, y, split, place: (y == y_t) and (
+                                         place == z_t))]
+
+        waterbirds_shuffle_idx_dataflag_dict["train"].append(subgroup_idx_list[:group_size["train"][subgroup]])
+        waterbirds_shuffle_idx_dataflag_dict["val"].append(subgroup_idx_list[
+                                                           group_size["train"][subgroup]:group_size["train"][subgroup] +
+                                                                                         group_size["val"][subgroup]])
+        waterbirds_shuffle_idx_dataflag_dict["test"].append(subgroup_idx_list[-group_size["test"][subgroup]:])
+
+    for data_flag in ["train", "val", "test"]:
+        waterbirds_shuffle_idx_dataflag_dict[data_flag] = [j for i in waterbirds_shuffle_idx_dataflag_dict[data_flag]
+                                                           for j in i]
+
+    # Define the new split df
+    split_new = pd.DataFrame.from_dict(waterbirds_shuffle_idx_dict, orient='index', columns=["split"])
+    split_new["id"] = split_new.index
+    split_new["filename"] = [f'{i:05}.jpg' for i in split_new["id"]]
+    split_new = split_new.reset_index(drop=True)
+
+    return waterbirds_shuffle_idx_dataflag_dict, split_new
+
+
 def sample_shuffle_write_data_csv(data, save_filename):
     data_new = pd.DataFrame(columns=["filename", "id", "y", "z", "class", "domain"])
     # import pdb;pdb.set_trace()
@@ -162,6 +204,15 @@ def sample_shuffle_write_data_csv(data, save_filename):
                              WATERBIRDS_CLASSES[y.numpy()], WATERBIRDS_DOMAINS[place.numpy()]]
 
     data_new.to_csv(save_filename, sep=" ", index=False)
+
+
+def filter_isin(x, list_in):
+    image, img_id, img_filename, place_filename, y, split, place = x
+    f = False
+    for j in list_in:
+        if img_id == j:
+            f = True
+    return f
 
 
 def load_base_variant(data_dir, y_label, z_label, label_type, proc_batch=128, sample_shuffle_seed=None):
@@ -173,18 +224,25 @@ def load_base_variant(data_dir, y_label, z_label, label_type, proc_batch=128, sa
         get_dataset_from_list_files_dataset(waterbirds_dataset, proc_batch=proc_batch,
                                             tfrecord_example_reader=read_waterbirds_tfrecord).unbatch()
     if sample_shuffle_seed != -1:
-        waterbirds_dataset, split_new = sample_shuffle(waterbirds_dataset, sample_shuffle_seed)
+        # waterbirds_dataset, split_new = sample_shuffle_old(waterbirds_dataset, sample_shuffle_seed)
+        waterbirds_shuffle_idx_dataflag_dict, split_new = sample_shuffle(waterbirds_dataset, sample_shuffle_seed)
         save_datadir = Path(f"/srv/galene0/sr572/Waterbirds/sample_shuffle_{sample_shuffle_seed}")
         Path(save_datadir).mkdir(parents=True, exist_ok=True)
 
-    # Split the data into train, validation and test
-    waterbirds_train = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
-                                                 (split == group_map["train"]))
-    print(f"Train Size: {sum([1 for _ in waterbirds_train])}")
-    waterbirds_val = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
-                                               (split == group_map["val"]))
-    waterbirds_test = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
-                                                (split == group_map["test"]))
+        # Split the data into train, validation and test
+        waterbirds_train = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place: (filter_isin(img_id, waterbirds_shuffle_idx_dataflag_dict["train"])))
+        waterbirds_val = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place: (filter_isin(img_id, waterbirds_shuffle_idx_dataflag_dict["val"])))
+        waterbirds_test = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place: (filter_isin(img_id, waterbirds_shuffle_idx_dataflag_dict["test"])))
+
+    else:
+        # Split the data into train, validation and test
+        waterbirds_train = waterbirds_dataset.filter(
+            lambda image, img_id, img_filename, place_filename, y, split, place:
+            (split == group_map["train"]))
+        waterbirds_val = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
+                                                   (split == group_map["val"]))
+        waterbirds_test = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
+                                                    (split == group_map["test"]))
     # import pdb;pdb.set_trace()
     # Write only if it's the first time (no dot rewrite after defining eval/test/subset of train
     if sample_shuffle_seed != -1 and not (save_datadir / "waterbirds_dataset_split.csv").is_file():
