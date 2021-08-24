@@ -108,7 +108,7 @@ def get_label_selection_function(label_type):
 
 
 def sample_shuffle(waterbirds_dataset, sample_shuffle_seed):
-    shuffle_buffer = 4000
+    shuffle_buffer = 12000
     # Save the original dataset
     # waterbirds_dataset_og = waterbirds_dataset
 
@@ -122,8 +122,7 @@ def sample_shuffle(waterbirds_dataset, sample_shuffle_seed):
         y_t, z_t = subgroup
         # z is identified as place
         # Only interested in the img_idx: img[1].numpy()
-        subgroup_idx_list = [img[1].numpy() for img in
-                             waterbirds_dataset_shuffle.filter(lambda image, img_id, img_filename, place_filename, y, split, place: (y == y_t) and (place == z_t))]
+        subgroup_idx_list = [img[1].numpy() for img in waterbirds_dataset_shuffle.filter(lambda image, img_id, img_filename, place_filename, y, split, place: (y == y_t) and (place == z_t))]
         # Write train idx
         for idx in subgroup_idx_list[:group_size["train"][subgroup]]:
             waterbirds_shuffle_idx_dict[idx] = group_map["train"]
@@ -139,6 +138,7 @@ def sample_shuffle(waterbirds_dataset, sample_shuffle_seed):
 
     def pop_new_split(image, img_id, img_filename, place_filename, y, split, place):
         new_split = waterbirds_shuffle_idx_dict[img_id.numpy()]
+        image.set_shape((None, None, 3))
         return image, img_id, img_filename, place_filename, y, tf.constant(new_split, dtype=split.dtype), place
 
     # Overwrite the split attribute with the new shuffled split
@@ -178,8 +178,9 @@ def load_base_variant(data_dir, y_label, z_label, label_type, proc_batch=128, sa
         Path(save_datadir).mkdir(parents=True, exist_ok=True)
     else:
         # Split the data into train, validation and test
-        waterbirds_train = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
-                                                     (split == group_map["train"]))
+        waterbirds_train = waterbirds_dataset.filter(
+            lambda image, img_id, img_filename, place_filename, y, split, place:
+            (split == group_map["train"]))
         waterbirds_val = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
                                                    (split == group_map["val"]))
         waterbirds_test = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
