@@ -118,14 +118,14 @@ def sample_shuffle(waterbirds_dataset, sample_shuffle_seed):
 
     waterbirds_shuffle_idx_dict = {}
     for subgroup in group_size["train"].keys():
-        import pdb;pdb.set_trace()
+        # import pdb;pdb.set_trace()
         y_t, z_t = subgroup
         # z is identified as place
         # Only interested in the img_idx: img[1].numpy()
         subgroup_idx_list = [img[1].numpy() for img in
                              waterbirds_dataset_shuffle.filter(
                                  lambda image, img_id, img_filename, place_filename, y, split, place:
-                                 (y == y_t) and (place == z_t))]
+                                 ((y == y_t) & (place == z_t)))]
         # Write train idx
         for idx in subgroup_idx_list[:group_size["train"][subgroup]]:
             waterbirds_shuffle_idx_dict[idx] = group_map["train"]
