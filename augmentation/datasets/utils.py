@@ -28,7 +28,7 @@ def dataset_len(tf_dataset, verbose=False):
 
 def get_dataset_from_list_files_dataset(list_files_dataset, proc_batch, tfrecord_example_reader, sequential=False):
     num_parallel_reads = cpu_count()
-    print(num_parallel_reads)
+    # print(num_parallel_reads)
     if sequential:
         num_parallel_reads = 1
     # Load up the TFRecord dataset with parallel reads: this will interleave unless sequential is set to True
@@ -228,7 +228,8 @@ CUSTOM_DATASET_PREFIXES = ['mnist_spurious',
                            ]
 
 
-def load_dataset(dataset_name, dataset_version, data_dir, validation_frac, undersampling_info=None,
+def load_dataset(dataset_name, dataset_version, data_dir, validation_frac,
+                 undersampling_info=None, sample_shuffle_seed=None,
                  cross_validation=False, fold=None):
     """
     The main entry point to load any dataset.
@@ -237,7 +238,8 @@ def load_dataset(dataset_name, dataset_version, data_dir, validation_frac, under
     # For a custom dataset, call the custom dataset loader
     if np.any([dataset_name.startswith(e) for e in CUSTOM_DATASET_PREFIXES]):
         assert cross_validation is False, 'Cross-validation is not supported for the custom datasets.'
-        return load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac, undersampling_info)
+        return load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac, undersampling_info,
+                                   sample_shuffle_seed)
 
     # Set up the dataset
     dataset_builder = load_dataset_using_tfds(dataset_name=dataset_name,
@@ -273,10 +275,12 @@ def fetch_datasets_for_trainer(dataset,
                                validation_frac,
                                batch_size,
                                undersampling_info=None,
+                               sample_shuffle_seed=None,
                                cross_validation=False,
                                fold=None):
     # Load the dataset payload
-    dataset_payload = load_dataset(dataset, dataset_version, datadir, validation_frac, undersampling_info,
+    dataset_payload = load_dataset(dataset, dataset_version, datadir, validation_frac,
+                                   undersampling_info, sample_shuffle_seed,
                                    cross_validation, fold)
 
     # Apply modifiers on the datasets
@@ -296,6 +300,7 @@ def fetch_list_of_datasets(datasets,
                            validation_frac,
                            batch_size,
                            undersampling_info,
+                           sample_shuffle_seed,
                            cross_validation=False,
                            fold=None):
     dataset_splits, training_examples_by_dataset = [], []
@@ -312,6 +317,7 @@ def fetch_list_of_datasets(datasets,
                                          validation_frac,
                                          batch_size,
                                          undersampling_info,
+                                         sample_shuffle_seed,
                                          cross_validation,
                                          fold)
         dataset_splits.append(splits)
@@ -333,6 +339,7 @@ def fetch_list_of_train_datasets(train_datasets,
                                  validation_frac,
                                  batch_size,
                                  undersampling_info,
+                                 sample_shuffle_seed,
                                  cross_validation=False,
                                  fold=None):
     # Fetch the list of training datasets
@@ -343,6 +350,7 @@ def fetch_list_of_train_datasets(train_datasets,
                                validation_frac=validation_frac,
                                batch_size=batch_size,
                                undersampling_info=undersampling_info,
+                               sample_shuffle_seed=sample_shuffle_seed,
                                cross_validation=cross_validation,
                                fold=fold)
 
@@ -361,6 +369,7 @@ def fetch_list_of_eval_datasets(eval_datasets,
                                 eval_datadirs,
                                 validation_frac,
                                 batch_size,
+                                sample_shuffle_seed,
                                 cross_validation=False,
                                 fold=None):
     # Fetch the list of training datasets
@@ -372,6 +381,7 @@ def fetch_list_of_eval_datasets(eval_datasets,
                                batch_size=batch_size,
                                undersampling_info={"undersample_shuffle_seed": -1,
                                                    "save_tfrec_name": ""},  # Do not shuffle for 'evaluation' dataset
+                               sample_shuffle_seed=sample_shuffle_seed,
                                cross_validation=cross_validation,
                                fold=fold)
 
@@ -403,6 +413,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                               repeat=False,
                                               shuffle_before_repeat=False,
                                               undersampling_info=None,
+                                              sample_shuffle_seed=None,
                                               cross_validation=False,
                                               fold=None):
     # Fetch the list of training datasets
@@ -415,6 +426,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                      validation_frac=validation_frac,
                                      batch_size=batch_size,
                                      undersampling_info=undersampling_info,
+                                     sample_shuffle_seed=sample_shuffle_seed,
                                      cross_validation=cross_validation,
                                      fold=fold)
 
@@ -426,6 +438,7 @@ def fetch_list_of_data_generators_for_trainer(train_dataset_names,
                                     eval_datadirs=eval_datadirs,
                                     validation_frac=validation_frac,
                                     batch_size=batch_size,
+                                    sample_shuffle_seed=sample_shuffle_seed,
                                     cross_validation=cross_validation,
                                     fold=fold)
 
@@ -690,7 +703,8 @@ def get_dataset_aliases(dataset_aliases, datasets):
         return datasets
 
 
-def load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac, undersampling_info):
+def load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac,
+                        undersampling_info, sample_shuffle_seed):
     """
     Load up a custom dataset.
     """
@@ -743,7 +757,8 @@ def load_custom_dataset(dataset_name, dataset_version, data_dir, validation_frac
     elif dataset_name.startswith('waterbirds'):
         return augmentation.datasets.custom.waterbirds.load_waterbirds(dataset_name,
                                                                        dataset_version,
-                                                                       data_dir)
+                                                                       data_dir,
+                                                                       sample_shuffle_seed)
     elif dataset_name.startswith('celeb_a_128'):
         return augmentation.datasets.custom.celeba_128.load_celeba_128(dataset_name,
                                                                        dataset_version,

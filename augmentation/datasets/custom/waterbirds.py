@@ -1,3 +1,5 @@
+import pandas as pd
+from pathlib import Path
 from types import SimpleNamespace
 import tensorflow as tf
 import augmentation.datasets.utils
@@ -21,6 +23,14 @@ WATERBIRDS_DOMAINS = ['land', 'water']
 train_group_sizes = {(0, 0): 3498, (0, 1): 184, (1, 0): 56, (1, 1): 1057}
 val_group_sizes = {(0, 0): 467, (0, 1): 466, (1, 0): 133, (1, 1): 133}
 test_group_sizes = {(0, 0): 2255, (0, 1): 2255, (1, 0): 642, (1, 1): 642}
+
+group_size = {"train": train_group_sizes,
+              "val": val_group_sizes,
+              "test": test_group_sizes}
+
+group_map = {"train": 0,
+             "val": 1,
+             "test": 2}
 
 
 def read_waterbirds_tfrecord(example, batched=True, parallelism=8):
@@ -72,7 +82,89 @@ def get_label_selection_function(label_type):
         raise NotImplementedError
 
 
-def load_base_variant(data_dir, y_label, z_label, label_type, proc_batch=128):
+# def sample_shuffle_write_data_csv_old(waterbirds_shuffle_idx_dict, og_save_datadir, save_datadir):
+#     # Load og labels data
+#     train_og = pd.read_csv(Path(og_save_datadir) / "train_labels.csv", sep=" ")
+#     val_og = pd.read_csv(Path(og_save_datadir) / "val_labels.csv", sep=" ")
+#     test_og = pd.read_csv(Path(og_save_datadir) / "test_labels.csv", sep=" ")
+#     all_og = pd.concat([train_og, val_og, test_og])
+#
+#     # Define the new split df
+#     split_new = pd.DataFrame.from_dict(waterbirds_shuffle_idx_dict, orient='index', columns=["split"])
+#     split_new["id"] = split_new.index
+#     split_new["filename"] = [f'{i:05}.jpg' for i in split_new["id"]]
+#     split_new = split_new.reset_index(drop=True)
+#
+#     split_new_dict = {data_flag: split_new[split_new.split == group_map[data_flag]].id.values.tolist() for data_flag in
+#                       ["train", "val", "test"]}
+#
+#     Path(save_datadir).mkdir(parents=True, exist_ok=True)
+#
+#     split_new.to_csv(Path(save_datadir) / "waterbirds_dataset_split.csv", sep=" ", index=False)
+#
+#     for data_flag in ["train", "val", "test"]:
+#         file_name = Path(save_datadir) / f"{data_flag}_labels.csv"
+#         all_og[all_og["id"].isin(split_new_dict[data_flag])].to_csv(file_name, sep=" ", index=False)
+
+
+def sample_shuffle(waterbirds_dataset, sample_shuffle_seed):
+    shuffle_buffer = 4000
+    # Save the original dataset
+    # waterbirds_dataset_og = waterbirds_dataset
+
+    # Shuffle data
+    waterbirds_dataset_shuffle = waterbirds_dataset.shuffle(buffer_size=shuffle_buffer, seed=sample_shuffle_seed)
+    assert sum([1 for _ in waterbirds_dataset]) == sum([1 for _ in waterbirds_dataset_shuffle])
+
+    waterbirds_shuffle_idx_dict = {}
+    for subgroup in group_size["train"].keys():
+        y_t, z_t = subgroup
+        # z is identified as place
+        # Only interested in the img_idx: img[1].numpy()
+        subgroup_idx_list = [img[1].numpy() for img in
+                             waterbirds_dataset_shuffle.filter(
+                                 lambda image, img_id, img_filename, place_filename, y, split, place:
+                                 (y == y_t) and (place == z_t))]
+        # Write train idx
+        for idx in subgroup_idx_list[:group_size["train"][subgroup]]:
+            waterbirds_shuffle_idx_dict[idx] = group_map["train"]
+
+        # Write val idx
+        for idx in subgroup_idx_list[
+                   group_size["train"][subgroup]:group_size["train"][subgroup] + group_size["val"][subgroup]]:
+            waterbirds_shuffle_idx_dict[idx] = group_map["val"]
+
+        # Write test idx
+        for idx in subgroup_idx_list[-group_size["test"][subgroup]:]:
+            waterbirds_shuffle_idx_dict[idx] = group_map["test"]
+
+    def pop_new_split(image, img_id, img_filename, place_filename, y, split, place):
+        new_split = waterbirds_shuffle_idx_dict[img_id.numpy()]
+        return image, img_id, img_filename, place_filename, y, tf.constant(new_split, dtype=split.dtype), place
+
+    # Overwrite the split attribute with the new shuffled split
+    map_f_return_types = [tf.uint8, tf.int64, tf.string, tf.string, tf.int64, tf.int64, tf.int64]
+    waterbirds_dataset = waterbirds_dataset.map(lambda *x: tf.py_function(pop_new_split, x, map_f_return_types))
+
+    # Define the new split df
+    split_new = pd.DataFrame.from_dict(waterbirds_shuffle_idx_dict, orient='index', columns=["split"])
+    split_new["id"] = split_new.index
+    split_new["filename"] = [f'{i:05}.jpg' for i in split_new["id"]]
+    split_new = split_new.reset_index(drop=True)
+
+    return waterbirds_dataset, split_new
+
+
+def sample_shuffle_write_data_csv(data, save_filename):
+    data_new = pd.DataFrame(columns=["filename", "id", "y", "z", "class", "domain"])
+    for idx, (image, img_id, img_filename, place_filename, y, split, place) in enumerate(data):
+        data_new.loc[idx] = [f'{img_id.numpy():05}.jpg', img_id.numpy(), y.numpy(), split.numpy(),
+                             WATERBIRDS_CLASSES[y.numpy()], WATERBIRDS_DOMAINS[split.numpy()]]
+
+    data_new.to_csv(save_filename, sep=" ", index=False)
+
+
+def load_base_variant(data_dir, y_label, z_label, label_type, proc_batch=128, sample_shuffle_seed=None):
     # Load up the list of .tfrec files for the train/val/test sets
     waterbirds_dataset = tf.data.Dataset.list_files(f'{data_dir}/*.tfrec', shuffle=False)
 
@@ -80,14 +172,25 @@ def load_base_variant(data_dir, y_label, z_label, label_type, proc_batch=128):
     waterbirds_dataset = augmentation.datasets.utils. \
         get_dataset_from_list_files_dataset(waterbirds_dataset, proc_batch=proc_batch,
                                             tfrecord_example_reader=read_waterbirds_tfrecord).unbatch()
-    import pdb;pdb.set_trace()
+    if sample_shuffle_seed != -1:
+        waterbirds_dataset, split_new = sample_shuffle(waterbirds_dataset, sample_shuffle_seed)
+
     # Split the data into train, validation and test
     waterbirds_train = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
-                                                 (split == 0))
+                                                 (split == group_map["train"]))
     waterbirds_val = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
-                                               (split == 1))
+                                               (split == group_map["val"]))
     waterbirds_test = waterbirds_dataset.filter(lambda image, img_id, img_filename, place_filename, y, split, place:
-                                                (split == 2))
+                                                (split == group_map["test"]))
+    # import pdb;pdb.set_trace()
+    if sample_shuffle_seed != -1:
+        save_datadir = Path(f"/srv/galene0/sr572/Waterbirds/sample_shuffle_{sample_shuffle_seed}")
+        Path(save_datadir).mkdir(parents=True, exist_ok=True)
+        split_new.to_csv(Path(save_datadir) / "waterbirds_dataset_split.csv", sep=" ", index=False)
+
+        for data, data_flag in zip([waterbirds_train, waterbirds_val, waterbirds_test], ["train", "val", "test"]):
+            save_filename = save_datadir / f'{data_flag}_labels.csv'
+            sample_shuffle_write_data_csv(data, save_filename=save_filename)
 
     if y_label == 0 or y_label == 1:
         # Keep only one of the y_labels
@@ -136,7 +239,7 @@ def get_waterbirds_dataset_len(y_label, z_label):
            sum([test_group_sizes[k] for k in entries_to_sum])
 
 
-def load_waterbirds(dataset_name, dataset_version, data_dir):
+def load_waterbirds(dataset_name, dataset_version, data_dir, sample_shuffle_seed):
     assert dataset_name.startswith(
         'waterbirds'), f'Dataset name is {dataset_name}, should be waterbirds/<which_y>/<which_z>/<y or z>'
 
@@ -149,7 +252,8 @@ def load_waterbirds(dataset_name, dataset_version, data_dir):
 
     if dataset_version == '1.*.*':
         # Load up the basic dataset
-        waterbirds_train, waterbirds_val, waterbirds_test = load_base_variant(data_dir, y_label, z_label, label_type)
+        waterbirds_train, waterbirds_val, waterbirds_test = load_base_variant(data_dir, y_label, z_label, label_type,
+                                                                              sample_shuffle_seed)
 
         # Compute the lengths of the dataset
         train_dataset_len, val_dataset_len, test_dataset_len = get_waterbirds_dataset_len(y_label, z_label)

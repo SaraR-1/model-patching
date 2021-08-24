@@ -89,7 +89,8 @@ max_shuffle_buffer: -1
 shuffle_before_repeat: False
 
 save_tfrec_name: ""
-undersample_seed: -1
+undersample_seed: -1 # used in celeba, undersample
+sample_shuffle_seed: -1 # used in waterbirds, no undersample just re-sample
 
 # Eval dataset settings
 eval_datasets:

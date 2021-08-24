@@ -21,6 +21,7 @@ import tempfile
 
 os.environ['WANDB_MODE'] = 'offline'
 
+
 def train_robust_model(config):
     # Do basic setup
     # assert len(config.logical_gpus) > 1, 'Must specify at least 2 logical GPUs for training robust models.'
@@ -115,6 +116,7 @@ def train_robust_model(config):
                                                       undersampling_info={
                                                           "undersample_shuffle_seed": config.undersample_seed,
                                                           "save_tfrec_name": config.save_tfrec_name},
+                                                      sample_shuffle_seed=config.sample_shuffle_seed,
                                                       cross_validation=config.cross_validation,
                                                       fold=fold)
 
@@ -528,7 +530,7 @@ def setup_and_train_robust_model(args):
     config = recursively_create_config_simple_namespace(args.config, args.template_config)
 
     # Useful for save_name
-    if (config.save_tfrec_name is None) or (len(config.save_tfrec_name)==0):
+    if (config.save_tfrec_name is None) or (len(config.save_tfrec_name) == 0):
         loss_name = config._config_path.split("/")[-2]
         y, z = config.train_datasets[0].split("/")[1:3]
         seed_general = config.seed
