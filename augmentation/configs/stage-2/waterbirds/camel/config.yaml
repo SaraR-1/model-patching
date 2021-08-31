@@ -3,7 +3,7 @@ prefix: robust
 mode: train
 
 # Weights and Biases
-wandb_entity: hazy-research
+wandb_entity: predictive-analytics-lab
 wandb_project: model-patching
 wandb_group: stage-2
 wandb_job_type: waterbirds
@@ -84,12 +84,12 @@ train_dataset_aliases:
   - '(Y=1)(Z=0)'
   - '(Y=1)(Z=1)'
 train_datadirs:
-  - /home/waterbirds_tfrecord_224
-  - /home/waterbirds_tfrecord_224
-  - /home/waterbirds_tfrecord_224
-  - /home/waterbirds_tfrecord_224
+  - /srv/galene0/sr572/Waterbirds/waterbirds_tfrecord_224
+  - /srv/galene0/sr572/Waterbirds/waterbirds_tfrecord_224
+  - /srv/galene0/sr572/Waterbirds/waterbirds_tfrecord_224
+  - /srv/galene0/sr572/Waterbirds/waterbirds_tfrecord_224
 # max_shuffle_buffer: -1
-# shuffle_before_repeat: False
+sample_shuffle_seed: -1
 
 eval_datasets:
   - 'waterbirds/0/0/y'
@@ -107,10 +107,10 @@ eval_dataset_aliases:
   - '(Y=1)(Z=0)'
   - '(Y=1)(Z=1)'
 eval_datadirs:
-  - /home/waterbirds_tfrecord_224
-  - /home/waterbirds_tfrecord_224
-  - /home/waterbirds_tfrecord_224
-  - /home/waterbirds_tfrecord_224
+  - /srv/galene0/sr572/Waterbirds/waterbirds_tfrecord_224
+  - /srv/galene0/sr572/Waterbirds/waterbirds_tfrecord_224
+  - /srv/galene0/sr572/Waterbirds/waterbirds_tfrecord_224
+  - /srv/galene0/sr572/Waterbirds/waterbirds_tfrecord_224
 
 
 # Static augmentations
@@ -145,10 +145,10 @@ eval_static_augmentation_pipelines:
   - [PretrainedCycleGANStaticAugmentationTFRecordPipeline]
   - [PretrainedCycleGANStaticAugmentationTFRecordPipeline]
 eval_static_augmentation_pipelines_args:
-  - [['/home/tfdata/augmented-datasets/', 'hazy-research', 'waterbirds', '5f2gmy7w', False, [224, 224, 3], 'batchnorm', -1, False, '', 4, False]]
-  - [['/home/tfdata/augmented-datasets/', 'hazy-research', 'waterbirds', '5f2gmy7w', False, [224, 224, 3], 'batchnorm', -1, False, '', 4, False]]
-  - [['/home/tfdata/augmented-datasets/', 'hazy-research', 'waterbirds', 'vla2y0m7', False, [224, 224, 3], 'batchnorm', -1, False, '', 4, False]]
-  - [['/home/tfdata/augmented-datasets/', 'hazy-research', 'waterbirds', 'vla2y0m7', False, [224, 224, 3], 'batchnorm', -1, False, '', 4, False]]
+  - [['/srv/galene0/sr572/Waterbirds/stage-1-tfrecords/', 'hazy-research', 'waterbirds', '5f2gmy7w', False, [224, 224, 3], 'batchnorm', -1, False, '', 4, False]]
+  - [['/srv/galene0/sr572/Waterbirds/stage-1-tfrecords/', 'hazy-research', 'waterbirds', '5f2gmy7w', False, [224, 224, 3], 'batchnorm', -1, False, '', 4, False]]
+  - [['/srv/galene0/sr572/Waterbirds/stage-1-tfrecords/', 'hazy-research', 'waterbirds', 'vla2y0m7', False, [224, 224, 3], 'batchnorm', -1, False, '', 4, False]]
+  - [['/srv/galene0/sr572/Waterbirds/stage-1-tfrecords/', 'hazy-research', 'waterbirds', 'vla2y0m7', False, [224, 224, 3], 'batchnorm', -1, False, '', 4, False]]
 eval_augmentation_pipelines:
   - [ImageNetPreprocessingPipeline]
   - [ImageNetPreprocessingPipeline]
@@ -166,10 +166,10 @@ eval_gpu_augmentation_pipelines_args:
 
 # Dataflow settings
 dataflow: disk_cached
-cache_dir: /home/tfcache/
+cache_dir: ./tfcache/
 
 # Path to checkpoints in wandb.run directory
 checkpoint_path: '/checkpoints/'
 
 # Checkpoint every _ epochs
-checkpoint_freq: 1
+checkpoint_freq: 50
