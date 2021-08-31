@@ -120,10 +120,10 @@ train_static_augmentation_pipelines:
   - [PretrainedCycleGANStaticAugmentationTFRecordPipeline]
   - [PretrainedCycleGANStaticAugmentationTFRecordPipeline]
 train_static_augmentation_pipelines_args: # this points to a Weights and Biases run: refer to PretrainedCycleGANStaticAugmentationTFRecordPipeline in augment/static.py
-  - [['/home/tfdata/augmented-datasets/', 'hazy-research', 'waterbirds', '5f2gmy7w', False, [224, 224, 3], 'batchnorm', -1, False, '', 4, True]]
-  - [['/home/tfdata/augmented-datasets/', 'hazy-research', 'waterbirds', '5f2gmy7w', False, [224, 224, 3], 'batchnorm', -1, False, '', 4, True]]
-  - [['/home/tfdata/augmented-datasets/', 'hazy-research', 'waterbirds', 'vla2y0m7', False, [224, 224, 3], 'batchnorm', -1, False, '', 4, True]]
-  - [['/home/tfdata/augmented-datasets/', 'hazy-research', 'waterbirds', 'vla2y0m7', False, [224, 224, 3], 'batchnorm', -1, False, '', 4, True]]
+  - [['/srv/galene0/sr572/Waterbirds/stage-1-tfrecords/', 'hazy-research', 'waterbirds', '5f2gmy7w', False, [224, 224, 3], 'batchnorm', -1, False, '', 4, True]]
+  - [['/srv/galene0/sr572/Waterbirds/stage-1-tfrecords/', 'hazy-research', 'waterbirds', '5f2gmy7w', False, [224, 224, 3], 'batchnorm', -1, False, '', 4, True]]
+  - [['/srv/galene0/sr572/Waterbirds/stage-1-tfrecords/', 'hazy-research', 'waterbirds', 'vla2y0m7', False, [224, 224, 3], 'batchnorm', -1, False, '', 4, True]]
+  - [['/srv/galene0/sr572/Waterbirds/stage-1-tfrecords/', 'hazy-research', 'waterbirds', 'vla2y0m7', False, [224, 224, 3], 'batchnorm', -1, False, '', 4, True]]
 train_augmentation_pipelines:
   - [ImageNetPreprocessingPipeline]
   - [ImageNetPreprocessingPipeline]
