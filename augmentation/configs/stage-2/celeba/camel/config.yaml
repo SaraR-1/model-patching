@@ -90,6 +90,7 @@ train_datadirs:
   - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
   - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
 max_shuffle_buffer: 5000
+undersample_seed: 1
 
 eval_datasets:
   - 'celeb_a_128/Blond_Hair/Male/1.0/0/0/y'
@@ -174,4 +175,4 @@ cache_dir: ./tfcache/
 checkpoint_path: '/checkpoints/'
 
 # Checkpoint every _ epochs
-checkpoint_freq: 2
+checkpoint_freq: 20
