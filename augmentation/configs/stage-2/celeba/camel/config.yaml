@@ -12,7 +12,8 @@ wandb_job_type: celeba_debug
 logical_gpus: [14336]
 
 # Random seed
-seed: 1
+seed: 3 # run with 3 for original dataset; check if now we have the same training triplets
+        # (at least reconstruction and generated, i.e. A-G and A-F)
 
 # Architecture
 model_source: cm
