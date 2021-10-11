@@ -280,6 +280,7 @@ def log_metrics_to_wandb(list_of_metrics, step, prefix='metrics/'):
     """
     Log a list of Keras Metrics to wandb.
     """
+    import pdb;pdb.set_trace()
     for metric in list_of_metrics:
         try:
             metric.log_wandb(step, prefix)

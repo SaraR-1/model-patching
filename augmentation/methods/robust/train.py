@@ -318,6 +318,7 @@ def _train_robust_model(train_generators,
         original_subgroups = ['(Y=0)(Z=0)', '(Y=0)(Z=1)', '(Y=1)(Z=0)', '(Y=1)(Z=1)']
         for i, generator in enumerate(generators):
             subgroup_accuracy[dataset_aliases[i]] = evaluate_model(model, generator, eval_metrics_by_group[i], aggregate_metrics)
+            import pdb;pdb.set_trace()
             log_metrics_to_wandb(subgroup_accuracy[dataset_aliases[i]],
                                  step=step, prefix=f'{split_name}_metrics/{dataset_aliases[i]}/')
             if dataset_aliases[i] not in original_subgroups:
