@@ -326,7 +326,8 @@ def _train_robust_model(train_generators,
         print(f"Print Check: {BEST_CASE_VALIDATION}, {SAVE_BEST_CASE_TEST}")
         if split_name == "validation":
             # Compute metric of interest on VALIDATION
-            metric_of_interst = abs(max(subgroup_accuracy.values) - min(subgroup_accuracy.values))
+            import pdb;pdb.set_trace()
+            metric_of_interst = abs(max(subgroup_accuracy.values()) - min(subgroup_accuracy.values()))
             if metric_of_interst < BEST_CASE_VALIDATION:
                 print(f"Best Case on Validation, step: {step}")
                 # INITIALISE THEM AS GLOBAL VARIABLES?
