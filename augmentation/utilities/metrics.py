@@ -289,6 +289,7 @@ def log_metrics_to_wandb(list_of_metrics, step, prefix='metrics/'):
 
 def update_metrics(list_of_metrics, targets, predictions):
     for metric in list_of_metrics:
+        # TODO: here select accuracy
         if metric.name in ['accuracy', 'confusion_matrix']:
             # Compatible with Softmax at the output
             metric.update_state(targets, tf.argmax(predictions, axis=-1))

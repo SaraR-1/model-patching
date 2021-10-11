@@ -4,6 +4,7 @@ import yaml
 import subprocess
 import glob
 import functools
+import numpy as np
 from augmentation.augment.utils import create_multiple_train_eval_augmentation_pipelines
 from augmentation.augment.static import create_multiple_train_eval_static_augmentation_pipelines
 from augmentation.datasets.utils import *
@@ -20,6 +21,8 @@ from augmentation.utilities.wandb import *
 import tempfile
 
 # os.environ['WANDB_MODE'] = 'offline'
+BEST_CASE_VALIDATION = np.inf
+SAVE_BEST_CASE_TEST = False
 
 
 def train_robust_model(config):
@@ -311,10 +314,32 @@ def _train_robust_model(train_generators,
     def eval_and_log(split_name, model, generators, dataset_aliases, aggregate_metrics, eval_metrics_by_group, step):
         # Evaluate the model on each evaluation set and log to weights and biases
         reset_metrics(aggregate_metrics)
+        subgroup_accuracy = {}
         for i, generator in enumerate(generators):
-            log_metrics_to_wandb(evaluate_model(model, generator, eval_metrics_by_group[i], aggregate_metrics),
+            subgroup_accuracy[dataset_aliases[i]] = evaluate_model(model, generator, eval_metrics_by_group[i], aggregate_metrics)
+            log_metrics_to_wandb(subgroup_accuracy[dataset_aliases[i]],
                                  step=step, prefix=f'{split_name}_metrics/{dataset_aliases[i]}/')
         log_metrics_to_wandb(aggregate_metrics, step=step, prefix=f'{split_name}_metrics/aggregate/')
+
+        global BEST_CASE_VALIDATION
+        global SAVE_BEST_CASE_TEST
+        print(f"Print Check: {BEST_CASE_VALIDATION}, {SAVE_BEST_CASE_TEST}")
+        if split_name == "validation":
+            # Compute metric of interest on VALIDATION
+            metric_of_interst = abs(max(subgroup_accuracy.values) - min(subgroup_accuracy.values))
+            if metric_of_interst < BEST_CASE_VALIDATION:
+                print(f"Best Case on Validation, step: {step}")
+                # INITIALISE THEM AS GLOBAL VARIABLES?
+                # np.inf, False
+                BEST_CASE_VALIDATION = metric_of_interst
+                SAVE_BEST_CASE_TEST = True
+                for v, k in subgroup_accuracy:
+                    log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}/')
+        elif (split_name == "test") and SAVE_BEST_CASE_TEST:
+            for v, k in subgroup_accuracy:
+                log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}/')
+
+
 
     # Keep track of how many gradient steps we've taken
     # For the robust train loop, we track steps instead of epochs
@@ -394,6 +419,7 @@ def _train_robust_model(train_generators,
             log_metrics_to_wandb(metrics, step, prefix=f'training_metrics/{train_dataset_aliases[i]}/')
 
         with devices[1]:
+            # TODO: best case "metric of interest" on validation set
             # Evaluate the model on each validation set and log to weights and biases
             eval_and_log('validation', model, val_generators, val_dataset_aliases, aggregate_metrics,
                          eval_metrics_by_group, step)
