@@ -318,7 +318,7 @@ def _train_robust_model(train_generators,
         original_subgroups = ['(Y=0)(Z=0)', '(Y=0)(Z=1)', '(Y=1)(Z=0)', '(Y=1)(Z=1)']
         for i, generator in enumerate(generators):
             subgroup_accuracy[dataset_aliases[i]] = evaluate_model(model, generator, eval_metrics_by_group[i], aggregate_metrics)
-            import pdb;pdb.set_trace()
+            # import pdb;pdb.set_trace()
             log_metrics_to_wandb(subgroup_accuracy[dataset_aliases[i]],
                                  step=step, prefix=f'{split_name}_metrics/{dataset_aliases[i]}/')
             if dataset_aliases[i] not in original_subgroups:
@@ -330,7 +330,7 @@ def _train_robust_model(train_generators,
         print(f"Print Check: {BEST_CASE_VALIDATION}, {SAVE_BEST_CASE_TEST}")
         if split_name == "validation":
             # Compute metric of interest on VALIDATION
-            import pdb;pdb.set_trace()
+            # import pdb;pdb.set_trace()
             accuracy_ = [v[0].result().numpy() for v in subgroup_accuracy.values()]
             metric_of_interst = abs(max(accuracy_) - min(accuracy_))
             if metric_of_interst < BEST_CASE_VALIDATION:
@@ -339,11 +339,11 @@ def _train_robust_model(train_generators,
                 # np.inf, False
                 BEST_CASE_VALIDATION = metric_of_interst
                 SAVE_BEST_CASE_TEST = True
-                for k, v  in subgroup_accuracy.items():
-                    log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}/')
+                for k, v in subgroup_accuracy.items():
+                    log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase/')
         elif (split_name == "test") and SAVE_BEST_CASE_TEST:
             for k, v in subgroup_accuracy.items():
-                log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}/')
+                log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase/')
 
 
 
