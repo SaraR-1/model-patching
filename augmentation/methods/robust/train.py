@@ -315,10 +315,13 @@ def _train_robust_model(train_generators,
         # Evaluate the model on each evaluation set and log to weights and biases
         reset_metrics(aggregate_metrics)
         subgroup_accuracy = {}
+        original_subgroups = ['(Y=0)(Z=0)', '(Y=0)(Z=1)', '(Y=1)(Z=0)', '(Y=1)(Z=1)']
         for i, generator in enumerate(generators):
             subgroup_accuracy[dataset_aliases[i]] = evaluate_model(model, generator, eval_metrics_by_group[i], aggregate_metrics)
             log_metrics_to_wandb(subgroup_accuracy[dataset_aliases[i]],
                                  step=step, prefix=f'{split_name}_metrics/{dataset_aliases[i]}/')
+            if dataset_aliases[i] not in original_subgroups:
+                del subgroup_accuracy[dataset_aliases[i]]
         log_metrics_to_wandb(aggregate_metrics, step=step, prefix=f'{split_name}_metrics/aggregate/')
 
         global BEST_CASE_VALIDATION
@@ -327,7 +330,8 @@ def _train_robust_model(train_generators,
         if split_name == "validation":
             # Compute metric of interest on VALIDATION
             import pdb;pdb.set_trace()
-            metric_of_interst = abs(max(subgroup_accuracy.values()) - min(subgroup_accuracy.values()))
+            accuracy_ = [v[0].result().numpy() for v in subgroup_accuracy.values()]
+            metric_of_interst = abs(max(accuracy_) - min(accuracy_))
             if metric_of_interst < BEST_CASE_VALIDATION:
                 print(f"Best Case on Validation, step: {step}")
                 # INITIALISE THEM AS GLOBAL VARIABLES?
