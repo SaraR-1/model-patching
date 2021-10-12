@@ -327,14 +327,14 @@ def _train_robust_model(train_generators,
 
         global BEST_CASE_VALIDATION
         global SAVE_BEST_CASE_TEST
-        print(f"Print Check: {BEST_CASE_VALIDATION}, {SAVE_BEST_CASE_TEST}")
+        # print(f"Print Check: {BEST_CASE_VALIDATION}, {SAVE_BEST_CASE_TEST}")
         if split_name == "validation":
             # Compute metric of interest on VALIDATION
             # import pdb;pdb.set_trace()
             accuracy_ = [v[0].result().numpy() for v in subgroup_accuracy.values()]
             metric_of_interst = abs(max(accuracy_) - min(accuracy_))
             if metric_of_interst < BEST_CASE_VALIDATION:
-                print(f"Best Case on Validation, step: {step}")
+                # print(f"Best Case on Validation, step: {step}")
                 # INITIALISE THEM AS GLOBAL VARIABLES?
                 # np.inf, False
                 BEST_CASE_VALIDATION = metric_of_interst
