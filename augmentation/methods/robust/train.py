@@ -341,6 +341,8 @@ def _train_robust_model(train_generators,
                 SAVE_BEST_CASE_TEST = True
                 for k, v in subgroup_accuracy.items():
                     log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase/')
+            else:
+                SAVE_BEST_CASE_TEST = False
         elif (split_name == "test") and SAVE_BEST_CASE_TEST:
             for k, v in subgroup_accuracy.items():
                 log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase/')
