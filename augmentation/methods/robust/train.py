@@ -330,7 +330,7 @@ def _train_robust_model(train_generators,
         # print(f"Print Check: {BEST_CASE_VALIDATION}, {SAVE_BEST_CASE_TEST}")
         if split_name == "validation":
             # Compute metric of interest on VALIDATION
-            # import pdb;pdb.set_trace()
+            import pdb;pdb.set_trace()
             accuracy_ = [v[0].result().numpy() for v in subgroup_accuracy.values()]
             metric_of_interst = abs(max(accuracy_) - min(accuracy_))
             if metric_of_interst < BEST_CASE_VALIDATION:
