@@ -362,7 +362,7 @@ def _train_robust_model(train_generators,
                 SAVE_BEST_CASE_TEST_NEW = True
                 for k, v in subgroup_accuracy.items():
                     log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_new_metric/')
-                log_metrics_to_wandb(metric_of_interst_new, step=step, prefix=f'{split_name}_bestcase_new_metric/aggregate/')
+                # log_metrics_to_wandb(metric_of_interst_new, step=step, prefix=f'{split_name}_bestcase_new_metric/aggregate/')
             else:
                 SAVE_BEST_CASE_TEST_NEW = False
 
