@@ -24,6 +24,10 @@ import tempfile
 BEST_CASE_VALIDATION = np.inf
 SAVE_BEST_CASE_TEST = False
 
+# New metric, the higher the better
+BEST_CASE_VALIDATION_NEW = 0
+SAVE_BEST_CASE_TEST_NEW = False
+
 
 def train_robust_model(config):
     # Do basic setup
@@ -327,10 +331,14 @@ def _train_robust_model(train_generators,
 
         global BEST_CASE_VALIDATION
         global SAVE_BEST_CASE_TEST
+
+        global BEST_CASE_VALIDATION_NEW
+        global SAVE_BEST_CASE_TEST_NEW
         # print(f"Print Check: {BEST_CASE_VALIDATION}, {SAVE_BEST_CASE_TEST}")
         if split_name == "validation":
             # Compute metric of interest on VALIDATION
             import pdb;pdb.set_trace()
+            # Model-Patching metric of interest
             accuracy_ = [v[0].result().numpy() for v in subgroup_accuracy.values()]
             metric_of_interst = abs(max(accuracy_) - min(accuracy_))
             if metric_of_interst < BEST_CASE_VALIDATION:
@@ -343,9 +351,28 @@ def _train_robust_model(train_generators,
                     log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase/')
             else:
                 SAVE_BEST_CASE_TEST = False
+
+            # New metric of interest = aggregate + worst subgroup accuracy - worst subgroup gap
+            group_acc = [[subgroup_accuracy[k][0].result().numpy() for k in subgroup_accuracy.keys() if group in k] for group in
+                         ["Y=0", "Y=1"]]
+            worst_subroup_gap = max([np.abs(x[0] - x[1]) for x in group_acc])
+            metric_of_interst_new = aggregate_metrics[0].result().numpy() + min(accuracy_) - worst_subroup_gap
+            if metric_of_interst_new > BEST_CASE_VALIDATION_NEW:
+                BEST_CASE_VALIDATION_NEW = metric_of_interst_new
+                SAVE_BEST_CASE_TEST_NEW = True
+                for k, v in subgroup_accuracy.items():
+                    log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_new_metric/')
+                log_metrics_to_wandb(metric_of_interst_new, step=step, prefix=f'{split_name}_bestcase_new_metric/aggregate/')
+            else:
+                SAVE_BEST_CASE_TEST_NEW = False
+
         elif (split_name == "test") and SAVE_BEST_CASE_TEST:
             for k, v in subgroup_accuracy.items():
                 log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase/')
+
+        elif (split_name == "test") and SAVE_BEST_CASE_TEST_NEW:
+            for k, v in subgroup_accuracy.items():
+                log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_new_metric/')
 
 
 
