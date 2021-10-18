@@ -28,6 +28,14 @@ SAVE_BEST_CASE_TEST = False
 BEST_CASE_VALIDATION_NEW = 0
 SAVE_BEST_CASE_TEST_NEW = False
 
+# New metric, the higher the better
+BEST_CASE_VALIDATION_MI3 = 0
+SAVE_BEST_CASE_TEST_MI3 = False
+
+# New metric, the higher the better
+BEST_CASE_VALIDATION_MI4 = 0
+SAVE_BEST_CASE_TEST_MI4 = False
+
 
 def train_robust_model(config):
     # Do basic setup
@@ -329,11 +337,21 @@ def _train_robust_model(train_generators,
                 del subgroup_accuracy[dataset_aliases[i]]
         log_metrics_to_wandb(aggregate_metrics, step=step, prefix=f'{split_name}_metrics/aggregate/')
 
+        # Model Patching Metric of interest
         global BEST_CASE_VALIDATION
         global SAVE_BEST_CASE_TEST
 
+        # RealPatch2 Metric of interest: aggregate + worst subgroup accuracy - worst subgroup gap
         global BEST_CASE_VALIDATION_NEW
         global SAVE_BEST_CASE_TEST_NEW
+
+        # Metric of interest 3: worst subgroup accuracy - worst subgroup gap
+        global BEST_CASE_VALIDATION_MI3
+        global SAVE_BEST_CASE_TEST_MI3
+
+        # Metric of interest 4: sum_{group} worst subgroup accuracy
+        global BEST_CASE_VALIDATION_MI4
+        global SAVE_BEST_CASE_TEST_MI4
         # print(f"Print Check: {BEST_CASE_VALIDATION}, {SAVE_BEST_CASE_TEST}")
         if split_name == "validation":
             # Compute metric of interest on VALIDATION
@@ -351,7 +369,7 @@ def _train_robust_model(train_generators,
                     log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase/')
             else:
                 SAVE_BEST_CASE_TEST = False
-
+            ################################
             # New metric of interest = aggregate + worst subgroup accuracy - worst subgroup gap
             group_acc = [[subgroup_accuracy[k][0].result().numpy() for k in subgroup_accuracy.keys() if group in k] for group in
                          ["Y=0", "Y=1"]]
@@ -366,6 +384,29 @@ def _train_robust_model(train_generators,
             else:
                 SAVE_BEST_CASE_TEST_NEW = False
 
+            ################################
+            mi3 = min(accuracy_) - worst_subroup_gap
+            if mi3 > BEST_CASE_VALIDATION_MI3:
+                BEST_CASE_VALIDATION_MI3 = mi3
+                SAVE_BEST_CASE_TEST_MI3 = True
+                for k, v in subgroup_accuracy.items():
+                    log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_new_metric/')
+                # log_metrics_to_wandb(metric_of_interst_new, step=step, prefix=f'{split_name}_bestcase_new_metric/aggregate/')
+            else:
+                SAVE_BEST_CASE_TEST_MI3 = False
+
+            ################################
+            import pdb;pdb.set_trace()
+            mi4 = sum([min(x) for x in group_acc])
+            if mi4 > BEST_CASE_VALIDATION_MI4:
+                BEST_CASE_VALIDATION_MI4 = mi4
+                SAVE_BEST_CASE_TEST_MI4 = True
+                for k, v in subgroup_accuracy.items():
+                    log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_new_metric/')
+                # log_metrics_to_wandb(metric_of_interst_new, step=step, prefix=f'{split_name}_bestcase_new_metric/aggregate/')
+            else:
+                SAVE_BEST_CASE_TEST_MI4 = False
+
         elif (split_name == "test") and SAVE_BEST_CASE_TEST:
             for k, v in subgroup_accuracy.items():
                 log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase/')
@@ -374,6 +415,13 @@ def _train_robust_model(train_generators,
             for k, v in subgroup_accuracy.items():
                 log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_new_metric/')
 
+        elif (split_name == "test") and SAVE_BEST_CASE_TEST_MI3:
+            for k, v in subgroup_accuracy.items():
+                log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_mi3/')
+
+        elif (split_name == "test") and SAVE_BEST_CASE_TEST_MI4:
+            for k, v in subgroup_accuracy.items():
+                log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_new_mi4/')
 
 
     # Keep track of how many gradient steps we've taken
