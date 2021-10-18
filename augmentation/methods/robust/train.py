@@ -385,7 +385,6 @@ def _train_robust_model(train_generators,
                 SAVE_BEST_CASE_TEST_NEW = False
 
             ################################
-            import pdb;pdb.set_trace()
             mi3 = min(accuracy_) - worst_subroup_gap
             if mi3 > BEST_CASE_VALIDATION_MI3:
                 BEST_CASE_VALIDATION_MI3 = mi3
@@ -421,7 +420,7 @@ def _train_robust_model(train_generators,
 
         elif (split_name == "test") and SAVE_BEST_CASE_TEST_MI4:
             for k, v in subgroup_accuracy.items():
-                log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_new_mi4/')
+                log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_mi4/')
 
 
     # Keep track of how many gradient steps we've taken
