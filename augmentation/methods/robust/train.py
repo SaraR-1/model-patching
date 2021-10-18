@@ -406,22 +406,22 @@ def _train_robust_model(train_generators,
             else:
                 SAVE_BEST_CASE_TEST_MI4 = False
 
-        elif (split_name == "test") and SAVE_BEST_CASE_TEST:
-            for k, v in subgroup_accuracy.items():
-                log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase/')
+        elif split_name == "test":
+            if SAVE_BEST_CASE_TEST:
+                for k, v in subgroup_accuracy.items():
+                    log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase/')
 
-        elif (split_name == "test") and SAVE_BEST_CASE_TEST_NEW:
-            for k, v in subgroup_accuracy.items():
-                log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_new_metric/')
+            if SAVE_BEST_CASE_TEST_NEW:
+                for k, v in subgroup_accuracy.items():
+                    log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_new_metric/')
 
-        elif (split_name == "test") and SAVE_BEST_CASE_TEST_MI3:
-            for k, v in subgroup_accuracy.items():
-                log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_mi3/')
+            if SAVE_BEST_CASE_TEST_MI3:
+                for k, v in subgroup_accuracy.items():
+                    log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_mi3/')
 
-        elif (split_name == "test") and SAVE_BEST_CASE_TEST_MI4:
-            for k, v in subgroup_accuracy.items():
-                log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_mi4/')
-
+            if SAVE_BEST_CASE_TEST_MI4:
+                for k, v in subgroup_accuracy.items():
+                    log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_mi4/')
 
     # Keep track of how many gradient steps we've taken
     # For the robust train loop, we track steps instead of epochs
