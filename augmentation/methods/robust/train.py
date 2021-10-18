@@ -396,7 +396,6 @@ def _train_robust_model(train_generators,
                 SAVE_BEST_CASE_TEST_MI3 = False
 
             ################################
-            import pdb;pdb.set_trace()
             mi4 = sum([min(x) for x in group_acc])
             if mi4 > BEST_CASE_VALIDATION_MI4:
                 BEST_CASE_VALIDATION_MI4 = mi4
