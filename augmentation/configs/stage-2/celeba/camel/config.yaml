@@ -35,7 +35,7 @@ irm_anneal_steps: 0
 irm_penalty_weight: 0.0
 
 # Group DRO
-gdro_adj_coef: 3.0 # from model-patching 3, in og papar \in {0,1,2,3,4,4}
+gdro_adj_coef: 2.0 # from model-patching 3, in og papar \in {0,1,2,3,4,4}
 gdro_lr: 0.01
 gdro_mixed: True
 
