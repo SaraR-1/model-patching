@@ -6,7 +6,7 @@ mode: train
 wandb_entity: predictive-analytics-lab
 wandb_project: model-patching
 wandb_group: stage-2
-wandb_job_type: celeba_debug
+wandb_job_type: celeba_og_different_seeds
 
 # Logical GPUs
 logical_gpus: [14336]
@@ -35,7 +35,7 @@ irm_anneal_steps: 0
 irm_penalty_weight: 0.0
 
 # Group DRO
-gdro_adj_coef: 2.0 # from model-patching 3, in og papar \in {0,1,2,3,4,4}
+gdro_adj_coef: 3.0 # from model-patching 3, in og papar \in {0,1,2,3,4,4}
 gdro_lr: 0.01
 gdro_mixed: True
 
@@ -57,7 +57,7 @@ weight_decay_rate: 0.05
 max_global_grad_norm: -1
 
 # Training details
-n_epochs: 100
+n_epochs: 50
 batch_size: 16
 baseline_batch_size: 128
 
@@ -91,7 +91,7 @@ train_datadirs:
   - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
   - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
 max_shuffle_buffer: 5000
-undersample_seed: -1
+undersample_seed: 3
 
 eval_datasets:
   - 'celeb_a_128/Blond_Hair/Male/1.0/0/0/y'
@@ -122,14 +122,16 @@ train_static_augmentation_pipelines:
   - [PretrainedCycleGANStaticAugmentationTFRecordPipeline]
   - [PretrainedCycleGANStaticAugmentationTFRecordPipeline]
 train_static_augmentation_pipelines_args: # this points to a Weights and Biases run: refer to PretrainedCycleGANStaticAugmentationTFRecordPipeline in augment/static.py
-  - [['/srv/galene0/sr572/celeba_128/stage-1-realpatch-tfrecords/', 'hazy-research', 'celeba', 'xbqhzkx3', False, [128, 128, 3], 'batchnorm', 3400, False, '', 16, True]]
-  - [['/srv/galene0/sr572/celeba_128/stage-1-realpatch-tfrecords/', 'hazy-research', 'celeba', 'xbqhzkx3', False, [128, 128, 3], 'batchnorm', 3400, False, '', 16, True]]
-  - [['/srv/galene0/sr572/celeba_128/stage-1-realpatch-tfrecords/', 'hazy-research', 'celeba', 'xs4l2gi0', False, [128, 128, 3], 'batchnorm', 3450, False, '', 16, True]]
-  - [['/srv/galene0/sr572/celeba_128/stage-1-realpatch-tfrecords/', 'hazy-research', 'celeba', 'xs4l2gi0', False, [128, 128, 3], 'batchnorm', 3450, False, '', 16, True]]
-#  - [['/srv/galene0/sr572/celeba_128/stage-1-tfrecords/', 'hazy-research', 'celeba', 'xbqhzkx3', False, [128, 128, 3], 'batchnorm', 3400, False, '', 16, True]]
-#  - [['/srv/galene0/sr572/celeba_128/stage-1-tfrecords/', 'hazy-research', 'celeba', 'xbqhzkx3', False, [128, 128, 3], 'batchnorm', 3400, False, '', 16, True]]
-#  - [['/srv/galene0/sr572/celeba_128/stage-1-tfrecords/', 'hazy-research', 'celeba', 'xs4l2gi0', False, [128, 128, 3], 'batchnorm', 3450, False, '', 16, True]]
-#  - [['/srv/galene0/sr572/celeba_128/stage-1-tfrecords/', 'hazy-research', 'celeba', 'xs4l2gi0', False, [128, 128, 3], 'batchnorm', 3450, False, '', 16, True]]
+# Uncomment for Camel with RealPatch
+#  - [['/srv/galene0/sr572/celeba_128/stage-1-realpatch-tfrecords/', 'hazy-research', 'celeba', 'xbqhzkx3', False, [128, 128, 3], 'batchnorm', 3400, False, '', 16, True]]
+#  - [['/srv/galene0/sr572/celeba_128/stage-1-realpatch-tfrecords/', 'hazy-research', 'celeba', 'xbqhzkx3', False, [128, 128, 3], 'batchnorm', 3400, False, '', 16, True]]
+#  - [['/srv/galene0/sr572/celeba_128/stage-1-realpatch-tfrecords/', 'hazy-research', 'celeba', 'xs4l2gi0', False, [128, 128, 3], 'batchnorm', 3450, False, '', 16, True]]
+#  - [['/srv/galene0/sr572/celeba_128/stage-1-realpatch-tfrecords/', 'hazy-research', 'celeba', 'xs4l2gi0', False, [128, 128, 3], 'batchnorm', 3450, False, '', 16, True]]
+# Uncomment for Original Camel
+  - [['/srv/galene0/sr572/celeba_128/stage-1-tfrecords/', 'hazy-research', 'celeba', 'xbqhzkx3', False, [128, 128, 3], 'batchnorm', 3400, False, '', 16, True]]
+  - [['/srv/galene0/sr572/celeba_128/stage-1-tfrecords/', 'hazy-research', 'celeba', 'xbqhzkx3', False, [128, 128, 3], 'batchnorm', 3400, False, '', 16, True]]
+  - [['/srv/galene0/sr572/celeba_128/stage-1-tfrecords/', 'hazy-research', 'celeba', 'xs4l2gi0', False, [128, 128, 3], 'batchnorm', 3450, False, '', 16, True]]
+  - [['/srv/galene0/sr572/celeba_128/stage-1-tfrecords/', 'hazy-research', 'celeba', 'xs4l2gi0', False, [128, 128, 3], 'batchnorm', 3450, False, '', 16, True]]
 
 train_augmentation_pipelines:
   - [ImageNetPreprocessingPipeline]
@@ -152,14 +154,16 @@ eval_static_augmentation_pipelines:
   - [PretrainedCycleGANStaticAugmentationTFRecordPipeline]
   - [PretrainedCycleGANStaticAugmentationTFRecordPipeline]
 eval_static_augmentation_pipelines_args:
-  - [ [ '/srv/galene0/sr572/celeba_128/stage-1-realpatch-tfrecords/', 'hazy-research', 'celeba', 'xbqhzkx3', False, [ 128, 128, 3 ], 'batchnorm', 3400, False, '', 16, False ] ]
-  - [ [ '/srv/galene0/sr572/celeba_128/stage-1-realpatch-tfrecords/', 'hazy-research', 'celeba', 'xbqhzkx3', False, [ 128, 128, 3 ], 'batchnorm', 3400, False, '', 16, False ] ]
-  - [ [ '/srv/galene0/sr572/celeba_128/stage-1-realpatch-tfrecords/', 'hazy-research', 'celeba', 'xs4l2gi0', False, [ 128, 128, 3 ], 'batchnorm', 3450, False, '', 16, False ] ]
-  - [ [ '/srv/galene0/sr572/celeba_128/stage-1-realpatch-tfrecords/', 'hazy-research', 'celeba', 'xs4l2gi0', False, [ 128, 128, 3 ], 'batchnorm', 3450, False, '', 16, False ] ]
-#  - [['/srv/galene0/sr572/celeba_128/stage-1-tfrecords/', 'hazy-research', 'celeba', 'xbqhzkx3', False, [128, 128, 3], 'batchnorm', 3400, False, '', 16, False]]
-#  - [['/srv/galene0/sr572/celeba_128/stage-1-tfrecords/', 'hazy-research', 'celeba', 'xbqhzkx3', False, [128, 128, 3], 'batchnorm', 3400, False, '', 16, False]]
-#  - [['/srv/galene0/sr572/celeba_128/stage-1-tfrecords/', 'hazy-research', 'celeba', 'xs4l2gi0', False, [128, 128, 3], 'batchnorm', 3450, False, '', 16, False]]
-#  - [['/srv/galene0/sr572/celeba_128/stage-1-tfrecords/', 'hazy-research', 'celeba', 'xs4l2gi0', False, [128, 128, 3], 'batchnorm', 3450, False, '', 16, False]]
+# Uncomment for Camel with RealPatch
+#  - [ [ '/srv/galene0/sr572/celeba_128/stage-1-realpatch-tfrecords/', 'hazy-research', 'celeba', 'xbqhzkx3', False, [ 128, 128, 3 ], 'batchnorm', 3400, False, '', 16, False ] ]
+#  - [ [ '/srv/galene0/sr572/celeba_128/stage-1-realpatch-tfrecords/', 'hazy-research', 'celeba', 'xbqhzkx3', False, [ 128, 128, 3 ], 'batchnorm', 3400, False, '', 16, False ] ]
+#  - [ [ '/srv/galene0/sr572/celeba_128/stage-1-realpatch-tfrecords/', 'hazy-research', 'celeba', 'xs4l2gi0', False, [ 128, 128, 3 ], 'batchnorm', 3450, False, '', 16, False ] ]
+#  - [ [ '/srv/galene0/sr572/celeba_128/stage-1-realpatch-tfrecords/', 'hazy-research', 'celeba', 'xs4l2gi0', False, [ 128, 128, 3 ], 'batchnorm', 3450, False, '', 16, False ] ]
+# Uncomment for Original Camel
+  - [['/srv/galene0/sr572/celeba_128/stage-1-tfrecords/', 'hazy-research', 'celeba', 'xbqhzkx3', False, [128, 128, 3], 'batchnorm', 3400, False, '', 16, False]]
+  - [['/srv/galene0/sr572/celeba_128/stage-1-tfrecords/', 'hazy-research', 'celeba', 'xbqhzkx3', False, [128, 128, 3], 'batchnorm', 3400, False, '', 16, False]]
+  - [['/srv/galene0/sr572/celeba_128/stage-1-tfrecords/', 'hazy-research', 'celeba', 'xs4l2gi0', False, [128, 128, 3], 'batchnorm', 3450, False, '', 16, False]]
+  - [['/srv/galene0/sr572/celeba_128/stage-1-tfrecords/', 'hazy-research', 'celeba', 'xs4l2gi0', False, [128, 128, 3], 'batchnorm', 3450, False, '', 16, False]]
 eval_augmentation_pipelines:
   - [ImageNetPreprocessingPipeline]
   - [ImageNetPreprocessingPipeline]

@@ -384,27 +384,27 @@ def _train_robust_model(train_generators,
             else:
                 SAVE_BEST_CASE_TEST_NEW = False
 
-            ################################
-            mi3 = min(accuracy_) - worst_subroup_gap
-            if mi3 > BEST_CASE_VALIDATION_MI3:
-                BEST_CASE_VALIDATION_MI3 = mi3
-                SAVE_BEST_CASE_TEST_MI3 = True
-                for k, v in subgroup_accuracy.items():
-                    log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_mi3/')
-                # log_metrics_to_wandb(metric_of_interst_new, step=step, prefix=f'{split_name}_bestcase_new_metric/aggregate/')
-            else:
-                SAVE_BEST_CASE_TEST_MI3 = False
-
-            ################################
-            mi4 = sum([min(x) for x in group_acc])
-            if mi4 > BEST_CASE_VALIDATION_MI4:
-                BEST_CASE_VALIDATION_MI4 = mi4
-                SAVE_BEST_CASE_TEST_MI4 = True
-                for k, v in subgroup_accuracy.items():
-                    log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_mi4/')
-                # log_metrics_to_wandb(metric_of_interst_new, step=step, prefix=f'{split_name}_bestcase_new_metric/aggregate/')
-            else:
-                SAVE_BEST_CASE_TEST_MI4 = False
+            # ################################
+            # mi3 = min(accuracy_) - worst_subroup_gap
+            # if mi3 > BEST_CASE_VALIDATION_MI3:
+            #     BEST_CASE_VALIDATION_MI3 = mi3
+            #     SAVE_BEST_CASE_TEST_MI3 = True
+            #     for k, v in subgroup_accuracy.items():
+            #         log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_mi3/')
+            #     # log_metrics_to_wandb(metric_of_interst_new, step=step, prefix=f'{split_name}_bestcase_new_metric/aggregate/')
+            # else:
+            #     SAVE_BEST_CASE_TEST_MI3 = False
+            #
+            # ################################
+            # mi4 = sum([min(x) for x in group_acc])
+            # if mi4 > BEST_CASE_VALIDATION_MI4:
+            #     BEST_CASE_VALIDATION_MI4 = mi4
+            #     SAVE_BEST_CASE_TEST_MI4 = True
+            #     for k, v in subgroup_accuracy.items():
+            #         log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_mi4/')
+            #     # log_metrics_to_wandb(metric_of_interst_new, step=step, prefix=f'{split_name}_bestcase_new_metric/aggregate/')
+            # else:
+            #     SAVE_BEST_CASE_TEST_MI4 = False
 
         elif split_name == "test":
             if SAVE_BEST_CASE_TEST:
@@ -414,14 +414,14 @@ def _train_robust_model(train_generators,
             if SAVE_BEST_CASE_TEST_NEW:
                 for k, v in subgroup_accuracy.items():
                     log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_new_metric/')
-
-            if SAVE_BEST_CASE_TEST_MI3:
-                for k, v in subgroup_accuracy.items():
-                    log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_mi3/')
-
-            if SAVE_BEST_CASE_TEST_MI4:
-                for k, v in subgroup_accuracy.items():
-                    log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_mi4/')
+            #
+            # if SAVE_BEST_CASE_TEST_MI3:
+            #     for k, v in subgroup_accuracy.items():
+            #         log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_mi3/')
+            #
+            # if SAVE_BEST_CASE_TEST_MI4:
+            #     for k, v in subgroup_accuracy.items():
+            #         log_metrics_to_wandb(v, step=step, prefix=f'{split_name}_metrics/{k}_bestcase_mi4/')
 
     # Keep track of how many gradient steps we've taken
     # For the robust train loop, we track steps instead of epochs
