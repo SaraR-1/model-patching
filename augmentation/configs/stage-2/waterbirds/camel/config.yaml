@@ -6,7 +6,7 @@ mode: train
 wandb_entity: predictive-analytics-lab
 wandb_project: model-patching
 wandb_group: stage-2
-wandb_job_type: waterbirds
+wandb_job_type: waterbirds_og_different_seeds
 
 # Logical GPUs
 logical_gpus: [14336]
