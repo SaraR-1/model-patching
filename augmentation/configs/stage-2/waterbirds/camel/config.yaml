@@ -89,7 +89,7 @@ train_datadirs:
   - /srv/galene0/sr572/Waterbirds/waterbirds_tfrecord_224
   - /srv/galene0/sr572/Waterbirds/waterbirds_tfrecord_224
 # max_shuffle_buffer: -1
-sample_shuffle_seed: -1
+sample_shuffle_seed: 1
 
 eval_datasets:
   - 'waterbirds/0/0/y'
