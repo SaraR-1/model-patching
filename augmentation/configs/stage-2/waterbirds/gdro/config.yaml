@@ -6,7 +6,7 @@ mode: train
 wandb_entity: predictive-analytics-lab
 wandb_project: model-patching
 wandb_group: stage-2
-wandb_job_type: waterbirds_gdro
+wandb_job_type: waterbirds_gdro_24ep
 
 # Logical GPUs
 logical_gpus: [14336]
@@ -57,7 +57,7 @@ max_global_grad_norm: -1
 
 # Training details
 n_epochs: 500
-batch_size: 16 #in paper they say 24; in config defualt was 16
+batch_size: 24 #in paper they say 24; in config defualt was 16
 baseline_batch_size: 128
 
 # Metrics to track
@@ -90,7 +90,7 @@ train_datadirs:
   - /srv/galene0/sr572/Waterbirds/waterbirds_tfrecord_224
 # max_shuffle_buffer: -1
 # shuffle_before_repeat: False
-sample_shuffle_seed: 2
+sample_shuffle_seed: -1
 
 eval_datasets:
   - 'waterbirds/0/0/y'
