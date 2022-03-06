@@ -144,7 +144,7 @@ def get_label_selection_function(label_type):
             return lambda image, y_label, z_label, young: (image, y_label)
     elif label_type == 'z':
         # Keep only the z labels
-                try:
+        try:
             return lambda image, y_label, z_label: (image, z_label)
         except TypeError:
             return lambda image, y_label, z_label, young: (image, z_label)
