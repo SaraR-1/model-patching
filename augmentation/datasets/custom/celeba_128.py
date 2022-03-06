@@ -268,8 +268,8 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
             # import pdb;pdb.set_trace()
             with tf.io.TFRecordWriter(record_file) as writer:
                 for sample in train_dataset_tosave:
-                    # tf_sample = customised_celeba_undersampled_tosave(sample, "additional")
-                    tf_sample = customised_celeba_undersampled_tosave(sample)
+                    tf_sample = customised_celeba_undersampled_tosave(sample, "additional")
+                    # tf_sample = customised_celeba_undersampled_tosave(sample)
                     writer.write(tf_sample.SerializeToString())
 
     # N.B. important compute it here before losing the information about z (after label_selection_fn)
