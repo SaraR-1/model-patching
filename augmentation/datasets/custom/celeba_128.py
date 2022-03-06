@@ -351,8 +351,8 @@ def customised_celeba_undersampled_tosave(train_sample, label="full"):
         # }
         feature = {
             'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
-            *{CELEBA_BASE_VARIANTS[i]:  _int64_feature(train_sample[1].numpy()) for i in range(len(CELEBA_BASE_VARIANTS))}
         }
+        feature.update({CELEBA_BASE_VARIANTS[i]:  _int64_feature(train_sample[1].numpy()) for i in range(len(CELEBA_BASE_VARIANTS))})
         
     else:
         feature = {
