@@ -174,6 +174,9 @@ def get_label_selection_function(label_type):
     elif label_type == 'full':
         # Keep both x the z labels
         return lambda image, y_label, z_label: (image, y_label, z_label)
+    elif label_type =='additional':
+        # Keep both x the z labels + the attribute young
+        return lambda image, y_label, z_label: (image, y_label, z_label, 'Young')
     else:
         raise NotImplementedError
 
@@ -295,10 +298,11 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, save_tfrec_name, un
 
             train_dataset_tosave = train_dataset
             # Save undersampled train set:
-            label_selection_fn_tosave = get_label_selection_function("full")
+            # label_selection_fn_tosave = get_label_selection_function("full")
+            label_selection_fn_tosave = get_label_selection_function("additional")
             # Still 4054
             train_dataset_tosave = train_dataset_tosave.map(label_selection_fn_tosave, num_parallel_calls=16)
-            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}.tfrec"
+            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}_young.tfrec"
 
             # import pdb;pdb.set_trace()
             with tf.io.TFRecordWriter(record_file) as writer:
