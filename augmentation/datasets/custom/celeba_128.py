@@ -259,8 +259,8 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
             #                                           (y == y_t and z == z_t)).shuffle(buffer_size=shuffle_buffer,
             #                                                                            seed=undersample_shuffle_seed)
             train_dataset_y0z0 = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: 
-                                                    (Blond_Hair == y_t and Male == z_t))).shuffle(buffer_size=shuffle_buffer, 
-                                                                                                seed=undersample_shuffle_seed)
+                                                      (Blond_Hair == y_t and Male == z_t)).shuffle(buffer_size=shuffle_buffer, 
+                                                                                                   seed=undersample_shuffle_seed)
         # Take out examples from Y = 0, Z = 0
         train_dataset_y0z0 = train_dataset_y0z0.take(n_subgroup_examples)
         # Keep only examples from groups other than Y = 0, Z = 0
