@@ -140,19 +140,21 @@ def get_label_selection_function(label_type):
     if label_type == 'y':
         # Keep only the y labels
         # return lambda image, y_label, z_label: (image, y_label)
-        return lambda image, y_label, z_label, young: (image, y_label)
+        # return lambda image, y_label, z_label, young: (image, y_label)
+        return lambda image, *CELEBA_BASE_VARIANTS: (image, Blond_Hair)
     elif label_type == 'z':
         # Keep only the z labels
         # return lambda image, y_label, z_label: (image, z_label)
-        return lambda image, y_label, z_label, young: (image, z_label)
+        # return lambda image, y_label, z_label, young: (image, z_label)
+        return lambda image, *CELEBA_BASE_VARIANTS: (image, Male)
     # CUSTOMISED ADD - TO USE WHEN SAVING THE DATA (for external usage)
     elif label_type == 'full':
         # Keep both x the z labels
         return lambda image, y_label, z_label: (image, y_label, z_label)
     elif label_type =='additional':
         # Keep both x the z labels + the attribute young
-        return lambda image, y_label, z_label, young: (image, y_label, z_label, young)
-        # return lambda image, y_label, z_label, "young": (image, y_label, z_label, 'Young')
+        return lambda image, *CELEBA_BASE_VARIANTS: (image, *[int(tags[i]) for i in CELEBA_BASE_VARIANTS])
+        # return lambda image, y_label, z_label, young: (image, y_label, z_label, young)
     else:
         raise NotImplementedError
 
@@ -209,7 +211,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
     # Map to grab the y and z labels for the attributes picked
     # selection_fn = lambda image, tags: (image, int(tags[y_variant]), int(tags[z_variant])))
     # selection_fn = lambda image, tags: (image, int(tags[y_variant]), int(tags[z_variant]), int(tags['Young']))
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     selection_fn = lambda image, tags: (image, *[int(tags[i]) for i in CELEBA_BASE_VARIANTS])
 
     train_dataset = train_dataset.map(selection_fn, num_parallel_calls=16)
@@ -253,9 +255,12 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
             train_dataset_y0z0 = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (Blond_Hair == y_t and Male == z_t))
         else:
             shuffle_buffer = train_group_original_sizes[y_variant][z_variant][(y_t, z_t)]
-            train_dataset_y0z0 = train_dataset.filter(lambda image, y, z:
-                                                      (y == y_t and z == z_t)).shuffle(buffer_size=shuffle_buffer,
-                                                                                       seed=undersample_shuffle_seed)
+            # train_dataset_y0z0 = train_dataset.filter(lambda image, y, z:
+            #                                           (y == y_t and z == z_t)).shuffle(buffer_size=shuffle_buffer,
+            #                                                                            seed=undersample_shuffle_seed)
+            train_dataset_y0z0 = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: 
+                                                    (Blond_Hair == y_t and Male == z_t))).shuffle(buffer_size=shuffle_buffer, 
+                                                                                                seed=undersample_shuffle_seed)
         # Take out examples from Y = 0, Z = 0
         train_dataset_y0z0 = train_dataset_y0z0.take(n_subgroup_examples)
         # Keep only examples from groups other than Y = 0, Z = 0
