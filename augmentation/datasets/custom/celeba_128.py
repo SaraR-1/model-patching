@@ -225,9 +225,9 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         # val_dataset = val_dataset.filter(lambda image, y, z, young: (y == y_label))
         # test_dataset = test_dataset.filter(lambda image, y, z, young: (y == y_label))
 
-        train_dataset = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (y == y_label))
-        val_dataset = val_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (y == y_label))
-        test_dataset = test_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (y == y_label))
+        train_dataset = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (Blond_Hair == y_label))
+        val_dataset = val_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (Blond_Hair == y_label))
+        test_dataset = test_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (Blond_Hair == y_label))
 
     if z_label == 0 or z_label == 1:
         # Keep only one of the z_labels
@@ -237,9 +237,9 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         # train_dataset = train_dataset.filter(lambda image, y, z, young: (z == z_label))
         # val_dataset = val_dataset.filter(lambda image, y, z, young: (z == z_label))
         # test_dataset = test_dataset.filter(lambda image, y, z, young: (z == z_label))
-        train_dataset = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (z == z_label))
-        val_dataset = val_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (z == z_label))
-        test_dataset = test_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (z == z_label))
+        train_dataset = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (Male == z_label))
+        val_dataset = val_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (Male == z_label))
+        test_dataset = test_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (Male == z_label))
 
     # Compute the sample size before undersampling the dataset
     compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, train_dataset, "train_original")
@@ -249,7 +249,8 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         y_t, z_t = 0, 0
         if undersample_shuffle_seed == -1:
             # train_dataset_y0z0 = train_dataset.filter(lambda image, y, z: (y == y_t and z == z_t))
-            train_dataset_y0z0 = train_dataset.filter(lambda image, y, z, young: (y == y_t and z == z_t))
+            # train_dataset_y0z0 = train_dataset.filter(lambda image, y, z, young: (y == y_t and z == z_t))
+            train_dataset_y0z0 = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (Blond_Hair == y_t and Male == z_t))
         else:
             shuffle_buffer = train_group_original_sizes[y_variant][z_variant][(y_t, z_t)]
             train_dataset_y0z0 = train_dataset.filter(lambda image, y, z:
@@ -260,7 +261,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         # Keep only examples from groups other than Y = 0, Z = 0
         # train_dataset = train_dataset.filter(lambda image, y, z: (y != 0 or z != 0))
         # train_dataset = train_dataset.filter(lambda image, y, z, young: (y != 0 or z != 0))
-        train_dataset = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (y != 0 or z != 0))
+        train_dataset = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (Blond_Hair != 0 or Male != 0))
         # Add the subset of Y = 0, Z = 0 examples back into the train dataset
         train_dataset = train_dataset.concatenate(train_dataset_y0z0)
 
@@ -277,7 +278,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
             # label_selection_fn_tosave = get_label_selection_function("full")
             # Still 4054
             train_dataset_tosave = train_dataset_tosave.map(label_selection_fn_tosave, num_parallel_calls=16)
-            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}_all_prova.tfrec"
+            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}_all_attributes.tfrec"
             # record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}.tfrec"
 
             # import pdb;pdb.set_trace()
