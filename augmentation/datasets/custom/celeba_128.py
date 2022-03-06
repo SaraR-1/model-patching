@@ -145,9 +145,10 @@ def get_label_selection_function(label_type):
     elif label_type == 'full':
         # Keep both x the z labels
         return lambda image, y_label, z_label: (image, y_label, z_label)
-    # elif label_type =='additional':
-    #     # Keep both x the z labels + the attribute young
-    #     return lambda image, y_label, z_label, "young": (image, y_label, z_label, 'Young')
+    elif label_type =='additional':
+        # Keep both x the z labels + the attribute young
+        return lambda image, y_label, z_label, young: (image, y_label, z_label, young)
+        # return lambda image, y_label, z_label, "young": (image, y_label, z_label, 'Young')
     else:
         raise NotImplementedError
 
@@ -198,35 +199,32 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         get_dataset_from_list_files_dataset(test_dataset, proc_batch=128,
                                             tfrecord_example_reader=read_celeba_tfrecord).unbatch()
 
-    train_dataset_copy = train_dataset
+    # train_dataset_copy = train_dataset
+    # val_dataset_copy = val_dataset
+    # test_dataset_copy = test_dataset
     # Map to grab the y and z labels for the attributes picked
-    selection_fn = lambda image, tags: (image, int(tags[y_variant]), int(tags[z_variant]))
+    selection_fn = lambda image, tags: (image, int(tags[y_variant]), int(tags[z_variant]), int(tags['Young']))
     train_dataset = train_dataset.map(selection_fn, num_parallel_calls=16)
-    import pdb;pdb.set_trace()
-    selection_fn_II = lambda image, tags: (image, int(tags[y_variant]), int(tags[z_variant]), int(tags['Young']))
-    train_dataset_copy = train_dataset_copy.map(selection_fn_II, num_parallel_calls=16)
-    record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{save_tfrec_name}_{y_label}_{z_label}_young.tfrec"
-    # import pdb;pdb.set_trace()
-    with tf.io.TFRecordWriter(record_file) as writer:
-        for sample in train_dataset_copy:
-            tf_sample = customised_celeba_undersampled_tosave(sample, "additional")
-            # tf_sample = customised_celeba_undersampled_tosave(sample)
-            writer.write(tf_sample.SerializeToString())
-
     val_dataset = val_dataset.map(selection_fn, num_parallel_calls=16)
     test_dataset = test_dataset.map(selection_fn, num_parallel_calls=16)
 
     if y_label == 0 or y_label == 1:
         # Keep only one of the y_labels
-        train_dataset = train_dataset.filter(lambda image, y, z: (y == y_label))
-        val_dataset = val_dataset.filter(lambda image, y, z: (y == y_label))
-        test_dataset = test_dataset.filter(lambda image, y, z: (y == y_label))
+        # train_dataset = train_dataset.filter(lambda image, y, z: (y == y_label))
+        # val_dataset = val_dataset.filter(lambda image, y, z: (y == y_label))
+        # test_dataset = test_dataset.filter(lambda image, y, z: (y == y_label))
+        train_dataset = train_dataset.filter(lambda image, y, z, young: (y == y_label))
+        val_dataset = val_dataset.filter(lambda image, y, z, young: (y == y_label))
+        test_dataset = test_dataset.filter(lambda image, y, z, young: (y == y_label))
 
     if z_label == 0 or z_label == 1:
         # Keep only one of the z_labels
-        train_dataset = train_dataset.filter(lambda image, y, z: (z == z_label))
-        val_dataset = val_dataset.filter(lambda image, y, z: (z == z_label))
-        test_dataset = test_dataset.filter(lambda image, y, z: (z == z_label))
+        # train_dataset = train_dataset.filter(lambda image, y, z: (z == z_label))
+        # val_dataset = val_dataset.filter(lambda image, y, z: (z == z_label))
+        # test_dataset = test_dataset.filter(lambda image, y, z: (z == z_label))
+        train_dataset = train_dataset.filter(lambda image, y, z, young: (z == z_label))
+        val_dataset = val_dataset.filter(lambda image, y, z, young: (z == z_label))
+        test_dataset = test_dataset.filter(lambda image, y, z, young: (z == z_label))
 
     # Compute the sample size before undersampling the dataset
     compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, train_dataset, "train_original")
@@ -235,7 +233,8 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
     if n_subgroup_examples > 0:
         y_t, z_t = 0, 0
         if undersample_shuffle_seed == -1:
-            train_dataset_y0z0 = train_dataset.filter(lambda image, y, z: (y == y_t and z == z_t))
+            # train_dataset_y0z0 = train_dataset.filter(lambda image, y, z: (y == y_t and z == z_t))
+            train_dataset_y0z0 = train_dataset.filter(lambda image, y, z, young: (y == y_t and z == z_t))
         else:
             shuffle_buffer = train_group_original_sizes[y_variant][z_variant][(y_t, z_t)]
             train_dataset_y0z0 = train_dataset.filter(lambda image, y, z:
@@ -244,7 +243,8 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         # Take out examples from Y = 0, Z = 0
         train_dataset_y0z0 = train_dataset_y0z0.take(n_subgroup_examples)
         # Keep only examples from groups other than Y = 0, Z = 0
-        train_dataset = train_dataset.filter(lambda image, y, z: (y != 0 or z != 0))
+        # train_dataset = train_dataset.filter(lambda image, y, z: (y != 0 or z != 0))
+        train_dataset = train_dataset.filter(lambda image, y, z, young: (y != 0 or z != 0))
         # Add the subset of Y = 0, Z = 0 examples back into the train dataset
         train_dataset = train_dataset.concatenate(train_dataset_y0z0)
 
@@ -257,12 +257,12 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
 
             train_dataset_tosave = train_dataset
             # Save undersampled train set:
-            # label_selection_fn_tosave = get_label_selection_function("additional")
-            label_selection_fn_tosave = get_label_selection_function("full")
+            label_selection_fn_tosave = get_label_selection_function("additional")
+            # label_selection_fn_tosave = get_label_selection_function("full")
             # Still 4054
             train_dataset_tosave = train_dataset_tosave.map(label_selection_fn_tosave, num_parallel_calls=16)
-            # record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}_young.tfrec"
-            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}.tfrec"
+            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}_young_II.tfrec"
+            # record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}.tfrec"
 
             # import pdb;pdb.set_trace()
             with tf.io.TFRecordWriter(record_file) as writer:
