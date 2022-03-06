@@ -205,7 +205,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
     import pdb;pdb.set_trace()
     selection_fn_II = lambda image, tags: (image, int(tags[y_variant]), int(tags[z_variant]), int(tags['Young']))
     train_dataset_copy = train_dataset_copy.map(selection_fn_II, num_parallel_calls=16)
-    record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}_young.tfrec"
+    record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{save_tfrec_name}_{y_label}_{z_label}_young.tfrec"
     # import pdb;pdb.set_trace()
     with tf.io.TFRecordWriter(record_file) as writer:
         for sample in train_dataset_copy:
