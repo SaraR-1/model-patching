@@ -209,7 +209,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
     # selection_fn = lambda image, tags: (image, int(tags[y_variant]), int(tags[z_variant])))
     # selection_fn = lambda image, tags: (image, int(tags[y_variant]), int(tags[z_variant]), int(tags['Young']))
     import pdb;pdb.set_trace()
-    selection_fn = lambda image, tags: (image, *[int(tags[i]) for i in CELEBA_BASE_VARIANTS]))
+    selection_fn = lambda image, tags: (image, *[int(tags[i]) for i in CELEBA_BASE_VARIANTS])
 
     train_dataset = train_dataset.map(selection_fn, num_parallel_calls=16)
     val_dataset = val_dataset.map(selection_fn, num_parallel_calls=16)
