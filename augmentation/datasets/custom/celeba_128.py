@@ -144,6 +144,9 @@ def get_label_selection_function(label_type):
     elif label_type == 'full':
         # Keep both x the z labels
         return lambda image, y_label, z_label: (image, y_label, z_label)
+    elif label_type =='additional':
+        # Keep both x the z labels + the attribute young
+        return lambda image, y_label, z_label: (image, y_label, z_label, 'Young')
     else:
         raise NotImplementedError
 
@@ -241,15 +244,18 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
 
             train_dataset_tosave = train_dataset
             # Save undersampled train set:
-            label_selection_fn_tosave = get_label_selection_function("full")
+            label_selection_fn_tosave = get_label_selection_function("additional")
+            # label_selection_fn_tosave = get_label_selection_function("full")
             # Still 4054
             train_dataset_tosave = train_dataset_tosave.map(label_selection_fn_tosave, num_parallel_calls=16)
-            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}.tfrec"
+            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}_young.tfrec"
+            # record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}.tfrec"
 
             # import pdb;pdb.set_trace()
             with tf.io.TFRecordWriter(record_file) as writer:
                 for sample in train_dataset_tosave:
-                    tf_sample = customised_celeba_undersampled_tosave(sample)
+                    tf_sample = customised_celeba_undersampled_tosave(sample, "additional")
+                    # tf_sample = customised_celeba_undersampled_tosave(sample)
                     writer.write(tf_sample.SerializeToString())
 
     # N.B. important compute it here before losing the information about z (after label_selection_fn)
@@ -304,6 +310,14 @@ def customised_celeba_undersampled_tosave(train_sample, label="full"):
             'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
             'y': _int64_feature(train_sample[1].numpy()),
             'z': _int64_feature(train_sample[2].numpy()),
+        }
+    elif label == "additional":
+        # Create a dictionary with features that may be relevant.
+        feature = {
+            'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
+            'y': _int64_feature(train_sample[1].numpy()),
+            'z': _int64_feature(train_sample[2].numpy()),
+            'young': _int64_feature(train_sample[3].numpy()),
         }
     else:
         feature = {
