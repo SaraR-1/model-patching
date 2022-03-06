@@ -283,6 +283,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
 
     # Get the label selection function and apply it
     label_selection_fn = get_label_selection_function(label_type)
+    import pdb;pdb.set_trace()
     train_dataset = train_dataset.map(label_selection_fn, num_parallel_calls=16)
     val_dataset = val_dataset.map(label_selection_fn, num_parallel_calls=16)
     test_dataset = test_dataset.map(label_selection_fn, num_parallel_calls=16)
