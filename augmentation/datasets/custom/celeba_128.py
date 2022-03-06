@@ -101,7 +101,8 @@ def compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, da
 
     for y_t, z_t in entries_to_populate:
         # dataset_subgroup = dataset.filter(lambda image, y, z: (y == y_t and z == z_t))
-        dataset_subgroup = dataset.filter(lambda image, y, z, young: (y == y_t and z == z_t))
+        # dataset_subgroup = dataset.filter(lambda image, y, z, young: (y == y_t and z == z_t))
+        dataset_subgroup = dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (y == y_t and z == z_t))
         GROUP_SIZE_DICTS[dataset_name][y_variant][z_variant][(y_t, z_t)] = count_util(dataset_subgroup)
 
 
@@ -258,7 +259,8 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         train_dataset_y0z0 = train_dataset_y0z0.take(n_subgroup_examples)
         # Keep only examples from groups other than Y = 0, Z = 0
         # train_dataset = train_dataset.filter(lambda image, y, z: (y != 0 or z != 0))
-        train_dataset = train_dataset.filter(lambda image, y, z, young: (y != 0 or z != 0))
+        # train_dataset = train_dataset.filter(lambda image, y, z, young: (y != 0 or z != 0))
+        train_dataset = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (y != 0 or z != 0))
         # Add the subset of Y = 0, Z = 0 examples back into the train dataset
         train_dataset = train_dataset.concatenate(train_dataset_y0z0)
 
@@ -341,12 +343,17 @@ def customised_celeba_undersampled_tosave(train_sample, label="full"):
         }
     elif label == "additional":
         # Create a dictionary with features that may be relevant.
+        # feature = {
+        #     'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
+        #     'y': _int64_feature(train_sample[1].numpy()),
+        #     'z': _int64_feature(train_sample[2].numpy()),
+        #     'young': _int64_feature(train_sample[3].numpy()),
+        # }
         feature = {
             'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
-            'y': _int64_feature(train_sample[1].numpy()),
-            'z': _int64_feature(train_sample[2].numpy()),
-            'young': _int64_feature(train_sample[3].numpy()),
+            *{CELEBA_BASE_VARIANTS[i]:  _int64_feature(train_sample[1].numpy()) for i in range(len(CELEBA_BASE_VARIANTS))}
         }
+        
     else:
         feature = {
             'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
