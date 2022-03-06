@@ -264,7 +264,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
             # label_selection_fn_tosave = get_label_selection_function("full")
             # Still 4054
             train_dataset_tosave = train_dataset_tosave.map(label_selection_fn_tosave, num_parallel_calls=16)
-            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}_young_II.tfrec"
+            record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}_young.tfrec"
             # record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}.tfrec"
 
             # import pdb;pdb.set_trace()
@@ -279,7 +279,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
 
     # Get the label selection function and apply it
     label_selection_fn = get_label_selection_function(label_type)
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     train_dataset = train_dataset.map(label_selection_fn, num_parallel_calls=16)
     val_dataset = val_dataset.map(label_selection_fn, num_parallel_calls=16)
     test_dataset = test_dataset.map(label_selection_fn, num_parallel_calls=16)
