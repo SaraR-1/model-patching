@@ -129,7 +129,7 @@ def read_celeba_tfrecord(example, batched=True, parallelism=8):
 
     # Get all the other tags
     tags = {tag: example[tag] for tag in CELEBA_BASE_VARIANTS}
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
 
     return image, tags
 
@@ -190,7 +190,6 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         get_dataset_from_list_files_dataset(train_dataset, proc_batch=128,
                                             tfrecord_example_reader=read_celeba_tfrecord).unbatch()
 
-# train_dataset = augmentation.datasets.utils.get_dataset_from_list_files_dataset(train_dataset, proc_batch=128,tfrecord_example_reader=read_celeba_tfrecord).unbatch()
     val_dataset = augmentation.datasets.utils. \
         get_dataset_from_list_files_dataset(val_dataset, proc_batch=128,
                                             tfrecord_example_reader=read_celeba_tfrecord).unbatch()
@@ -199,9 +198,14 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         get_dataset_from_list_files_dataset(test_dataset, proc_batch=128,
                                             tfrecord_example_reader=read_celeba_tfrecord).unbatch()
 
+    train_dataset_copy = train_dataset
     # Map to grab the y and z labels for the attributes picked
-    selection_fn = lambda image, tags: (image, int(tags[y_label]), int(tags[z_variant]))
+    selection_fn = lambda image, tags: (image, int(tags[y_variant]), int(tags[z_variant]))
     train_dataset = train_dataset.map(selection_fn, num_parallel_calls=16)
+    import pdb;pdb.set_trace()
+    selection_fn_II = lambda image, tags: (image, int(tags[y_variant]), int(tags[z_variant]), int(tags['Young']))
+    train_dataset_copy = train_dataset_copy.map(selection_fn_II, num_parallel_calls=16)
+
     val_dataset = val_dataset.map(selection_fn, num_parallel_calls=16)
     test_dataset = test_dataset.map(selection_fn, num_parallel_calls=16)
 
