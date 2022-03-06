@@ -102,7 +102,7 @@ def compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, da
     for y_t, z_t in entries_to_populate:
         # dataset_subgroup = dataset.filter(lambda image, y, z: (y == y_t and z == z_t))
         # dataset_subgroup = dataset.filter(lambda image, y, z, young: (y == y_t and z == z_t))
-        dataset_subgroup = dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (Blond_Hair == y_t and Male == z_t))
+        dataset_subgroup = dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: ("Blond_Hair" == y_t and "Male" == z_t))
         GROUP_SIZE_DICTS[dataset_name][y_variant][z_variant][(y_t, z_t)] = count_util(dataset_subgroup)
 
 
