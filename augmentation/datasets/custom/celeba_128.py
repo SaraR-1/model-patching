@@ -44,6 +44,11 @@ CELEBA_BASE_VARIANTS = ['5_o_Clock_Shadow',
                         'Wearing_Necktie',
                         'Young']
 
+CELEBA_BASE_VARIANTS_accepted = CELEBA_BASE_VARIANTS[1:]
+# Init var names? Cannot use 5_o_Clock_Shadow as it starts with a number - not accepeted
+for x in CELEBA_BASE_VARIANTS_accepted:
+    exec("%s = %d" % (x,100))
+
 train_group_sizes = defaultdict(dict)
 
 train_group_original_sizes = defaultdict(dict)
@@ -102,7 +107,7 @@ def compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, da
     for y_t, z_t in entries_to_populate:
         # dataset_subgroup = dataset.filter(lambda image, y, z: (y == y_t and z == z_t))
         # dataset_subgroup = dataset.filter(lambda image, y, z, young: (y == y_t and z == z_t))
-        dataset_subgroup = dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: ("Blond_Hair" == y_t and "Male" == z_t))
+        dataset_subgroup = dataset.filter(lambda image, *CELEBA_BASE_VARIANTS_accepted: (Blond_Hair == y_t and Male == z_t))
         GROUP_SIZE_DICTS[dataset_name][y_variant][z_variant][(y_t, z_t)] = count_util(dataset_subgroup)
     print(GROUP_SIZE_DICTS)
 
@@ -142,19 +147,19 @@ def get_label_selection_function(label_type):
         # Keep only the y labels
         # return lambda image, y_label, z_label: (image, y_label)
         # return lambda image, y_label, z_label, young: (image, y_label)
-        return lambda image, *CELEBA_BASE_VARIANTS: (image, "Blond_Hair")
+        return lambda image, *CELEBA_BASE_VARIANTS_accepted: (image, Blond_Hair)
     elif label_type == 'z':
         # Keep only the z labels
         # return lambda image, y_label, z_label: (image, z_label)
         # return lambda image, y_label, z_label, young: (image, z_label)
-        return lambda image, *CELEBA_BASE_VARIANTS: (image, "Male")
+        return lambda image, *CELEBA_BASE_VARIANTS_accepted: (image, Male)
     # CUSTOMISED ADD - TO USE WHEN SAVING THE DATA (for external usage)
     elif label_type == 'full':
         # Keep both x the z labels
         return lambda image, y_label, z_label: (image, y_label, z_label)
     elif label_type =='additional':
         # Keep both x the z labels + the attribute young
-        return lambda image, *CELEBA_BASE_VARIANTS: (image, *[int(tags[i]) for i in CELEBA_BASE_VARIANTS])
+        return lambda image, *CELEBA_BASE_VARIANTS_accepted: (image, *[int(i) for i in CELEBA_BASE_VARIANTS_accepted])
         # return lambda image, y_label, z_label, young: (image, y_label, z_label, young)
     else:
         raise NotImplementedError
@@ -213,7 +218,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
     # selection_fn = lambda image, tags: (image, int(tags[y_variant]), int(tags[z_variant])))
     # selection_fn = lambda image, tags: (image, int(tags[y_variant]), int(tags[z_variant]), int(tags['Young']))
     # import pdb;pdb.set_trace()
-    selection_fn = lambda image, tags: (image, *[int(tags[i]) for i in CELEBA_BASE_VARIANTS])
+    selection_fn = lambda image, tags: (image, *[int(tags[i]) for i in CELEBA_BASE_VARIANTS_accepted])
 
     train_dataset = train_dataset.map(selection_fn, num_parallel_calls=16)
     val_dataset = val_dataset.map(selection_fn, num_parallel_calls=16)
@@ -228,9 +233,9 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         # val_dataset = val_dataset.filter(lambda image, y, z, young: (y == y_label))
         # test_dataset = test_dataset.filter(lambda image, y, z, young: (y == y_label))
 
-        train_dataset = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: ("Blond_Hair" == y_label))
-        val_dataset = val_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: ("Blond_Hair" == y_label))
-        test_dataset = test_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: ("Blond_Hair" == y_label))
+        train_dataset = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS_accepted: (Blond_Hair == y_label))
+        val_dataset = val_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS_accepted: (Blond_Hair == y_label))
+        test_dataset = test_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS_accepted: (Blond_Hair == y_label))
 
     if z_label == 0 or z_label == 1:
         # Keep only one of the z_labels
@@ -240,9 +245,9 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         # train_dataset = train_dataset.filter(lambda image, y, z, young: (z == z_label))
         # val_dataset = val_dataset.filter(lambda image, y, z, young: (z == z_label))
         # test_dataset = test_dataset.filter(lambda image, y, z, young: (z == z_label))
-        train_dataset = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: ("Male" == z_label))
-        val_dataset = val_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: ("Male" == z_label))
-        test_dataset = test_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: ("Male" == z_label))
+        train_dataset = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS_accepted: (Male == z_label))
+        val_dataset = val_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS_accepted: (Male == z_label))
+        test_dataset = test_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS_accepted: (Male == z_label))
 
     # Compute the sample size before undersampling the dataset
     compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, train_dataset, "train_original")
@@ -253,21 +258,21 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         if undersample_shuffle_seed == -1:
             # train_dataset_y0z0 = train_dataset.filter(lambda image, y, z: (y == y_t and z == z_t))
             # train_dataset_y0z0 = train_dataset.filter(lambda image, y, z, young: (y == y_t and z == z_t))
-            train_dataset_y0z0 = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: ("Blond_Hair" == y_t and "Male" == z_t))
+            train_dataset_y0z0 = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS_accepted: (Blond_Hair == y_t and Male == z_t))
         else:
             shuffle_buffer = train_group_original_sizes[y_variant][z_variant][(y_t, z_t)]
             # train_dataset_y0z0 = train_dataset.filter(lambda image, y, z:
             #                                           (y == y_t and z == z_t)).shuffle(buffer_size=shuffle_buffer,
             #                                                                            seed=undersample_shuffle_seed)
-            train_dataset_y0z0 = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: 
-                                                      ("Blond_Hair" == y_t and "Male" == z_t)).shuffle(buffer_size=shuffle_buffer, 
+            train_dataset_y0z0 = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS_accepted: 
+                                                      (Blond_Hair == y_t and Male == z_t)).shuffle(buffer_size=shuffle_buffer, 
                                                                                                    seed=undersample_shuffle_seed)
         # Take out examples from Y = 0, Z = 0
         train_dataset_y0z0 = train_dataset_y0z0.take(n_subgroup_examples)
         # Keep only examples from groups other than Y = 0, Z = 0
         # train_dataset = train_dataset.filter(lambda image, y, z: (y != 0 or z != 0))
         # train_dataset = train_dataset.filter(lambda image, y, z, young: (y != 0 or z != 0))
-        train_dataset = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: ("Blond_Hair" != 0 or "Male" != 0))
+        train_dataset = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS_accepted: (Blond_Hair != 0 or Male != 0))
         # Add the subset of Y = 0, Z = 0 examples back into the train dataset
         train_dataset = train_dataset.concatenate(train_dataset_y0z0)
 
@@ -359,7 +364,7 @@ def customised_celeba_undersampled_tosave(train_sample, label="full"):
         feature = {
             'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
         }
-        feature.update({CELEBA_BASE_VARIANTS[i]:  _int64_feature(train_sample[1].numpy()) for i in range(len(CELEBA_BASE_VARIANTS))})
+        feature.update({CELEBA_BASE_VARIANTS_accepted[i]:  _int64_feature(train_sample[1].numpy()) for i in range(len(CELEBA_BASE_VARIANTS_accepted))})
         
     else:
         feature = {
