@@ -224,9 +224,9 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         # val_dataset = val_dataset.filter(lambda image, y, z, young: (y == y_label))
         # test_dataset = test_dataset.filter(lambda image, y, z, young: (y == y_label))
 
-        train_dataset = train_dataset.filter(lambda image, *[i for i in CELEBA_BASE_VARIANTS]: (y == y_label))
-        val_dataset = val_dataset.filter(lambda image, *[i for i in CELEBA_BASE_VARIANTS]: (y == y_label))
-        test_dataset = test_dataset.filter(lambda image, *[i for i in CELEBA_BASE_VARIANTS]: (y == y_label))
+        train_dataset = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (y == y_label))
+        val_dataset = val_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (y == y_label))
+        test_dataset = test_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (y == y_label))
 
     if z_label == 0 or z_label == 1:
         # Keep only one of the z_labels
@@ -236,9 +236,9 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         # train_dataset = train_dataset.filter(lambda image, y, z, young: (z == z_label))
         # val_dataset = val_dataset.filter(lambda image, y, z, young: (z == z_label))
         # test_dataset = test_dataset.filter(lambda image, y, z, young: (z == z_label))
-        train_dataset = train_dataset.filter(lambda image, *[i for i in CELEBA_BASE_VARIANTS]: (z == z_label))
-        val_dataset = val_dataset.filter(lambda image, *[i for i in CELEBA_BASE_VARIANTS]: (z == z_label))
-        test_dataset = test_dataset.filter(lambda image, *[i for i in CELEBA_BASE_VARIANTS]: (z == z_label))
+        train_dataset = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (z == z_label))
+        val_dataset = val_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (z == z_label))
+        test_dataset = test_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS: (z == z_label))
 
     # Compute the sample size before undersampling the dataset
     compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, train_dataset, "train_original")
