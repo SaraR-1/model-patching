@@ -205,6 +205,13 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
     import pdb;pdb.set_trace()
     selection_fn_II = lambda image, tags: (image, int(tags[y_variant]), int(tags[z_variant]), int(tags['Young']))
     train_dataset_copy = train_dataset_copy.map(selection_fn_II, num_parallel_calls=16)
+    record_file = f"/srv/galene0/sr572/celeba_128/undersampled_4054/{SAVE_TFREC_NAME}_{y_label}_{z_label}_young.tfrec"
+    # import pdb;pdb.set_trace()
+    with tf.io.TFRecordWriter(record_file) as writer:
+        for sample in train_dataset_copy:
+            tf_sample = customised_celeba_undersampled_tosave(sample, "additional")
+            # tf_sample = customised_celeba_undersampled_tosave(sample)
+            writer.write(tf_sample.SerializeToString())
 
     val_dataset = val_dataset.map(selection_fn, num_parallel_calls=16)
     test_dataset = test_dataset.map(selection_fn, num_parallel_calls=16)
@@ -317,14 +324,14 @@ def customised_celeba_undersampled_tosave(train_sample, label="full"):
             'y': _int64_feature(train_sample[1].numpy()),
             'z': _int64_feature(train_sample[2].numpy()),
         }
-    # elif label == "additional":
-    #     # Create a dictionary with features that may be relevant.
-    #     feature = {
-    #         'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
-    #         'y': _int64_feature(train_sample[1].numpy()),
-    #         'z': _int64_feature(train_sample[2].numpy()),
-    #         'young': _int64_feature(train_sample[3].numpy()),
-    #     }
+    elif label == "additional":
+        # Create a dictionary with features that may be relevant.
+        feature = {
+            'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
+            'y': _int64_feature(train_sample[1].numpy()),
+            'z': _int64_feature(train_sample[2].numpy()),
+            'young': _int64_feature(train_sample[3].numpy()),
+        }
     else:
         feature = {
             'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
