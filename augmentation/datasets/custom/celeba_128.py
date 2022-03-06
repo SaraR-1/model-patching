@@ -138,16 +138,12 @@ def read_celeba_tfrecord(example, batched=True, parallelism=8):
 def get_label_selection_function(label_type):
     if label_type == 'y':
         # Keep only the y labels
-        try:
-            return lambda image, y_label, z_label: (image, y_label)
-        except TypeError:
-            return lambda image, y_label, z_label, young: (image, y_label)
+        # return lambda image, y_label, z_label: (image, y_label)
+        return lambda image, y_label, z_label, young: (image, y_label)
     elif label_type == 'z':
         # Keep only the z labels
-        try:
-            return lambda image, y_label, z_label: (image, z_label)
-        except TypeError:
-            return lambda image, y_label, z_label, young: (image, z_label)
+        # return lambda image, y_label, z_label: (image, z_label)
+        return lambda image, y_label, z_label, young: (image, z_label)
     # CUSTOMISED ADD - TO USE WHEN SAVING THE DATA (for external usage)
     elif label_type == 'full':
         # Keep both x the z labels
