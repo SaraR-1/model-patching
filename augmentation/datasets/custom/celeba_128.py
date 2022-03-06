@@ -144,9 +144,9 @@ def get_label_selection_function(label_type):
     elif label_type == 'full':
         # Keep both x the z labels
         return lambda image, y_label, z_label: (image, y_label, z_label)
-    elif label_type =='additional':
-        # Keep both x the z labels + the attribute young
-        return lambda image, y_label, z_label, "young": (image, y_label, z_label, 'Young')
+    # elif label_type =='additional':
+    #     # Keep both x the z labels + the attribute young
+    #     return lambda image, y_label, z_label, "young": (image, y_label, z_label, 'Young')
     else:
         raise NotImplementedError
 
@@ -311,14 +311,14 @@ def customised_celeba_undersampled_tosave(train_sample, label="full"):
             'y': _int64_feature(train_sample[1].numpy()),
             'z': _int64_feature(train_sample[2].numpy()),
         }
-    elif label == "additional":
-        # Create a dictionary with features that may be relevant.
-        feature = {
-            'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
-            'y': _int64_feature(train_sample[1].numpy()),
-            'z': _int64_feature(train_sample[2].numpy()),
-            'young': _int64_feature(train_sample[3].numpy()),
-        }
+    # elif label == "additional":
+    #     # Create a dictionary with features that may be relevant.
+    #     feature = {
+    #         'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
+    #         'y': _int64_feature(train_sample[1].numpy()),
+    #         'z': _int64_feature(train_sample[2].numpy()),
+    #         'young': _int64_feature(train_sample[3].numpy()),
+    #     }
     else:
         feature = {
             'image': _bytes_feature(tf.image.encode_jpeg(train_sample[0]).numpy()),
