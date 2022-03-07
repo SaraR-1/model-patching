@@ -160,7 +160,7 @@ def get_label_selection_function(label_type):
         return lambda image, y_label, z_label: (image, y_label, z_label)
     elif label_type =='additional':
         # Keep both x the z labels + the attribute young
-        return lambda image, *CELEBA_BASE_VARIANTS_accepted_vars: (image, *[int(i) for i in CELEBA_BASE_VARIANTS_accepted])
+        return lambda image, *CELEBA_BASE_VARIANTS_accepted_vars: (image, *[int(i) for i in CELEBA_BASE_VARIANTS_accepted_vars])
         # return lambda image, y_label, z_label, young: (image, y_label, z_label, young)
     else:
         raise NotImplementedError
