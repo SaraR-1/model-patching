@@ -77,7 +77,7 @@ train_dataset_aliases:
 train_datadirs:
   - /srv/galene0/sr572/celeba_128/celeba_tfrecord_128
 max_shuffle_buffer: 40000
-undersample_seed: 2
+undersample_seed: 3
 
 eval_datasets:
   - 'celeb_a_128/Blond_Hair/Male/1.0/0/0/y'
