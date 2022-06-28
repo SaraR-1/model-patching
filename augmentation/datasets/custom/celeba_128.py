@@ -218,7 +218,6 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
     # Map to grab the y and z labels for the attributes picked
     # selection_fn = lambda image, tags: (image, int(tags[y_variant]), int(tags[z_variant])))
     # selection_fn = lambda image, tags: (image, int(tags[y_variant]), int(tags[z_variant]), int(tags['Young']))
-    import pdb;pdb.set_trace()
     selection_fn = lambda image, tags: (image, *[int(tags[i]) for i in CELEBA_BASE_VARIANTS_accepted])
 
     train_dataset = train_dataset.map(selection_fn, num_parallel_calls=16)
@@ -259,7 +258,11 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         if undersample_shuffle_seed == -1:
             # train_dataset_y0z0 = train_dataset.filter(lambda image, y, z: (y == y_t and z == z_t))
             # train_dataset_y0z0 = train_dataset.filter(lambda image, y, z, young: (y == y_t and z == z_t))
-            train_dataset_y0z0 = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS_accepted_vars: (Blond_Hair == y_t and Male == z_t))
+            train_dataset_y0z0 = train_dataset.filter(lambda image, Arched_Eyebrows, Attractive, Bags_Under_Eyes, Bald, Bangs, Big_Lips, Big_Nose, Black_Hair, Blond_Hair,
+             Blurry, Brown_Hair, Bushy_Eyebrows, Chubby, Double_Chin, Eyeglasses, Goatee, Gray_Hair, Heavy_Makeup,
+             High_Cheekbones, Male, Mouth_Slightly_Open, Mustache, Narrow_Eyes, No_Beard, Oval_Face, Pale_Skin,
+             Pointy_Nose, Receding_Hairline, Rosy_Cheeks, Sideburns, Smiling, Straight_Hair, Wavy_Hair,
+             Wearing_Earrings, Wearing_Hat, Wearing_Lipstick, Wearing_Necklace, Wearing_Necktie, Young: (Blond_Hair == y_t and Male == z_t))
         else:
             # shuffle_buffer = train_group_original_sizes[y_variant][z_variant][(y_t, z_t)]
             shuffle_buffer = 40000
@@ -267,10 +270,6 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
             #                                           (y == y_t and z == z_t)).shuffle(buffer_size=shuffle_buffer,
             #                                                                            seed=undersample_shuffle_seed)
             # import pdb;pdb.set_trace()
-            train_dataset_y0z0 = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS_accepted_vars: 
-                                                      (Blond_Hair == y_t and Male == z_t)).shuffle(buffer_size=shuffle_buffer, 
-                                                                                                   seed=undersample_shuffle_seed)
-
             train_dataset_y0z0 = train_dataset.filter(lambda image, Arched_Eyebrows, Attractive, Bags_Under_Eyes, Bald, Bangs, Big_Lips, Big_Nose, Black_Hair, Blond_Hair,
              Blurry, Brown_Hair, Bushy_Eyebrows, Chubby, Double_Chin, Eyeglasses, Goatee, Gray_Hair, Heavy_Makeup,
              High_Cheekbones, Male, Mouth_Slightly_Open, Mustache, Narrow_Eyes, No_Beard, Oval_Face, Pale_Skin,
@@ -286,7 +285,11 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         # Keep only examples from groups other than Y = 0, Z = 0
         # train_dataset = train_dataset.filter(lambda image, y, z: (y != 0 or z != 0))
         # train_dataset = train_dataset.filter(lambda image, y, z, young: (y != 0 or z != 0))
-        train_dataset = train_dataset.filter(lambda image, *CELEBA_BASE_VARIANTS_accepted_vars: (Blond_Hair != 0 or Male != 0))
+        train_dataset = train_dataset.filter(lambda image, Arched_Eyebrows, Attractive, Bags_Under_Eyes, Bald, Bangs, Big_Lips, Big_Nose, Black_Hair, Blond_Hair,
+             Blurry, Brown_Hair, Bushy_Eyebrows, Chubby, Double_Chin, Eyeglasses, Goatee, Gray_Hair, Heavy_Makeup,
+             High_Cheekbones, Male, Mouth_Slightly_Open, Mustache, Narrow_Eyes, No_Beard, Oval_Face, Pale_Skin,
+             Pointy_Nose, Receding_Hairline, Rosy_Cheeks, Sideburns, Smiling, Straight_Hair, Wavy_Hair,
+             Wearing_Earrings, Wearing_Hat, Wearing_Lipstick, Wearing_Necklace, Wearing_Necktie, Young: (Blond_Hair != 0 or Male != 0))
         # Add the subset of Y = 0, Z = 0 examples back into the train dataset
         train_dataset = train_dataset.concatenate(train_dataset_y0z0)
 
