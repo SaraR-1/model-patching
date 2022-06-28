@@ -280,7 +280,6 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
 
 
         # Take out examples from Y = 0, Z = 0
-        import pdb; pdb.set_trace()
         train_dataset_y0z0 = train_dataset_y0z0.take(n_subgroup_examples)
         # Keep only examples from groups other than Y = 0, Z = 0
         # train_dataset = train_dataset.filter(lambda image, y, z: (y != 0 or z != 0))
