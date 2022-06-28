@@ -3,8 +3,7 @@ from types import SimpleNamespace
 import tensorflow as tf
 import augmentation.datasets.utils
 
-CELEBA_BASE_VARIANTS = [#'5_o_Clock_Shadow',
-                        'o_Clock_Shadow',
+CELEBA_BASE_VARIANTS = ['5_o_Clock_Shadow',
                         'Arched_Eyebrows',
                         'Attractive',
                         'Bags_Under_Eyes',
@@ -51,7 +50,7 @@ CELEBA_BASE_VARIANTS_accepted = CELEBA_BASE_VARIANTS
 # Init var names? Cannot use 5_o_Clock_Shadow as it starts with a number - not accepeted
 for x in CELEBA_BASE_VARIANTS_accepted:
     exec("%s = %d" % (x,100))
-CELEBA_BASE_VARIANTS_accepted_vars = [o_Clock_Shadow, Arched_Eyebrows, Attractive, Bags_Under_Eyes, Bald, Bangs, Big_Lips, Big_Nose, Black_Hair, Blond_Hair, Blurry, Brown_Hair, Bushy_Eyebrows, Chubby, Double_Chin, Eyeglasses, Goatee, Gray_Hair, Heavy_Makeup, High_Cheekbones, Male, Mouth_Slightly_Open, Mustache, Narrow_Eyes, No_Beard, Oval_Face, Pale_Skin, Pointy_Nose, Receding_Hairline, Rosy_Cheeks, Sideburns, Smiling, Straight_Hair, Wavy_Hair, Wearing_Earrings, Wearing_Hat, Wearing_Lipstick, Wearing_Necklace, Wearing_Necktie, Young]
+CELEBA_BASE_VARIANTS_accepted_vars = [Arched_Eyebrows, Attractive, Bags_Under_Eyes, Bald, Bangs, Big_Lips, Big_Nose, Black_Hair, Blond_Hair, Blurry, Brown_Hair, Bushy_Eyebrows, Chubby, Double_Chin, Eyeglasses, Goatee, Gray_Hair, Heavy_Makeup, High_Cheekbones, Male, Mouth_Slightly_Open, Mustache, Narrow_Eyes, No_Beard, Oval_Face, Pale_Skin, Pointy_Nose, Receding_Hairline, Rosy_Cheeks, Sideburns, Smiling, Straight_Hair, Wavy_Hair, Wearing_Earrings, Wearing_Hat, Wearing_Lipstick, Wearing_Necklace, Wearing_Necktie, Young]
 
 train_group_sizes = defaultdict(dict)
 
@@ -111,7 +110,7 @@ def compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, da
     for y_t, z_t in entries_to_populate:
         # dataset_subgroup = dataset.filter(lambda image, y, z: (y == y_t and z == z_t))
         # dataset_subgroup = dataset.filter(lambda image, y, z, young: (y == y_t and z == z_t))
-        dataset_subgroup = dataset.filter(lambda image, o_Clock_Shadow, Arched_Eyebrows, Attractive, Bags_Under_Eyes, Bald, Bangs, Big_Lips, Big_Nose, Black_Hair, Blond_Hair,
+        dataset_subgroup = dataset.filter(lambda image, Arched_Eyebrows, Attractive, Bags_Under_Eyes, Bald, Bangs, Big_Lips, Big_Nose, Black_Hair, Blond_Hair,
              Blurry, Brown_Hair, Bushy_Eyebrows, Chubby, Double_Chin, Eyeglasses, Goatee, Gray_Hair, Heavy_Makeup,
              High_Cheekbones, Male, Mouth_Slightly_Open, Mustache, Narrow_Eyes, No_Beard, Oval_Face, Pale_Skin,
              Pointy_Nose, Receding_Hairline, Rosy_Cheeks, Sideburns, Smiling, Straight_Hair, Wavy_Hair,
@@ -145,7 +144,8 @@ def read_celeba_tfrecord(example, batched=True, parallelism=8):
         image = augmentation.datasets.utils.decode_raw_image(example['image'])
 
     # Get all the other tags
-    tags = {tag: example[tag] for tag in CELEBA_BASE_VARIANTS}
+    # tags = {tag: example[tag] for tag in CELEBA_BASE_VARIANTS}
+    tags = {tag: example[tag] for tag in CELEBA_BASE_VARIANTS_accepted}
     # import pdb;pdb.set_trace()
 
     return image, tags
