@@ -218,7 +218,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
     # Map to grab the y and z labels for the attributes picked
     # selection_fn = lambda image, tags: (image, int(tags[y_variant]), int(tags[z_variant])))
     # selection_fn = lambda image, tags: (image, int(tags[y_variant]), int(tags[z_variant]), int(tags['Young']))
-    # import pdb;pdb.set_trace()
+    import pdb;pdb.set_trace()
     selection_fn = lambda image, tags: (image, *[int(tags[i]) for i in CELEBA_BASE_VARIANTS_accepted])
 
     train_dataset = train_dataset.map(selection_fn, num_parallel_calls=16)
