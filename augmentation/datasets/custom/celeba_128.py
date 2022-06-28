@@ -3,7 +3,8 @@ from types import SimpleNamespace
 import tensorflow as tf
 import augmentation.datasets.utils
 
-CELEBA_BASE_VARIANTS = ['5_o_Clock_Shadow',
+CELEBA_BASE_VARIANTS = [#'5_o_Clock_Shadow',
+                        'o_Clock_Shadow',
                         'Arched_Eyebrows',
                         'Attractive',
                         'Bags_Under_Eyes',
@@ -46,7 +47,7 @@ CELEBA_BASE_VARIANTS = ['5_o_Clock_Shadow',
 
 # CELEBA_BASE_VARIANTS_accepted = CELEBA_BASE_VARIANTS[1:]
 CELEBA_BASE_VARIANTS_accepted = CELEBA_BASE_VARIANTS
-CELEBA_BASE_VARIANTS_accepted[0] = "o_Clock_Shadow"
+# CELEBA_BASE_VARIANTS_accepted[0] = "o_Clock_Shadow"
 # Init var names? Cannot use 5_o_Clock_Shadow as it starts with a number - not accepeted
 for x in CELEBA_BASE_VARIANTS_accepted:
     exec("%s = %d" % (x,100))
@@ -115,6 +116,7 @@ def compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, da
              High_Cheekbones, Male, Mouth_Slightly_Open, Mustache, Narrow_Eyes, No_Beard, Oval_Face, Pale_Skin,
              Pointy_Nose, Receding_Hairline, Rosy_Cheeks, Sideburns, Smiling, Straight_Hair, Wavy_Hair,
              Wearing_Earrings, Wearing_Hat, Wearing_Lipstick, Wearing_Necklace, Wearing_Necktie, Young: (Blond_Hair == y_t and Male == z_t))
+
         GROUP_SIZE_DICTS[dataset_name][y_variant][z_variant][(y_t, z_t)] = count_util(dataset_subgroup)
     print(GROUP_SIZE_DICTS)
 
