@@ -46,6 +46,7 @@ CELEBA_BASE_VARIANTS = ['5_o_Clock_Shadow',
 
 # CELEBA_BASE_VARIANTS_accepted = CELEBA_BASE_VARIANTS[1:]
 CELEBA_BASE_VARIANTS_accepted = CELEBA_BASE_VARIANTS
+CELEBA_BASE_VARIANTS_accepted[0] = "o_Clock_Shadow"
 # Init var names? Cannot use 5_o_Clock_Shadow as it starts with a number - not accepeted
 for x in CELEBA_BASE_VARIANTS_accepted:
     exec("%s = %d" % (x,100))
