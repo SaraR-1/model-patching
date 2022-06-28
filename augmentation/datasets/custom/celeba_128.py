@@ -44,11 +44,12 @@ CELEBA_BASE_VARIANTS = ['5_o_Clock_Shadow',
                         'Wearing_Necktie',
                         'Young']
 
-CELEBA_BASE_VARIANTS_accepted = CELEBA_BASE_VARIANTS[1:]
+# CELEBA_BASE_VARIANTS_accepted = CELEBA_BASE_VARIANTS[1:]
+CELEBA_BASE_VARIANTS_accepted = CELEBA_BASE_VARIANTS
 # Init var names? Cannot use 5_o_Clock_Shadow as it starts with a number - not accepeted
 for x in CELEBA_BASE_VARIANTS_accepted:
     exec("%s = %d" % (x,100))
-CELEBA_BASE_VARIANTS_accepted_vars = [Arched_Eyebrows, Attractive, Bags_Under_Eyes, Bald, Bangs, Big_Lips, Big_Nose, Black_Hair, Blond_Hair, Blurry, Brown_Hair, Bushy_Eyebrows, Chubby, Double_Chin, Eyeglasses, Goatee, Gray_Hair, Heavy_Makeup, High_Cheekbones, Male, Mouth_Slightly_Open, Mustache, Narrow_Eyes, No_Beard, Oval_Face, Pale_Skin, Pointy_Nose, Receding_Hairline, Rosy_Cheeks, Sideburns, Smiling, Straight_Hair, Wavy_Hair, Wearing_Earrings, Wearing_Hat, Wearing_Lipstick, Wearing_Necklace, Wearing_Necktie, Young]
+CELEBA_BASE_VARIANTS_accepted_vars = [o_Clock_Shadow, Arched_Eyebrows, Attractive, Bags_Under_Eyes, Bald, Bangs, Big_Lips, Big_Nose, Black_Hair, Blond_Hair, Blurry, Brown_Hair, Bushy_Eyebrows, Chubby, Double_Chin, Eyeglasses, Goatee, Gray_Hair, Heavy_Makeup, High_Cheekbones, Male, Mouth_Slightly_Open, Mustache, Narrow_Eyes, No_Beard, Oval_Face, Pale_Skin, Pointy_Nose, Receding_Hairline, Rosy_Cheeks, Sideburns, Smiling, Straight_Hair, Wavy_Hair, Wearing_Earrings, Wearing_Hat, Wearing_Lipstick, Wearing_Necklace, Wearing_Necktie, Young]
 
 train_group_sizes = defaultdict(dict)
 
@@ -108,7 +109,11 @@ def compute_celeba_dataset_len_single(y_variant, z_variant, y_label, z_label, da
     for y_t, z_t in entries_to_populate:
         # dataset_subgroup = dataset.filter(lambda image, y, z: (y == y_t and z == z_t))
         # dataset_subgroup = dataset.filter(lambda image, y, z, young: (y == y_t and z == z_t))
-        dataset_subgroup = dataset.filter(lambda image, *CELEBA_BASE_VARIANTS_accepted_vars: (Blond_Hair == y_t and Male == z_t))
+        dataset_subgroup = dataset.filter(lambda image, o_Clock_Shadow, Arched_Eyebrows, Attractive, Bags_Under_Eyes, Bald, Bangs, Big_Lips, Big_Nose, Black_Hair, Blond_Hair,
+             Blurry, Brown_Hair, Bushy_Eyebrows, Chubby, Double_Chin, Eyeglasses, Goatee, Gray_Hair, Heavy_Makeup,
+             High_Cheekbones, Male, Mouth_Slightly_Open, Mustache, Narrow_Eyes, No_Beard, Oval_Face, Pale_Skin,
+             Pointy_Nose, Receding_Hairline, Rosy_Cheeks, Sideburns, Smiling, Straight_Hair, Wavy_Hair,
+             Wearing_Earrings, Wearing_Hat, Wearing_Lipstick, Wearing_Necklace, Wearing_Necktie, Young: (Blond_Hair == y_t and Male == z_t))
         GROUP_SIZE_DICTS[dataset_name][y_variant][z_variant][(y_t, z_t)] = count_util(dataset_subgroup)
     print(GROUP_SIZE_DICTS)
 
@@ -258,7 +263,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         if undersample_shuffle_seed == -1:
             # train_dataset_y0z0 = train_dataset.filter(lambda image, y, z: (y == y_t and z == z_t))
             # train_dataset_y0z0 = train_dataset.filter(lambda image, y, z, young: (y == y_t and z == z_t))
-            train_dataset_y0z0 = train_dataset.filter(lambda image, Arched_Eyebrows, Attractive, Bags_Under_Eyes, Bald, Bangs, Big_Lips, Big_Nose, Black_Hair, Blond_Hair,
+            train_dataset_y0z0 = train_dataset.filter(lambda image, o_Clock_Shadow, Arched_Eyebrows, Attractive, Bags_Under_Eyes, Bald, Bangs, Big_Lips, Big_Nose, Black_Hair, Blond_Hair,
              Blurry, Brown_Hair, Bushy_Eyebrows, Chubby, Double_Chin, Eyeglasses, Goatee, Gray_Hair, Heavy_Makeup,
              High_Cheekbones, Male, Mouth_Slightly_Open, Mustache, Narrow_Eyes, No_Beard, Oval_Face, Pale_Skin,
              Pointy_Nose, Receding_Hairline, Rosy_Cheeks, Sideburns, Smiling, Straight_Hair, Wavy_Hair,
@@ -270,7 +275,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
             #                                           (y == y_t and z == z_t)).shuffle(buffer_size=shuffle_buffer,
             #                                                                            seed=undersample_shuffle_seed)
             # import pdb;pdb.set_trace()
-            train_dataset_y0z0 = train_dataset.filter(lambda image, Arched_Eyebrows, Attractive, Bags_Under_Eyes, Bald, Bangs, Big_Lips, Big_Nose, Black_Hair, Blond_Hair,
+            train_dataset_y0z0 = train_dataset.filter(lambda image, o_Clock_Shadow, Arched_Eyebrows, Attractive, Bags_Under_Eyes, Bald, Bangs, Big_Lips, Big_Nose, Black_Hair, Blond_Hair,
              Blurry, Brown_Hair, Bushy_Eyebrows, Chubby, Double_Chin, Eyeglasses, Goatee, Gray_Hair, Heavy_Makeup,
              High_Cheekbones, Male, Mouth_Slightly_Open, Mustache, Narrow_Eyes, No_Beard, Oval_Face, Pale_Skin,
              Pointy_Nose, Receding_Hairline, Rosy_Cheeks, Sideburns, Smiling, Straight_Hair, Wavy_Hair,
@@ -284,7 +289,7 @@ def load_celeba_128(dataset_name, dataset_version, data_dir, undersampling_info)
         # Keep only examples from groups other than Y = 0, Z = 0
         # train_dataset = train_dataset.filter(lambda image, y, z: (y != 0 or z != 0))
         # train_dataset = train_dataset.filter(lambda image, y, z, young: (y != 0 or z != 0))
-        train_dataset = train_dataset.filter(lambda image, Arched_Eyebrows, Attractive, Bags_Under_Eyes, Bald, Bangs, Big_Lips, Big_Nose, Black_Hair, Blond_Hair,
+        train_dataset = train_dataset.filter(lambda image, o_Clock_Shadow, Arched_Eyebrows, Attractive, Bags_Under_Eyes, Bald, Bangs, Big_Lips, Big_Nose, Black_Hair, Blond_Hair,
              Blurry, Brown_Hair, Bushy_Eyebrows, Chubby, Double_Chin, Eyeglasses, Goatee, Gray_Hair, Heavy_Makeup,
              High_Cheekbones, Male, Mouth_Slightly_Open, Mustache, Narrow_Eyes, No_Beard, Oval_Face, Pale_Skin,
              Pointy_Nose, Receding_Hairline, Rosy_Cheeks, Sideburns, Smiling, Straight_Hair, Wavy_Hair,
